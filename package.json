@@ -1,0 +1,25 @@
+{
+  "name": "fluxo",
+  "version": "0.0.1",
+  "description": "Yet another Facebook Flux lib",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samuelsimoes/fluxo"
+  },
+  "author": {
+    "name": "Samuel Simões",
+    "email": "slip.cm@gmail.com"
+  },
+  "devDependencies": {
+    "bower": "*",
+    "grunt": "*",
+    "chai": "*",
+    "chai-spies": "*",
+    "mocha": "*",
+    "grunt-mocha": "*",
+    "grunt-settings": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*"
+  }
+}
