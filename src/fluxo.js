@@ -54,8 +54,9 @@
     }
   };
 
-  Fluxo.Store = function(data) {
+  Fluxo.Store = function(data, options) {
     this.data = data || {};
+    this.options = options || {};
     this.changeEventToken = Math.random().toString().slice(2, 11);
   };
 
@@ -87,9 +88,10 @@
     }
   };
 
-  Fluxo.CollectionStore = function(stores) {
+  Fluxo.CollectionStore = function(stores, options) {
     this.changeEventToken = Math.random().toString().slice(2, 11);
     this.stores = [];
+    this.options = options || {};
 
     stores = (stores || []);
 
