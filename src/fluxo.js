@@ -58,11 +58,15 @@
     this.data = data || {};
     this.options = options || {};
     this.changeEventToken = Math.random().toString().slice(2, 11);
+
+    this.initialize(data, options);
   };
 
   Fluxo.Store.extend = extend;
 
   Fluxo.Store.prototype = {
+    initialize: function () {},
+
     toJSON: function() {
       return this.data;
     },
@@ -98,11 +102,15 @@
     for (var i = 0, l = stores.length; i < l; i ++) {
       this.addFromData(stores[i]);
     }
+
+    this.initialize(stores, options);
   };
 
   Fluxo.CollectionStore.extend = extend;
 
   Fluxo.CollectionStore.prototype = {
+    initialize: function () {},
+
     store: Fluxo.Store,
 
     storesOnChangeCancelers: {},
