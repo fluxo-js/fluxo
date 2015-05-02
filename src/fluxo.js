@@ -55,6 +55,11 @@
   };
 
   Fluxo.Store = function(data, options) {
+    // Copy data to not mutate the original object
+    if (data) {
+      data = JSON.parse(JSON.stringify(data));
+    }
+
     this.data = data || {};
     this.options = options || {};
     this.changeEventToken = Math.random().toString().slice(2, 11);
