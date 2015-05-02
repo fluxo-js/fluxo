@@ -97,18 +97,23 @@
     }
   };
 
-  Fluxo.CollectionStore = function(stores, options) {
+  Fluxo.CollectionStore = function(storesData, options) {
+    // Copy data to not mutate the original object
+    if (storesData) {
+      storesData = JSON.parse(JSON.stringify(storesData));
+    } else {
+      storesData = [];
+    }
+
     this.changeEventToken = Math.random().toString().slice(2, 11);
     this.stores = [];
     this.options = options || {};
 
-    stores = (stores || []);
-
-    for (var i = 0, l = stores.length; i < l; i ++) {
-      this.addFromData(stores[i]);
+    for (var i = 0, l = storesData.length; i < l; i ++) {
+      this.addFromData(storesData[i]);
     }
 
-    this.initialize(stores, options);
+    this.initialize(storesData, options);
   };
 
   Fluxo.CollectionStore.extend = extend;
