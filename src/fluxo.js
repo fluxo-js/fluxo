@@ -235,7 +235,11 @@
 
         var canceler =
           store.onChange(function() {
-            this.setState({ storeIdentifierProp: store.toJSON() });
+            var state = {}
+
+            state[storeIdentifierProp] = store.toJSON();
+
+            this.setState(state);
           }.bind(this));
 
         this.storesOnChangeCancelers.push(canceler);
