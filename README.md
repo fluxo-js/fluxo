@@ -79,7 +79,7 @@ comment.data.content
 ###CollectionStore
 
 `Fluxo.CollectionStore` is a wrapper to your array of objects. When you create
-an CollectionStore, each item of your array is wrapped on a instance of `Fluxo.Store`,
+a CollectionStore, each item of your array is wrapped on a instance of `Fluxo.Store`,
 which you can change this extending the `Fluxo.CollectionStore` and specifying the
 store class.
 
