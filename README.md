@@ -1,6 +1,6 @@
 #Fluxo
 
-Fluxo is a simple and lightweight Facebook Flux implementation.
+Fluxo is a simple, lightweight (~ 200LOC) and dependency free Facebook Flux implementation.
 
 ##How to use
 
