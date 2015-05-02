@@ -253,17 +253,21 @@
         var storeIdentifierProp = this.listenProps[i],
             store = this.props[storeIdentifierProp];
 
-        var canceler =
-          store.onChange(function() {
-            var state = {}
-
-            state[storeIdentifierProp] = store.toJSON();
-
-            this.setState(state);
-          }.bind(this));
-
-        this.storesOnChangeCancelers.push(canceler);
+        this.listenStore(store);
       }
+    },
+
+    listenStore: function(store) {
+      var canceler =
+        store.onChange(function() {
+          var state = {}
+
+          state[storeIdentifierProp] = store.toJSON();
+
+          this.setState(state);
+        }.bind(this));
+
+      this.storesOnChangeCancelers.push(canceler);
     },
 
     componentWillUnmount: function() {
