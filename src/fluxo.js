@@ -218,20 +218,24 @@
     getInitialState: function() {
       var state = {};
 
-      for (var identifier in this.listen) {
-        state[identifier] = this.listen[identifier].toJSON();
+      for (var i = 0, l = this.listenProps.length; i < l; i ++) {
+        var storeIdentifierProp = this.listenProps[i],
+            store = this.props[storeIdentifierProp];
+
+        state[storeIdentifierProp] = store.toJSON();
       }
 
       return state;
     },
 
     componentWillMount: function() {
-      for (var identifier in this.listen) {
-        var store = this.listen[identifier];
+      for (var i = 0, l = this.listenProps.length; i < l; i ++) {
+        var storeIdentifierProp = this.listenProps[i],
+            store = this.props[storeIdentifierProp];
 
         var canceler =
           store.onChange(function() {
-            this.setState({ identifier: store.toJSON() });
+            this.setState({ storeIdentifierProp: store.toJSON() });
           }.bind(this));
 
         this.storesOnChangeCancelers.push(canceler);
