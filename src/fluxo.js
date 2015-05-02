@@ -211,4 +211,37 @@
 
     return action.apply(handler, args);
   };
+
+  Fluxo.WatchComponent = {
+    storesOnChangeCancelers: [],
+
+    getInitialState: function() {
+      var state = {};
+
+      for (var identifier in this.listen) {
+        state[identifier] = this.listen[identifier].toJSON();
+      }
+
+      return state;
+    },
+
+    componentWillMount: function() {
+      for (var identifier in this.listen) {
+        var store = this.listen[identifier];
+
+        var canceler =
+          store.onChange(function() {
+            this.setState({ identifier: store.toJSON() });
+          }.bind(this));
+
+        this.storesOnChangeCancelers.push(canceler);
+      }
+    },
+
+    componentWillUnmount: function() {
+      for (var i = 0, l = this.storesOnChangeCancelers.length; i < l; i ++) {
+        this.storesOnChangeCancelers[i].apply();
+      }
+    }
+  };
 });
