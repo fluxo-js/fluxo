@@ -109,6 +109,8 @@
     this.options = options || {};
     this.changeEventToken = Math.random().toString().slice(2, 11);
 
+    Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
+
     this.initialize(data, options);
   };
 
@@ -116,6 +118,8 @@
 
   Fluxo.Store.prototype = {
     initialize: function () {},
+
+    mixins: [],
 
     toJSON: function() {
       return this.data;
@@ -158,6 +162,8 @@
       this.addFromData(storesData[i]);
     }
 
+    Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
+
     this.initialize(storesData, options);
   };
 
@@ -165,6 +171,8 @@
 
   Fluxo.CollectionStore.prototype = {
     initialize: function () {},
+
+    mixins: [],
 
     store: Fluxo.Store,
 
