@@ -24,7 +24,7 @@ module.exports = function (grunt) {
   config.set("clean.dist.src", ["dist"]);
 
   config.set("concat.dist", {
-    src: ["src/fluxo.js"],
+    src: ["dist/fluxo.js"],
     dest: "dist/fluxo.js",
     options: {
       banner: "<%= meta.banner %>\n",
@@ -43,15 +43,22 @@ module.exports = function (grunt) {
     }
   });
 
+  config.set("includereplace.dist", {
+    src: "src/fluxo.js",
+    dest: "dist/fluxo.js"
+  });
+
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-mocha");
+  grunt.loadNpmTasks("grunt-include-replace");
 
   config.registerTask("build", [
     "clean:dist",
+    "includereplace:dist",
     "concat:dist",
     "uglify:dist"
   ]);
 
-  grunt.registerTask("test", ["mocha"]);
+  grunt.registerTask("test", ["build", "mocha"]);
 };
