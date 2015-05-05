@@ -11,11 +11,10 @@
     "email": "slip.cm@gmail.com"
   },
   "devDependencies": {
-    "bower": "*",
-    "grunt": "*",
+    "mocha": "*",
     "chai": "*",
     "chai-spies": "*",
-    "mocha": "*",
+    "grunt": "*",
     "grunt-mocha": "*",
     "grunt-settings": "*",
     "grunt-contrib-clean": "*",
