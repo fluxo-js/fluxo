@@ -6,24 +6,42 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../bower_components/mocha/mocha.css" />
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
   </head>
   <body>
     <div id="mocha"></div>
 
+    <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/chai/chai.js"></script>
     <script src="../node_modules/chai-spies/chai-spies.js"></script>
-    <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../src/fluxo.js"></script>
 
     <script>mocha.setup("bdd");</script>
 
-    <script src="setup.js"></script>
+    <script>
+      expect = chai.expect;
+    </script>
+
+    <script>
+      // PhantomJS doesn't support bind yet
+      Function.prototype.bind = Function.prototype.bind || function (thisp) {
+        var fn = this;
+
+        return function () {
+          return fn.apply(thisp, arguments);
+        };
+      };
+    </script>
+
     <script src="store_specs.js"></script>
     <script src="collection_specs.js"></script>
     <script src="actions_specs.js"></script>
     <script src="mixin_specs.js"></script>
 
-    <script>mocha.run();</script>
+    <script>
+      if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+        mocha.run();
+      }
+    </script>
   </body>
 </html>
