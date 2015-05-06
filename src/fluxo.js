@@ -47,4 +47,6 @@
   @@include('fluxo.actions.js')
 
   @@include('fluxo.watch_component.js')
+
+  return this.Fluxo;
 });
