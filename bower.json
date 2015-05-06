@@ -1,0 +1,23 @@
+{
+  "name": "fluxo",
+  "version": "0.0.1",
+  "homepage": "https://github.com/samuelsimoes/fluxo",
+  "authors": [
+    "Samuel Simões <slip.cm@gmail.com>"
+  ],
+  "keywords": [
+    "fluxo",
+    "flux",
+    "facebook"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "spec",
+    "src",
+    "Gruntfile.js",
+    "package.json",
+    "README.md"
+  ]
+}
