@@ -140,3 +140,18 @@ Fluxo.Radio.publish("alertMessage", "Hello!");
 // Cancel the event
 cancel();
 ```
+
+###Mixins
+Store and StoreCollection support mixins, the usage is identical to React mixins.
+
+```javascript
+var MyMixin = {
+  sayHello: function () {
+    alert("Hello");
+  }
+};
+
+var Comment = Fluxo.Store.extend({
+  mixins: [MyMixin]
+});
+```
