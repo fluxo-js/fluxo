@@ -4,10 +4,10 @@
   } else if (typeof exports !== "undefined") {
     return module.exports = factory();
   } else {
-    factory();
+    root.Fluxo = factory();
   }
 })(this, function() {
-  this.Fluxo = {};
+  var Fluxo = {};
 
   Fluxo.extend = function(toExtend) {
     toExtend = toExtend || {};
@@ -48,5 +48,5 @@
 
   @@include('fluxo.watch_component.js')
 
-  return this.Fluxo;
+  return Fluxo;
 });
