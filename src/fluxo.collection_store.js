@@ -31,9 +31,10 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
 
     this.stores.push(store);
 
-    this.storesOnChangeCancelers[store.changeEventToken] = store.on(["change"], this.emitChange.bind(this));
+    this.storesOnChangeCancelers[store.changeEventToken] =
+      store.on(["change"], this.trigger.bind(this, "change"));
 
-    this.emitChange();
+    this.trigger("change");
   },
 
   find: function (storeId) {
@@ -57,10 +58,6 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
     return this.find(store.data.id);
   },
 
-  onChange: function(callback) {
-    return Fluxo.Radio.subscribe(this.changeEventToken, callback.bind(this));
-  },
-
   remove: function(store) {
     this.storesOnChangeCancelers[store.changeEventToken].call();
 
@@ -68,11 +65,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
-    this.emitChange();
-  },
-
-  emitChange: function() {
-    Fluxo.Radio.publish(this.changeEventToken);
+    this.trigger("change");
   },
 
   toJSON: function() {

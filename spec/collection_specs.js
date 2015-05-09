@@ -4,7 +4,7 @@ describe("Fluxo.CollectionStore", function () {
       var collection = new Fluxo.CollectionStore(),
           onChangeCallback = chai.spy();
 
-      collection.onChange(onChangeCallback);
+      collection.on(["change"], onChangeCallback);
 
       collection.addFromData({ name: "Samuel" });
 
@@ -17,7 +17,7 @@ describe("Fluxo.CollectionStore", function () {
           store = new Fluxo.Store({ name: "Samuel" }),
           onChangeCallback = chai.spy();
 
-      collection.onChange(onChangeCallback);
+      collection.on(["change"], onChangeCallback);
 
       collection.addStore(store);
 
@@ -29,7 +29,7 @@ describe("Fluxo.CollectionStore", function () {
       var collection = new Fluxo.CollectionStore([{ name: "Samuel" }]),
           onChangeCallback = chai.spy();
 
-      collection.onChange(onChangeCallback);
+      collection.on(["change"], onChangeCallback);
 
       collection.stores[0].setAttribute("name", "Samuel S");
       expect(onChangeCallback).to.have.been.called();
@@ -44,7 +44,7 @@ describe("Fluxo.CollectionStore", function () {
 
       collection.remove(store);
 
-      collection.onChange(onChangeCallback);
+      collection.on(["change"], onChangeCallback);
 
       store.setAttribute("name", "a diferent name");
 
