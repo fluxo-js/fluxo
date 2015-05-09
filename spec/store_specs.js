@@ -54,6 +54,20 @@ describe("Fluxo.Store", function () {
 
       expect(store.data.fullName).to.be.eql("Neo Simoes");
     });
+
+    it("attributes parser", function() {
+      var MyCustomStore = Fluxo.Store.extend({
+        attributeParsers: {
+          count: function(value) {
+            return parseInt(value, 10);
+          }
+        }
+      });
+
+      var store = new MyCustomStore({ count: "1" });
+
+      expect(store.data.count).to.be.eql(1);
+    });
   });
 
   context("on a class", function() {

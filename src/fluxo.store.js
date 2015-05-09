@@ -26,6 +26,8 @@ Fluxo.Store.prototype = {
 
   computed: {},
 
+  attributeParsers: function() {},
+
   registerComputed: function() {
     for (var attributeName in this.computed) {
       var toComputeEvents = this.computed[attributeName];
@@ -43,11 +45,13 @@ Fluxo.Store.prototype = {
   setAttribute: function(attribute, value, options) {
     options = options || {};
 
-    var isEqual = (this.data[attribute] === value);
+    if (this.data[attribute] === value) { return; }
+
+    if (this.attributeParsers[attribute]) {
+      value = this.attributeParsers[attribute](value);
+    }
 
     this.data[attribute] = value;
-
-    if (isEqual) { return; }
 
     this.trigger("change:" + attribute);
 
