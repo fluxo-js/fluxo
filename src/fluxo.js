@@ -40,6 +40,8 @@
 
   @@include('fluxo.mixin.js')
 
+  @@include('fluxo.base.js')
+
   @@include('fluxo.store.js')
 
   @@include('fluxo.collection_store.js')

@@ -1,30 +1,20 @@
-Fluxo.CollectionStore = function(storesData, options) {
-  // Copy data to not mutate the original object
-  if (storesData) {
-    storesData = JSON.parse(JSON.stringify(storesData));
-  } else {
-    storesData = [];
-  }
+Fluxo.CollectionStore = Fluxo.Base.extend({
+ _constructor: function(storesData, options) {
+    // Copy data to not mutate the original object
+    if (storesData) {
+      storesData = JSON.parse(JSON.stringify(storesData));
+    } else {
+      storesData = [];
+    }
 
-  this.changeEventToken = Math.random().toString().slice(2, 11);
-  this.stores = [];
-  this.options = options || {};
+    this.stores = [];
 
-  for (var i = 0, l = storesData.length; i < l; i ++) {
-    this.addFromData(storesData[i]);
-  }
+    for (var i = 0, l = storesData.length; i < l; i ++) {
+      this.addFromData(storesData[i]);
+    }
 
-  Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
-
-  this.initialize(storesData, options);
-};
-
-Fluxo.CollectionStore.extend = extend;
-
-Fluxo.CollectionStore.prototype = {
-  initialize: function () {},
-
-  mixins: [],
+    this.initialize(storesData, options);
+  },
 
   store: Fluxo.Store,
 
@@ -95,4 +85,4 @@ Fluxo.CollectionStore.prototype = {
 
     return collectionData;
   }
-};
+});
