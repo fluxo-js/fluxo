@@ -50,9 +50,7 @@ changes.
 
 On Fluxo, the store is a convenient wrapper to your literal javascript objects or
 array with literal objects. It resembles a simplified version of Backbone's models
-and collections with some key changes. On the Fluxo.Store/Collection you don't have
-any method to make server requests, you also only have a very simple event emission
-that is triggered when the store/collection changes.
+and collections without server request.
 
 You can create stores like this:
 

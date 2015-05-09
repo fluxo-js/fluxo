@@ -41,7 +41,7 @@ Fluxo.CollectionStore.prototype = {
 
     this.stores.push(store);
 
-    this.storesOnChangeCancelers[store.changeEventToken] = store.onChange(this.emitChange.bind(this));
+    this.storesOnChangeCancelers[store.changeEventToken] = store.on(["change"], this.emitChange.bind(this));
 
     this.emitChange();
   },
@@ -72,7 +72,7 @@ Fluxo.CollectionStore.prototype = {
   },
 
   remove: function(store) {
-    this.storesOnChangeCancelers[store.changeEventToken]();
+    this.storesOnChangeCancelers[store.changeEventToken].call();
 
     delete this.storesOnChangeCancelers[store.changeEventToken];
 
