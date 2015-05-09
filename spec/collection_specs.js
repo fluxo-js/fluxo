@@ -31,8 +31,25 @@ describe("Fluxo.CollectionStore", function () {
 
       collection.onChange(onChangeCallback);
 
-      collection.stores[0].setAttribute("name", "Samuel");
+      collection.stores[0].setAttribute("name", "Samuel S");
       expect(onChangeCallback).to.have.been.called();
+    });
+
+    it("#remove", function() {
+      var store = new Fluxo.Store({ name: "Samuel" }),
+          collection = new Fluxo.CollectionStore(),
+          onChangeCallback = chai.spy();
+
+      collection.addStore(store);
+
+      collection.remove(store);
+
+      collection.onChange(onChangeCallback);
+
+      store.setAttribute("name", "a diferent name");
+
+      expect(collection.stores).to.be.eql([]);
+      expect(onChangeCallback).to.not.have.been.called();
     });
   });
 });
