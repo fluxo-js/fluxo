@@ -4,7 +4,7 @@ Fluxo.Radio = {
   events: {},
 
   subscribe: function(eventName, callback) {
-    var subscriptionId = (this.callbackIds + 1);
+    var subscriptionId = this.callbackIds++;
 
     this.events[eventName] = this.events[eventName] || {};
     this.events[eventName][subscriptionId] = callback;
