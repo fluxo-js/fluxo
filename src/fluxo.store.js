@@ -1,14 +1,18 @@
 Fluxo.Store = function(data, options) {
+  this.options = options || {};
+  this.changeEventToken = Math.random().toString().slice(2, 11);
+  this.data = {};
+
   // Copy data to not mutate the original object
   if (data) {
     data = JSON.parse(JSON.stringify(data));
   }
 
-  this.data = data || {};
-  this.options = options || {};
-  this.changeEventToken = Math.random().toString().slice(2, 11);
+  this.registerComputed();
 
   Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
+
+  this.set(data || {});
 
   this.initialize(data, options);
 };
@@ -19,6 +23,18 @@ Fluxo.Store.prototype = {
   initialize: function () {},
 
   mixins: [],
+
+  computed: {},
+
+  registerComputed: function() {
+    for (var attributeName in this.computed) {
+      var toComputeEvents = this.computed[attributeName];
+
+      this.on(toComputeEvents, function() {
+        this.setAttribute(attributeName, this[attributeName].call(this));
+      });
+    }
+  },
 
   toJSON: function() {
     return this.data;

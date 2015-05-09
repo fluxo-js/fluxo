@@ -34,6 +34,26 @@ describe("Fluxo.Store", function () {
       var store = new Fluxo.Store({ name: "Samuel" });
       expect(store.toJSON()).to.be.eql({ name: "Samuel" });
     });
+
+    it("computed attributes", function() {
+      var MyCustomStore = Fluxo.Store.extend({
+        computed: {
+          "fullName": ["change:first_name", "change:last_name"]
+        },
+
+        fullName: function() {
+          return (this.data.first_name + " " + this.data.last_name);
+        }
+      });
+
+      var store = new MyCustomStore({ first_name: "Samuel", last_name: "Simoes" });
+
+      expect(store.data.fullName).to.be.eql("Samuel Simoes");
+
+      store.setAttribute("first_name", "Neo");
+
+      expect(store.data.fullName).to.be.eql("Neo Simoes");
+    });
   });
 
   context("on a class", function() {
