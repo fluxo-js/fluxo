@@ -25,7 +25,7 @@ Fluxo.WatchComponent = {
 
   listenStore: function(store) {
     var canceler =
-      store.onChange(function() {
+      store.on(["change"], function() {
         var state = {}
 
         state[storeIdentifierProp] = store.toJSON();
