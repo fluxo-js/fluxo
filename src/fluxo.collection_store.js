@@ -78,6 +78,9 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
       collectionData.push(store.toJSON());
     }
 
-    return collectionData;
+    return {
+      data: this.data,
+      stores: collectionData
+    };
   }
 });
