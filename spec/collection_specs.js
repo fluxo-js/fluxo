@@ -8,7 +8,7 @@ describe("Fluxo.CollectionStore", function () {
 
       collection.addFromData({ name: "Samuel" });
 
-      expect(collection.toJSON()).to.be.eql([{ name: "Samuel" }]);
+      expect(collection.toJSON()).to.be.eql({ data: {}, stores: [{ name: "Samuel" }]});
       expect(onChangeCallback).to.have.been.called();
     });
 
@@ -21,7 +21,7 @@ describe("Fluxo.CollectionStore", function () {
 
       collection.addStore(store);
 
-      expect(collection.toJSON()).to.be.eql([{ name: "Samuel" }]);
+      expect(collection.toJSON()).to.be.eql({ data: {}, stores: [{ name: "Samuel" }]});
       expect(onChangeCallback).to.have.been.called();
     });
 

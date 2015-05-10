@@ -1,4 +1,4 @@
-/*! fluxo v0.0.1 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.2 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -43,7 +43,7 @@
   events: {},
 
   subscribe: function(eventName, callback) {
-    var subscriptionId = (this.callbackIds + 1);
+    var subscriptionId = this.callbackIds++;
 
     this.events[eventName] = this.events[eventName] || {};
     this.events[eventName][subscriptionId] = callback;
@@ -102,81 +102,129 @@
 };
 
 
-  Fluxo.Store = function(data, options) {
-  // Copy data to not mutate the original object
-  if (data) {
-    data = JSON.parse(JSON.stringify(data));
-  }
+  Fluxo.Base = function() {
+  var args = Array.prototype.slice.call(arguments);
 
-  this.data = data || {};
-  this.options = options || {};
+  this.data = {};
+  this.options = args[1] || {};
   this.changeEventToken = Math.random().toString().slice(2, 11);
 
   Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
 
-  this.initialize(data, options);
+  this.registerComputed();
+
+  this._constructor.apply(this, args);
 };
 
-Fluxo.Store.extend = extend;
+Fluxo.Base.extend = extend;
 
-Fluxo.Store.prototype = {
+Fluxo.Base.prototype = {
   initialize: function () {},
 
   mixins: [],
 
-  toJSON: function() {
-    return this.data;
+  on: function(events, callback) {
+    var cancelers = [];
+
+    for (var i = 0, l = events.length; i < l; i ++) {
+      var eventName = events[i],
+          changeEventToken = (this.changeEventToken + ":" + eventName),
+          canceler = Fluxo.Radio.subscribe(changeEventToken, callback.bind(this));
+
+      cancelers.push(canceler);
+    }
+
+    var aggregatedCanceler = function() {
+      for (var i = 0, l = cancelers.length; i < l; i ++) {
+        var canceler = cancelers[i];
+        canceler.call();
+      }
+    };
+
+    return aggregatedCanceler;
   },
 
-  setAttribute: function(attribute, value) {
+  trigger: function(eventName) {
+    Fluxo.Radio.publish(this.changeEventToken + ":" + eventName);
+  },
+
+  computed: {},
+
+  attributeParsers: function() {},
+
+  registerComputed: function() {
+    for (var attributeName in this.computed) {
+      var toComputeEvents = this.computed[attributeName];
+
+      this.on(toComputeEvents, function() {
+        this.setAttribute(attributeName, this[attributeName].call(this));
+      });
+    }
+  },
+
+  setAttribute: function(attribute, value, options) {
+    options = options || {};
+
+    if (this.data[attribute] === value) { return; }
+
+    if (this.attributeParsers[attribute]) {
+      value = this.attributeParsers[attribute](value);
+    }
+
     this.data[attribute] = value;
 
-    this.emitChange();
+    this.trigger("change:" + attribute);
+
+    if (options.silentGlobalChange) { return; }
+
+    this.trigger("change");
   },
 
   set: function(data) {
-    Fluxo.extend(this.data, data);
+    for (var key in data) {
+      this.setAttribute(key, data[key], { silentGlobalChange: true });
+    }
 
-    this.emitChange();
-  },
-
-  onChange: function(callback) {
-    return Fluxo.Radio.subscribe(this.changeEventToken, callback.bind(this));
-  },
-
-  emitChange: function() {
-    Fluxo.Radio.publish(this.changeEventToken, this.toJSON());
+    this.trigger("change");
   }
 };
 
 
-  Fluxo.CollectionStore = function(storesData, options) {
-  // Copy data to not mutate the original object
-  if (storesData) {
-    storesData = JSON.parse(JSON.stringify(storesData));
-  } else {
-    storesData = [];
+  Fluxo.Store = Fluxo.Base.extend({
+  _constructor: function(data, options) {
+    // Copy data to not mutate the original object
+    if (data) {
+      data = JSON.parse(JSON.stringify(data));
+    }
+
+    this.set(data || {});
+
+    this.initialize(data, options);
+  },
+
+  toJSON: function() {
+    return this.data;
   }
+});
 
-  this.changeEventToken = Math.random().toString().slice(2, 11);
-  this.stores = [];
-  this.options = options || {};
 
-  for (var i = 0, l = storesData.length; i < l; i ++) {
-    this.addFromData(storesData[i]);
-  }
+  Fluxo.CollectionStore = Fluxo.Base.extend({
+ _constructor: function(storesData, options) {
+    // Copy data to not mutate the original object
+    if (storesData) {
+      storesData = JSON.parse(JSON.stringify(storesData));
+    } else {
+      storesData = [];
+    }
 
-  Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
+    this.stores = [];
 
-  this.initialize(storesData, options);
-};
+    for (var i = 0, l = storesData.length; i < l; i ++) {
+      this.addFromData(storesData[i]);
+    }
 
-Fluxo.CollectionStore.extend = extend;
-
-Fluxo.CollectionStore.prototype = {
-  initialize: function () {},
-
-  mixins: [],
+    this.initialize(storesData, options);
+  },
 
   store: Fluxo.Store,
 
@@ -193,9 +241,11 @@ Fluxo.CollectionStore.prototype = {
 
     this.stores.push(store);
 
-    this.storesOnChangeCancelers[store.changeEventToken] = store.onChange(this.emitChange.bind(this));
+    this.storesOnChangeCancelers[store.changeEventToken] =
+      store.on(["change"], this.trigger.bind(this, "change"));
 
-    this.emitChange();
+    this.trigger("add", store);
+    this.trigger("change");
   },
 
   find: function (storeId) {
@@ -219,22 +269,15 @@ Fluxo.CollectionStore.prototype = {
     return this.find(store.data.id);
   },
 
-  onChange: function(callback) {
-    return Fluxo.Radio.subscribe(this.changeEventToken, callback.bind(this));
-  },
-
   remove: function(store) {
-    this.storesOnChangeCancelers[store.changeEventToken]();
+    this.storesOnChangeCancelers[store.changeEventToken].call();
 
     delete this.storesOnChangeCancelers[store.changeEventToken];
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
-    this.emitChange();
-  },
-
-  emitChange: function() {
-    Fluxo.Radio.publish(this.changeEventToken);
+    this.trigger("remove", store);
+    this.trigger("change");
   },
 
   toJSON: function() {
@@ -245,9 +288,12 @@ Fluxo.CollectionStore.prototype = {
       collectionData.push(store.toJSON());
     }
 
-    return collectionData;
+    return {
+      data: this.data,
+      stores: collectionData
+    };
   }
-};
+});
 
 
   Fluxo.actionHandlers = {};
@@ -308,7 +354,7 @@ Fluxo.callAction = function(actionHandlerIdentifier, actionName) {
 
   listenStore: function(store) {
     var canceler =
-      store.onChange(function() {
+      store.on(["change"], function() {
         var state = {}
 
         state[storeIdentifierProp] = store.toJSON();
