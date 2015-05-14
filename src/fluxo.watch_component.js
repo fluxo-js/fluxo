@@ -19,11 +19,11 @@ Fluxo.WatchComponent = {
       var storeIdentifierProp = this.listenProps[i],
           store = this.props[storeIdentifierProp];
 
-      this.listenStore(store);
+      this.listenStore(store, storeIdentifierProp);
     }
   },
 
-  listenStore: function(store) {
+  listenStore: function(store, storeIdentifierProp) {
     var canceler =
       store.on(["change"], function() {
         var state = {}
