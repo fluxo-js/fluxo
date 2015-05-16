@@ -11,6 +11,8 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
 
     this.addBunchFromData(storesData);
 
+    this.registerComputed();
+
     this.initialize(storesData, options);
   },
 

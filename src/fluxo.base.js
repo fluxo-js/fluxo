@@ -7,8 +7,6 @@ Fluxo.Base = function() {
 
   Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
 
-  this.registerComputed();
-
   this._constructor.apply(this, args);
 };
 
@@ -52,9 +50,12 @@ Fluxo.Base.prototype = {
     for (var attributeName in this.computed) {
       var toComputeEvents = this.computed[attributeName];
 
-      this.on(toComputeEvents, function() {
-        this.setAttribute(attributeName, this[attributeName].call(this));
-      });
+      this.on(toComputeEvents, function(attrName) {
+        var value = this[attrName].call(this);
+        this.setAttribute(attrName, value);
+      }.bind(this, attributeName));
+
+      this.setAttribute(attributeName, this[attributeName].call(this));
     }
   },
 

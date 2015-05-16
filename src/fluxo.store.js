@@ -7,6 +7,8 @@ Fluxo.Store = Fluxo.Base.extend({
 
     this.set(data || {});
 
+    this.registerComputed();
+
     this.initialize(data, options);
   },
 
