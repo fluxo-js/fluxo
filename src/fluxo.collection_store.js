@@ -55,12 +55,20 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
     this.trigger("change");
   },
 
+  /**
+   * @param {Object} data
+   * @returns {Fluxo.Store}
+   */
   addFromData: function(data) {
     var store = new this.store(data);
 
-    this.addStore(store);
+    return this.addStore(store);
   },
 
+  /**
+   * @param {Fluxo.Store} store
+   * @returns {Fluxo.Store}
+   */
   addStore: function(store) {
     if (this.storeAlreadyAdded(store)) { return; }
 
@@ -71,8 +79,14 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
 
     this.trigger("add", store);
     this.trigger("change");
+
+    return store;
   },
 
+  /**
+   * @param {number} storeId
+   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   */
   find: function (storeId) {
     var foundStore;
 
@@ -90,6 +104,12 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
     return foundStore;
   },
 
+  /**
+   * Verifies presence of a store on the collection
+   *
+   * @param {Fluxo.Store} store - the store to verify presence
+   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   */
   storeAlreadyAdded: function (store) {
     return this.find(store.data.id);
   },
@@ -115,6 +135,9 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
     this.trigger("change");
   },
 
+  /**
+   * @returns {Object}
+   */
   toJSON: function() {
     var collectionData = [];
 
