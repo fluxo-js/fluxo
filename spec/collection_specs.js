@@ -63,5 +63,18 @@ describe("Fluxo.CollectionStore", function () {
       expect(collection.stores).to.be.eql([]);
       expect(onChangeCallback).to.have.been.called();
     });
+
+    it("#addBunchStores", function() {
+      var collection = new Fluxo.CollectionStore(),
+          store = new Fluxo.Store(),
+          onChangeCallback = chai.spy();
+
+      collection.on(["change", "add"], onChangeCallback);
+
+      collection.addBunchStores([store]);
+
+      expect(collection.stores).to.be.eql([store]);
+      expect(onChangeCallback).to.have.been.called.exactly(2);
+    });
   });
 });
