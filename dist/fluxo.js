@@ -1,4 +1,4 @@
-/*! fluxo v0.0.2 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.3 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -219,9 +219,7 @@ Fluxo.Base.prototype = {
 
     this.stores = [];
 
-    for (var i = 0, l = storesData.length; i < l; i ++) {
-      this.addFromData(storesData[i]);
-    }
+    this.addBunchFromData(storesData);
 
     this.initialize(storesData, options);
   },
@@ -230,12 +228,57 @@ Fluxo.Base.prototype = {
 
   storesOnChangeCancelers: {},
 
+  /**
+   * @param {Object[]} - storesData
+   * @returns {null}
+   */
+  addBunchFromData: function(storesData) {
+    for (var i = 0, l = storesData.length; i < l; i ++) {
+      var storeData = storesData[i];
+      this.addFromData(storeData);
+    }
+  },
+
+  /**
+   * @param {Fluxo.Store[]} - stores
+   * @returns {null}
+   */
+  addBunchStores: function(stores) {
+    for (var i = 0, l = stores.length; i < l; i ++) {
+     var store = data[i];
+     this.addStore(storeOrData);
+    }
+  },
+
+  /**
+   * @returns {null}
+   */
+  removeAll: function() {
+    for (var i = (this.stores.length - 1), l = 0; i >= l; i--) {
+      var store = this.stores[i];
+      this.removeListenersOn(store);
+    }
+
+    this.stores = [];
+
+    this.trigger("remove");
+    this.trigger("change");
+  },
+
+  /**
+   * @param {Object} data
+   * @returns {Fluxo.Store}
+   */
   addFromData: function(data) {
     var store = new this.store(data);
 
-    this.addStore(store);
+    return this.addStore(store);
   },
 
+  /**
+   * @param {Fluxo.Store} store
+   * @returns {Fluxo.Store}
+   */
   addStore: function(store) {
     if (this.storeAlreadyAdded(store)) { return; }
 
@@ -246,8 +289,14 @@ Fluxo.Base.prototype = {
 
     this.trigger("add", store);
     this.trigger("change");
+
+    return store;
   },
 
+  /**
+   * @param {number} storeId
+   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   */
   find: function (storeId) {
     var foundStore;
 
@@ -265,14 +314,30 @@ Fluxo.Base.prototype = {
     return foundStore;
   },
 
+  /**
+   * Verifies presence of a store on the collection
+   *
+   * @param {Fluxo.Store} store - the store to verify presence
+   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   */
   storeAlreadyAdded: function (store) {
     return this.find(store.data.id);
   },
 
-  remove: function(store) {
+  /**
+   * @returns {null}
+   */
+  removeListenersOn: function(store) {
     this.storesOnChangeCancelers[store.changeEventToken].call();
-
     delete this.storesOnChangeCancelers[store.changeEventToken];
+  },
+
+  /**
+   * @param {Fluxo.Store} store - the store to remove
+   * @returns {null}
+   */
+  remove: function(store) {
+    this.removeListenersOn(store);
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
@@ -280,7 +345,10 @@ Fluxo.Base.prototype = {
     this.trigger("change");
   },
 
-  toJSON: function() {
+  /**
+   * @returns {Object}
+   */
+  storesToJSON: function() {
     var collectionData = [];
 
     for (var i = 0, l = this.stores.length; i < l; i ++) {
@@ -288,9 +356,16 @@ Fluxo.Base.prototype = {
       collectionData.push(store.toJSON());
     }
 
+    return collectionData;
+  },
+
+  /**
+   * @returns {Object}
+   */
+  toJSON: function() {
     return {
       data: this.data,
-      stores: collectionData
+      stores: this.storesToJSON()
     };
   }
 });
@@ -348,11 +423,11 @@ Fluxo.callAction = function(actionHandlerIdentifier, actionName) {
       var storeIdentifierProp = this.listenProps[i],
           store = this.props[storeIdentifierProp];
 
-      this.listenStore(store);
+      this.listenStore(store, storeIdentifierProp);
     }
   },
 
-  listenStore: function(store) {
+  listenStore: function(store, storeIdentifierProp) {
     var canceler =
       store.on(["change"], function() {
         var state = {}
