@@ -25,13 +25,24 @@
     return toExtend;
   };
 
-  var extend = function (props) {
-    var that = this,
-        child = function () { return that.apply(this, arguments); };
+  var extend = function (protoProps, staticProps) {
+    var parent = this,
+        child;
 
-    Fluxo.extend(child, this);
-    Fluxo.extend(this.prototype, props);
-    Fluxo.extend(child.prototype, this.prototype);
+    child = function(){ return parent.apply(this, arguments); };
+
+    // Add static properties to the constructor function, if supplied.
+    Fluxo.extend(child, parent, staticProps);
+
+    var Surrogate = function() { this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
+
+    if (protoProps) {
+      Fluxo.extend(child.prototype, protoProps);
+    }
+
+    child.__super__ = parent.prototype;
 
     return child;
   };
