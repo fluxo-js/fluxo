@@ -51,5 +51,17 @@ describe("Fluxo.CollectionStore", function () {
       expect(collection.stores).to.be.eql([]);
       expect(onChangeCallback).to.not.have.been.called();
     });
+
+    it("#removeAll", function() {
+      var collection = new Fluxo.CollectionStore([{ name: "Samuel" }, { name: "Fluxo" }]),
+          onChangeCallback = chai.spy();
+
+      collection.on(["change"], onChangeCallback);
+
+      collection.removeAll();
+
+      expect(collection.stores).to.be.eql([]);
+      expect(onChangeCallback).to.have.been.called();
+    });
   });
 });

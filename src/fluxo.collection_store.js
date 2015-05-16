@@ -9,9 +9,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
 
     this.stores = [];
 
-    for (var i = 0, l = storesData.length; i < l; i ++) {
-      this.addFromData(storesData[i]);
-    }
+    this.addBunchFromData(storesData);
 
     this.initialize(storesData, options);
   },
@@ -19,6 +17,43 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
   store: Fluxo.Store,
 
   storesOnChangeCancelers: {},
+
+  /**
+   * @param {Object[]} - storesData
+   * @returns {null}
+   */
+  addBunchFromData: function(storesData) {
+    for (var i = 0, l = storesData.length; i < l; i ++) {
+      var storeData = storesData[i];
+      this.addFromData(storeData);
+    }
+  },
+
+  /**
+   * @param {Fluxo.Store[]} - stores
+   * @returns {null}
+   */
+  addBunchStores: function(stores) {
+    for (var i = 0, l = stores.length; i < l; i ++) {
+     var store = data[i];
+     this.addStore(storeOrData);
+    }
+  },
+
+  /**
+   * @returns {null}
+   */
+  removeAll: function() {
+    for (var i = (this.stores.length - 1), l = 0; i >= l; i--) {
+      var store = this.stores[i];
+      this.removeListenersOn(store);
+    }
+
+    this.stores = [];
+
+    this.trigger("remove");
+    this.trigger("change");
+  },
 
   addFromData: function(data) {
     var store = new this.store(data);
@@ -59,10 +94,20 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
     return this.find(store.data.id);
   },
 
-  remove: function(store) {
+  /**
+   * @returns {null}
+   */
+  removeListenersOn: function(store) {
     this.storesOnChangeCancelers[store.changeEventToken].call();
-
     delete this.storesOnChangeCancelers[store.changeEventToken];
+  },
+
+  /**
+   * @param {Fluxo.Store} store - the store to remove
+   * @returns {null}
+   */
+  remove: function(store) {
+    this.removeListenersOn(store);
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
