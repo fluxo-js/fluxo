@@ -43,6 +43,11 @@ module.exports = function (grunt) {
     }
   });
 
+  config.set("watch.scripts", {
+    files: ["src/*.js"],
+    tasks: ["build"]
+  });
+
   config.set("includereplace.dist", {
     src: "src/fluxo.js",
     dest: "dist/fluxo.js"
@@ -52,6 +57,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-mocha");
   grunt.loadNpmTasks("grunt-include-replace");
+  grunt.loadNpmTasks("grunt-contrib-watch");
 
   config.registerTask("build", [
     "clean:dist",
