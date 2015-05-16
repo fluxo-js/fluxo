@@ -138,7 +138,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
   /**
    * @returns {Object}
    */
-  toJSON: function() {
+  storesToJSON: function() {
     var collectionData = [];
 
     for (var i = 0, l = this.stores.length; i < l; i ++) {
@@ -146,9 +146,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend({
       collectionData.push(store.toJSON());
     }
 
+    return collectionData;
+  },
+
+  /**
+   * @returns {Object}
+   */
+  toJSON: function() {
     return {
       data: this.data,
-      stores: collectionData
+      stores: this.storesToJSON()
     };
   }
 });
