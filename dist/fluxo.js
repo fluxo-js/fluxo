@@ -1,4 +1,4 @@
-/*! fluxo v0.0.3 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.5 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -26,13 +26,24 @@
     return toExtend;
   };
 
-  var extend = function (props) {
-    var that = this,
-        child = function () { return that.apply(this, arguments); };
+  var extend = function (protoProps, staticProps) {
+    var parent = this,
+        child;
 
-    Fluxo.extend(child, this);
-    Fluxo.extend(this.prototype, props);
-    Fluxo.extend(child.prototype, this.prototype);
+    child = function(){ return parent.apply(this, arguments); };
+
+    // Add static properties to the constructor function, if supplied.
+    Fluxo.extend(child, parent, staticProps);
+
+    var Surrogate = function() { this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
+
+    if (protoProps) {
+      Fluxo.extend(child.prototype, protoProps);
+    }
+
+    child.__super__ = parent.prototype;
 
     return child;
   };
@@ -111,8 +122,6 @@
 
   Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
 
-  this.registerComputed();
-
   this._constructor.apply(this, args);
 };
 
@@ -156,9 +165,12 @@ Fluxo.Base.prototype = {
     for (var attributeName in this.computed) {
       var toComputeEvents = this.computed[attributeName];
 
-      this.on(toComputeEvents, function() {
-        this.setAttribute(attributeName, this[attributeName].call(this));
-      });
+      this.on(toComputeEvents, function(attrName) {
+        var value = this[attrName].call(this);
+        this.setAttribute(attrName, value);
+      }.bind(this, attributeName));
+
+      this.setAttribute(attributeName, this[attributeName].call(this));
     }
   },
 
@@ -199,6 +211,8 @@ Fluxo.Base.prototype = {
 
     this.set(data || {});
 
+    this.registerComputed();
+
     this.initialize(data, options);
   },
 
@@ -220,6 +234,8 @@ Fluxo.Base.prototype = {
     this.stores = [];
 
     this.addBunchFromData(storesData);
+
+    this.registerComputed();
 
     this.initialize(storesData, options);
   },
