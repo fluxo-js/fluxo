@@ -156,6 +156,50 @@ you set an attribute using `set` method.
 The CollectionStore emits `change`, and `add` or `remove` when you add or remove
 some store.
 
+###Computed Properties
+
+Store and CollectionStores has computed properties like Ember.js, computed
+properties let you declare functions are properties that are computed in
+certain events that you declare. Look the example below on a simple Store:
+
+```javascript
+var Person = Fluxo.Store.extend({
+  computed: {
+    fullName: ["change:firstName", "change:lastName"]
+  },
+
+  fullName: function () {
+    return (this.data.firstName + " " + this.data.lastName);
+  }
+});
+
+var samuel = new Person({
+  firstName: "Samuel",
+  lastName:  "Simões"
+});
+
+samuel.data.fullName; // => "Samuel Simões"
+```
+
+Or a more complex example on a CollectionStore:
+
+```javascript
+var Todos = Fluxo.CollectionStore.extend({
+  computed: {
+    doneCount: ["change"]
+  },
+
+  doneCount: function() {
+    var count; // compute the done todos count...
+    return count;
+  }
+});
+
+var myTodos = new Todos([{ done: true }]);
+
+myTodos.data.doneCount; // => 1
+```
+
 ###Fluxo.Radio
 Internally Fluxo uses it own pub/sub implementation, this is a 20 LOC implementation.
 Feel free to use on your app. The usage is very simple.
