@@ -1,4 +1,4 @@
-#Fluxo
+#Fluxo [![Build Status](https://travis-ci.org/samuelsimoes/fluxo.svg?branch=master)](https://travis-ci.org/samuelsimoes/fluxo)
 
 Fluxo is a simple, lightweight (~290LOC) and dependency free Facebook Flux implementation.
 
