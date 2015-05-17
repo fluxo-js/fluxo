@@ -1,6 +1,8 @@
 #Fluxo [![Build Status](https://travis-ci.org/samuelsimoes/fluxo.svg?branch=master)](https://travis-ci.org/samuelsimoes/fluxo)
 
-Fluxo is a simple, lightweight (~290LOC) and dependency free Facebook Flux implementation.
+Fluxo is a simple, lightweight (~300LOC) and dependency free data infrastructure lib based
+on [Facebook Flux](https://facebook.github.io/flux) and [Backbone.js](http://backbonejs.org). It's compatible with [React.js](https://facebook.github.io/react), but you can use
+with whatever you want to the view/component layer.
 
 **Important:** this project is under development and experimental phase and because
 of this many things may change.
