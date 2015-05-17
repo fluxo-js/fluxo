@@ -86,6 +86,9 @@ a CollectionStore, each item of your array is wrapped on a instance of `Fluxo.St
 which you can change extending the `Fluxo.CollectionStore` and specifying your
 store class.
 
+Note: `Fluxo.CollectionStore` has the same methods of the `Fluxo.Store`, so you
+can use methods like `set` of `Fluxo.Store`.
+
 ```javascript
 var MyComments = Fluxo.CollectionStore.extend({
   store: MyComment
@@ -126,6 +129,32 @@ the same prop key name.
 
 On the example above, the content of our store is placed on component's `this.state.comment`
 property.
+
+###Events
+`Fluxo.Store` and `Fluxo.CollectionStore` can emits and react on events, using the
+`on` and `trigger` methods.
+
+The `on` method accepts two arguments, the first is the event's name array
+and the second is the callback.
+
+```javascript
+myStore.on(["change:name"], function () {
+  alert("wow, you changed the name");
+});
+```
+
+The `trigger` method accepts one argument, the event's name that you want trigger.
+So every registered event on the event name will be triggered.
+
+```javascript
+myStore.trigger("myCustomEvent");
+```
+
+The CollectionStore and Store emits `change` and `change:<NAME-OF-ATTRIBUTE>` when
+you set an attribute using `set` method.
+
+The CollectionStore emits `change`, and `add` or `remove` when you add or remove
+some store.
 
 ###Fluxo.Radio
 Internally Fluxo uses it own pub/sub implementation, this is a 20 LOC implementation.
