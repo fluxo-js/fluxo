@@ -93,8 +93,13 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores.push(store);
 
+    var onStoreChange = function() {
+      this.trigger("change:stores");
+      this.trigger("change");
+    };
+
     this.storesOnChangeCancelers[store.changeEventToken] =
-      store.on(["change"], this.trigger.bind(this, "change"));
+      store.on(["change"], onStoreChange.bind(this));
 
     this.trigger("add", store);
     this.trigger("change");
