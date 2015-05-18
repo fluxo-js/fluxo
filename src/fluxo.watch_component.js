@@ -38,7 +38,7 @@ Fluxo.WatchComponent = {
 
   componentWillUnmount: function() {
     for (var i = 0, l = this.storesOnChangeCancelers.length; i < l; i ++) {
-      this.storesOnChangeCancelers[i].apply();
+      this.storesOnChangeCancelers[i].call();
     }
   }
 };
