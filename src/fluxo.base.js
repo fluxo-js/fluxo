@@ -38,8 +38,11 @@ Fluxo.Base.prototype = {
     return aggregatedCanceler;
   },
 
-  trigger: function(eventName) {
-    Fluxo.Radio.publish(this.changeEventToken + ":" + eventName);
+  trigger: function(eventsNames) {
+    for (var i = 0, l = eventsNames.length; i < l; i ++) {
+      var eventName = eventsNames[i];
+      Fluxo.Radio.publish(this.changeEventToken + ":" + eventName);
+    }
   },
 
   computed: {},
@@ -70,11 +73,11 @@ Fluxo.Base.prototype = {
 
     this.data[attribute] = value;
 
-    this.trigger("change:" + attribute);
+    this.trigger(["change:" + attribute]);
 
     if (options.silentGlobalChange) { return; }
 
-    this.trigger("change");
+    this.trigger(["change"]);
   },
 
   set: function(data) {
@@ -82,6 +85,6 @@ Fluxo.Base.prototype = {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
 
-    this.trigger("change");
+    this.trigger(["change"]);
   }
 };

@@ -68,8 +68,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores = [];
 
-    this.trigger("remove");
-    this.trigger("change");
+    this.trigger(["remove", "change"]);
   },
 
   /**
@@ -94,15 +93,13 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
     this.stores.push(store);
 
     var onStoreChange = function() {
-      this.trigger("change:stores");
-      this.trigger("change");
+      this.trigger(["change:stores", "change"]);
     };
 
     this.storesOnChangeCancelers[store.changeEventToken] =
       store.on(["change"], onStoreChange.bind(this));
 
-    this.trigger("add", store);
-    this.trigger("change");
+    this.trigger(["add", "change"]);
 
     return store;
   },
@@ -159,8 +156,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
-    this.trigger("remove", store);
-    this.trigger("change");
+    this.trigger(["remove", "change"]);
   },
 
   /**

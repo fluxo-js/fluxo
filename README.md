@@ -145,11 +145,11 @@ myStore.on(["change:name"], function () {
 });
 ```
 
-The `trigger` method accepts one argument, the event's name that you want trigger.
-So every registered event on the event name will be triggered.
+The `trigger` method accepts one argument, the array with the events names that
+you want trigger. So every registered event on the events names will be triggered.
 
 ```javascript
-myStore.trigger("myCustomEvent");
+myStore.trigger(["myCustomEvent", "change"]);
 ```
 
 The CollectionStore and Store emits `change` and `change:<NAME-OF-ATTRIBUTE>` when
