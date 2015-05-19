@@ -3,7 +3,7 @@ Fluxo.Base = function() {
 
   this.data = {};
   this.options = args[1] || {};
-  this.changeEventToken = Math.random().toString().slice(2, 11);
+  this.changeEventToken = (Fluxo.storesUUID++);
 
   Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
 

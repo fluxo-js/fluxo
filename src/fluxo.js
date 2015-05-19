@@ -7,7 +7,7 @@
     root.Fluxo = factory();
   }
 })(this, function() {
-  var Fluxo = {};
+  var Fluxo = { storesUUID: 1 };
 
   Fluxo.extend = function(toExtend) {
     toExtend = toExtend || {};
