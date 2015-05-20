@@ -11,6 +11,13 @@ Check the TodoMVC implementation with Fluxo on **[samuelsimoes/todomvc-fluxo](ht
 
 ##How to use
 
+###Installation
+
+Install with bower and include on your page or use some module loader.
+```
+$ bower install --save-dev fluxo
+```
+
 ###Actions
 
 Everything on Fluxo starts on action handlers, this action handlers are
