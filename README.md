@@ -55,7 +55,7 @@ Fluxo.callAction("Comment", "create", { content: "This is my comment" });
 
 ### Stores
 
-You hold the state of your Flux app on the store, the stores should emit an event
+You hold the state of your Fluxo app on the store, the stores should emit an event
 to the component/view layer when something change and then your view layer renders the
 changes.
 
@@ -143,13 +143,20 @@ property.
 `Fluxo.Store` and `Fluxo.CollectionStore` can emits and react on events, using the
 `on` and `trigger` methods.
 
-The `on` method accepts two arguments, the first is the event's name array
+The `on` method accepts two arguments, the first is an array of events names
 and the second is the callback.
 
+To cancel the event subscription you can invoke the returned canceler on the
+event subscription.
+
 ```javascript
-myStore.on(["change:name"], function () {
+// Registers the event
+var eventCanceler = myStore.on(["change:name"], function () {
   alert("wow, you changed the name");
 });
+
+// Cancels the event
+eventCanceler.call();
 ```
 
 The `trigger` method accepts one argument, the array with the events names that
@@ -162,14 +169,15 @@ myStore.trigger(["myCustomEvent", "change"]);
 The CollectionStore and Store emits `change` and `change:<NAME-OF-ATTRIBUTE>` when
 you set an attribute using `set` method.
 
-The CollectionStore emits `change`, and `add` or `remove` when you add or remove
-some store.
+The CollectionStore emits `change` when something change on the store or the children
+stores, `change:stores` when something change on store, and `add` or `remove` when
+you add or remove some store.
 
 ###Computed Properties
 
 Store and CollectionStores has computed properties like Ember.js, computed
-properties let you declare functions are properties that are computed in
-certain events that you declare. Look the example below on a simple Store:
+properties let you declare functions that are properties that are computed in
+certain events of your store. Look the example below:
 
 ```javascript
 var Person = Fluxo.Store.extend({
