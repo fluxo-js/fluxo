@@ -1,6 +1,8 @@
 Fluxo.actionHandlers = {};
 
 Fluxo.registerActionHandler = function(identifier, handler) {
+  handler = Fluxo.extend({}, handler);
+
   Fluxo.actionHandlers[identifier] = handler;
 
   var args = Array.prototype.slice.call(arguments, 2);
