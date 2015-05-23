@@ -1,4 +1,4 @@
-/*! fluxo v0.0.6 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.7 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -431,6 +431,8 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   Fluxo.actionHandlers = {};
 
 Fluxo.registerActionHandler = function(identifier, handler) {
+  handler = Fluxo.extend({}, handler);
+
   Fluxo.actionHandlers[identifier] = handler;
 
   var args = Array.prototype.slice.call(arguments, 2);
