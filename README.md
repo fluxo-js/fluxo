@@ -20,85 +20,81 @@ Install with bower and include on your page or use some module loader.
 $ bower install --save-dev fluxo
 ```
 
-###Actions
+##Actions
 
 Everything on Fluxo starts on action handlers, this action handlers are
 javascript objects registered upon a name using the method `Fluxo#registerActionHandler`.
 
-```javascript
-var commentActionHandler = {
-  create: function(data) {
-    return data;
-  }
-};
+The params are:
 
-Fluxo.registerActionHandler("Comment", commentActionHandler);
-```
-
-You can register action handlers with arguments that are passed to the its
-`initialize` method that are invoked when it's registered.
+1. Action handler identifier.
+2. Action handler prototype, where you put your actions.
+3. (optional) Args that are passed to `initialize` action when your handler is registered.
 
 ```javascript
-var commentActionHandler = {
+Fluxo.registerActionHandler("Comment",  {
   initialize: function (options) {
     this.myOption = options.myOption;
   }
-};
-
-Fluxo.registerActionHandler("Comment", commentActionHandler, { myOption: true });
+}, { myOptions: "Some content here" });
 ```
 
-To call an action you need use the method `Fluxo#callAction` with the action
-handler name, the action name and the other arguments that are passed to the action.
+To call an action you need use the method `Fluxo#callAction`.
+
+The params are:
+
+1. Action handler identifier that you want call.
+2. The action name.
+3. The arguments that are passed the action.
 
 ```javascript
 Fluxo.callAction("Comment", "create", { content: "This is my comment" });
 ```
 
-### Stores
+## Stores
 
 You hold the state of your Fluxo app on the store, the stores should emit an event
 to the component/view layer when something change and then your view layer renders the
 changes.
 
 On Fluxo, the store is a convenient wrapper to your literal javascript objects or
-array with literal objects. It resembles a simplified version of Backbone's models
-and collections without server request.
+array with literal objects.
 
 You can create stores like this:
 
 ```javascript
+// Create a Comment Store class extending the Fluxo.Store class
 var Comment = Fluxo.Store.extend({
   myStoreMethod: function() {
     // ...
   }
 });
 
+// Instantiate a new Comment Store with some initial data on the constructor
 var comment = new Comment({ content: "This is my comment" });
 ```
 
-You need update your data using the `Fluxo.Store#set` method, which emits the change
-event.
+If you need update your data, use the `Fluxo.Store#set` method.
 
 ```javascript
 comment.set({ content: "This is my edited comment" });
 ```
 
-To access your data just access the store's `data` property.
+All your data lives on your store's `data` property.
 
 ```javascript
-comment.data.content
+comment.data.content // => "This is my comment"
 ```
 
-###CollectionStore
+##CollectionStore
 
-`Fluxo.CollectionStore` is a wrapper to your array of objects. When you create
-a CollectionStore, each item of your array is wrapped on a instance of `Fluxo.Store`,
-which you can change extending the `Fluxo.CollectionStore` and specifying your
+Fluxo.CollectionStore is a wrapper to your array of objects. When you create
+a CollectionStore, each item of your array is wrapped on a instance of Fluxo.Store,
+which you can change extending the Fluxo.CollectionStore and specifying your
 store class.
 
-Note: `Fluxo.CollectionStore` has the same methods of the `Fluxo.Store`, so you
-can use methods like `set` of `Fluxo.Store`.
+Note: Fluxo.CollectionStore has the same methods of the Fluxo.Store, so you
+can use methods like `set` of Fluxo.Store.
 
 ```javascript
 var MyComments = Fluxo.CollectionStore.extend({
@@ -106,42 +102,45 @@ var MyComments = Fluxo.CollectionStore.extend({
 });
 ```
 
-When a store of a collection emits a signal of change, this signal is propagated
+When a child store of a collection emits a signal of change, this signal is propagated
 to the collection that also emits a change signal.
 
-###Using with React.js
+All your stores instances lives on the `stores` property.
 
-You can make your React component react to changes on your store using the
-`Fluxo.WatchComponent` mixin.
+##Using with React.js
+
+If you choose React.js as you view layer, Fluxo already have a React.js Mixin to make your component
+presents a store data and rerender when it have some change.
+
+To specify what store you are "binding" on your component you need declare on the `listenProps` property
+an array with what props of your components are Fluxo Stores instances.
+
+Your attached store's data is placed on component's state upon the same prop key name.
 
 ```jsx
+// A new instance of Fluxo.Store
 var comment = new Fluxo.Store({ content: "My comment" });
 
 var MyComponent = React.createClass({
   mixins: [Fluxo.WatchComponent],
 
+  // Declare that comment prop is a Fluxo.Store to bind
   listenProps: ["comment"],
 
   render: function() {
+    // Present my store using the object on "this.state.comment"
     return <p>{this.state.comment.content}</p>;
   }
 });
 
+// Render my component passing the comment instance as comment prop
 React.render(
   <MyComponent comment={comment} />,
   document.getElementById("app")
 );
 ```
 
-To specify what store you are listening you need declare on the component's
-`listenProps` property the component's prop key to your store instances. In this way,
-your store data, which is generated by `toJSON` method, is placed on state on
-the same prop key name.
-
-On the example above, the content of our store is placed on component's `this.state.comment`
-property.
-
-###And more
+###And more...
 
 * [Store's Computed Properties](https://github.com/samuelsimoes/fluxo/wiki/Store's-Computed-Properties)
 * [Store's Events](https://github.com/samuelsimoes/fluxo/wiki/Store's-Events)
