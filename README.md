@@ -4,12 +4,14 @@ Fluxo is a simple, lightweight (~300LOC) and dependency free data infrastructure
 on [Facebook Flux](https://facebook.github.io/flux) and [Backbone.js](http://backbonejs.org). It's compatible with [React.js](https://facebook.github.io/react), but you can use
 with whatever you want to the view/component layer.
 
-**Important:** this project is under development and experimental phase and because
-of this many things may change.
+:warning: **This project is under development and experimental phase and because
+of this many things may change.**
 
-Check the TodoMVC implementation with Fluxo on **[samuelsimoes/todomvc-fluxo](https://github.com/samuelsimoes/todomvc-fluxo)**.
+:ballot_box_with_check: Check the TodoMVC implementation with Fluxo on **[samuelsimoes/todomvc-fluxo](https://github.com/samuelsimoes/todomvc-fluxo)**.
 
 ##How to use
+
+:warning: Before I highly recomend you to read about the [React.js](https://facebook.github.io/react) and [Facebook Flux](https://facebook.github.io/flux) to a better understanding.
 
 ###Installation
 
