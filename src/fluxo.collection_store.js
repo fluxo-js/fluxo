@@ -45,6 +45,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
+   * @param {Object[]} storesData
+   * @returns {null}
+   * @instance
+   */
+  resetFromData: function(storesData) {
+    this.removeAll();
+    this.addBunchFromData(storesData);
+  },
+
+  /**
    * @param {Fluxo.Store[]} stores
    * @returns {null}
    * @instance
@@ -54,6 +64,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
       var store = stores[i];
       this.addStore(store);
     }
+  },
+
+  /**
+   * @param {Fluxo.Store[]} stores
+   * @returns {null}
+   * @instance
+   */
+  resetFromStores: function(stores) {
+    this.removeAll();
+    this.addBunchStores(storeData);
   },
 
   /**
