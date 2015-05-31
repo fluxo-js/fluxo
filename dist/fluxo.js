@@ -1,4 +1,4 @@
-/*! fluxo v0.0.7 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.8 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -272,6 +272,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
+   * @param {Object[]} storesData
+   * @returns {null}
+   * @instance
+   */
+  resetFromData: function(storesData) {
+    this.removeAll();
+    this.addBunchFromData(storesData);
+  },
+
+  /**
    * @param {Fluxo.Store[]} stores
    * @returns {null}
    * @instance
@@ -281,6 +291,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
       var store = stores[i];
       this.addStore(store);
     }
+  },
+
+  /**
+   * @param {Fluxo.Store[]} stores
+   * @returns {null}
+   * @instance
+   */
+  resetFromStores: function(stores) {
+    this.removeAll();
+    this.addBunchStores(storeData);
   },
 
   /**
