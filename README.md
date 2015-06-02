@@ -7,7 +7,9 @@ with whatever you want to the view/component layer.
 :warning: **This project is under development and experimental phase and because
 of this many things may change.**
 
-:ballot_box_with_check: Check the TodoMVC implementation with Fluxo on **[samuelsimoes/todomvc-fluxo](https://github.com/samuelsimoes/todomvc-fluxo)**.
+:ballot_box_with_check: Read the **[Getting started](https://github.com/samuelsimoes/fluxo/wiki/Getting-Started)**.
+
+:ballot_box_with_check: Check the **[TodoMVC implementation](https://github.com/samuelsimoes/todomvc-fluxo)** with Fluxo.
 
 ##How to use
 
