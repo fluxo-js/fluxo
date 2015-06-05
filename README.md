@@ -146,7 +146,6 @@ React.render(
 
 * [Store's Computed Properties](https://github.com/samuelsimoes/fluxo/wiki/Store's-Computed-Properties)
 * [Store's Events](https://github.com/samuelsimoes/fluxo/wiki/Store's-Events)
-* [Store's Mixins](https://github.com/samuelsimoes/fluxo/wiki/Store's-Mixins)
 
 -----------------------------------------
 
