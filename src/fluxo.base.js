@@ -5,8 +5,6 @@ Fluxo.Base = function() {
   this.options = args[1] || {};
   this.changeEventToken = (Fluxo.storesUUID++);
 
-  Fluxo.Mixin.apply(null, [Object.getPrototypeOf(this)].concat(this.mixins));
-
   this._constructor.apply(this, args);
 };
 
@@ -14,8 +12,6 @@ Fluxo.Base.extend = extend;
 
 Fluxo.Base.prototype = {
   initialize: function () {},
-
-  mixins: [],
 
   on: function(events, callback) {
     var cancelers = [];

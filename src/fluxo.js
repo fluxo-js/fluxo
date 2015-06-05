@@ -49,8 +49,6 @@
 
   @@include('fluxo.radio.js')
 
-  @@include('fluxo.mixin.js')
-
   @@include('fluxo.base.js')
 
   @@include('fluxo.store.js')
