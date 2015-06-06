@@ -76,5 +76,18 @@ describe("Fluxo.CollectionStore", function () {
       expect(collection.stores).to.be.eql([store]);
       expect(onChangeCallback).to.have.been.called.exactly(2);
     });
+
+    it("#where", function() {
+      var collection = new Fluxo.CollectionStore();
+
+      var store1 = new Fluxo.Store({ id: 20, name: "samuel" }),
+          store2 = new Fluxo.Store({ id: 21, name: "simoes" }),
+          store3 = new Fluxo.Store({ id: 22, name: "simoes" });
+
+      collection.addBunchStores([store1, store2, store3]);
+
+      expect(collection.where({ name: "simoes" })).to.be.eql([store2, store3]);
+      expect(collection.findWhere({ name: "samuel" })).to.be.eql(store1);
+    });
   });
 });
