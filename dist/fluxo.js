@@ -1,4 +1,4 @@
-/*! fluxo v0.0.9 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.10 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -312,25 +312,60 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {number} storeId
+   * @param {number} storeID
    * @returns {Fluxo.Store|undefined} - the found flux store or undefined
    * @instance
    */
-  find: function (storeId) {
+  find: function (storeID) {
     var foundStore;
 
-    if (!storeId) { return; }
-
-    for (var i = 0, l = this.stores.length; i < l; i++) {
-      var comparedStoreId = this.stores[i].data.id;
-
-      if (comparedStoreId && comparedStoreId == storeId) {
-        foundStore = this.stores[i];
-        break;
-      }
+    if (storeID) {
+      foundStore = this.findWhere({ id: storeID });
     }
 
     return foundStore;
+  },
+
+  /**
+   * @param {object} criteria
+   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   * @instance
+   */
+  findWhere: function(criteria) {
+    return this.where(criteria, true)[0];
+  },
+
+  /**
+   * @param {object} criteria
+   * @returns {Fluxo.Store[]} - the found flux stores or empty array
+   * @instance
+   */
+  where: function(criteria, stopOnFirstMatch) {
+    var foundStores = [];
+
+    if (!criteria) { return []; }
+
+    for (var i = 0, l = this.stores.length; i < l; i++) {
+      var comparedStore = this.stores[i],
+          matchAllCriteria = true;
+
+      for (var key in criteria) {
+        if (comparedStore.data[key] !== criteria[key]) {
+          matchAllCriteria = false;
+          break;
+        }
+      }
+
+      if (matchAllCriteria) {
+        foundStores.push(comparedStore);
+
+        if (stopOnFirstMatch) {
+          break;
+        }
+      }
+    }
+
+    return foundStores;
   },
 
   /**
