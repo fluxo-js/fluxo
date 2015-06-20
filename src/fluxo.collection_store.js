@@ -189,6 +189,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @instance
    */
   storeAlreadyAdded: function (store) {
+    if (!store.data.id) { return false; }
     return this.find(store.data.id);
   },
 
