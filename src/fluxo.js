@@ -57,7 +57,7 @@
 
   @@include('fluxo.actions.js')
 
-  @@include('fluxo.watch_component.js')
+  @@include('fluxo.connect_stores.js')
 
   return Fluxo;
 });
