@@ -22,6 +22,7 @@
     "grunt-include-replace": "^3.0.0",
     "grunt-mocha": "*",
     "grunt-settings": "*",
+    "react": "0.13.3",
     "mocha": "*"
   },
   "scripts": {

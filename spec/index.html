@@ -11,6 +11,8 @@
   <body>
     <div id="mocha"></div>
 
+    <script src="bind_polyfill.js"></script>
+    <script src="../node_modules/react/dist/react-with-addons.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/chai/chai.js"></script>
     <script src="../node_modules/chai-spies/chai-spies.js"></script>
@@ -22,12 +24,11 @@
       expect = chai.expect;
     </script>
 
-    <script src="bind_polyfill.js"></script>
+    <script src="connect_stores_spec.js"></script>
     <script src="store_specs.js"></script>
     <script src="collection_specs.js"></script>
     <script src="actions_specs.js"></script>
     <script src="radio_specs.js"></script>
-    <script src="mixin_specs.js"></script>
 
     <script>
       if (navigator.userAgent.indexOf('PhantomJS') < 0) {
