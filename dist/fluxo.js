@@ -1,4 +1,4 @@
-/*! fluxo v0.0.10 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.11 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -376,6 +376,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @instance
    */
   storeAlreadyAdded: function (store) {
+    if (!store.data.id) { return false; }
     return this.find(store.data.id);
   },
 
@@ -476,49 +477,51 @@ Fluxo.callAction = function(actionHandlerIdentifier, actionName) {
 };
 
 
-  Fluxo.WatchComponent = {
-  storesOnChangeCancelers: [],
+  Fluxo.ConnectStores = function (Component, stores) {
+  return React.createClass({
+    storesOnChangeCancelers: [],
 
-  getInitialState: function() {
-    var state = {};
+    getInitialState: function() {
+      return this.storesState();
+    },
 
-    for (var i = 0, l = this.listenProps.length; i < l; i ++) {
-      var storeIdentifierProp = this.listenProps[i],
-          store = this.props[storeIdentifierProp];
+    storesState: function() {
+      var state = {};
 
-      state[storeIdentifierProp] = store.toJSON();
+      for (var storeName in stores) {
+        var store = stores[storeName];
+        state[storeName] = store.toJSON();
+      }
+
+      return state;
+    },
+
+    updateComponentState: function() {
+      this.setState(this.storesState);
+    },
+
+    componentWillMount: function() {
+      for (var storeName in stores) {
+        var store = stores[storeName];
+        this.listenStore(store);
+      }
+    },
+
+    listenStore: function(store) {
+      var canceler = store.on(["change"], this.updateComponentState.bind(this));
+      this.storesOnChangeCancelers.push(canceler);
+    },
+
+    componentWillUnmount: function() {
+      for (var i = 0, l = this.storesOnChangeCancelers.length; i < l; i ++) {
+        this.storesOnChangeCancelers[i].call();
+      }
+    },
+
+    render: function() {
+      return React.createElement(Component, Fluxo.extend({}, this.props, this.state));
     }
-
-    return state;
-  },
-
-  componentWillMount: function() {
-    for (var i = 0, l = this.listenProps.length; i < l; i ++) {
-      var storeIdentifierProp = this.listenProps[i],
-          store = this.props[storeIdentifierProp];
-
-      this.listenStore(store, storeIdentifierProp);
-    }
-  },
-
-  listenStore: function(store, storeIdentifierProp) {
-    var canceler =
-      store.on(["change"], function() {
-        var state = {}
-
-        state[storeIdentifierProp] = store.toJSON();
-
-        this.setState(state);
-      }.bind(this));
-
-    this.storesOnChangeCancelers.push(canceler);
-  },
-
-  componentWillUnmount: function() {
-    for (var i = 0, l = this.storesOnChangeCancelers.length; i < l; i ++) {
-      this.storesOnChangeCancelers[i].call();
-    }
-  }
+  });
 };
 
 
