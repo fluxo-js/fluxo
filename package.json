@@ -21,8 +21,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-include-replace": "^3.0.0",
     "grunt-mocha": "*",
-    "grunt-settings": "*",
-    "react": "0.13.3",
+    "grunt-settings": "*"
     "mocha": "*"
   },
   "scripts": {
