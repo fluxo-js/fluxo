@@ -111,35 +111,39 @@ All your stores instances lives on the `stores` property.
 
 ##Using with React.js
 
-If you choose React.js as you view layer, Fluxo already have a React.js Mixin to make your component
+If you choose React.js as you view layer, Fluxo already have a way to make your component
 presents a store data and rerender when it have some change.
 
-To specify what store you are "binding" on your component you need declare on the `listenProps` property
-an array with what props of your components are Fluxo Stores instances.
+To specify what stores you are "connecting" on your component you need use the
+**Fluxo.ConnectStores** function to connect your component with the stores like this:
 
-Your attached store's data is placed on component's state upon the same prop key name.
+```js
+var MyComponentConnected = Fluxo.ConnectStores(MyComponent, { comment: comment });
+```
+
+The first argument are the component that you will connect, the second one is the
+literal object where the key is the store name and the value is the store instance.
+
+All connected store data will be placed on the component's props. Take a look on the
+example below.
 
 ```jsx
 // A new instance of Fluxo.Store
 var comment = new Fluxo.Store({ content: "My comment" });
 
+// My component
 var MyComponent = React.createClass({
-  mixins: [Fluxo.WatchComponent],
-
-  // Declare that comment prop is a Fluxo.Store to bind
-  listenProps: ["comment"],
-
   render: function() {
-    // Present my store using the object on "this.state.comment"
-    return <p>{this.state.comment.content}</p>;
+    // Present my store using the object on "this.props.comment"
+    return <p>{this.props.comment.content}</p>;
   }
 });
 
-// Render my component passing the comment instance as comment prop
-React.render(
-  <MyComponent comment={comment} />,
-  document.getElementById("app")
-);
+// Connect my store on my component
+var MyComponentConnected = Fluxo.ConnectStores(MyComponent, { comment: comment });
+
+// Render my connected component
+React.render(<MyComponentConnected/>, document.getElementById("app"));
 ```
 
 ###And more...
