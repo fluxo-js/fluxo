@@ -1,6 +1,6 @@
 {
   "name": "fluxo",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Yet another Facebook Flux lib",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-include-replace": "^3.0.0",
     "grunt-mocha": "*",
-    "grunt-settings": "*"
+    "grunt-settings": "*",
     "mocha": "*"
   },
   "scripts": {
