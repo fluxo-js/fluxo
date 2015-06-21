@@ -111,40 +111,11 @@ All your stores instances lives on the `stores` property.
 
 ##Using with React.js
 
-If you choose React.js as you view layer, Fluxo already have a way to make your component
-presents a store data and rerender when it have some change.
+Fluxo is view layer agnostic, you can use whatever you want, but we highly recommend
+the React.js. If you choose the React.js we already created a way to connect your
+stores on your React.js components.
 
-To specify what stores you are "connecting" on your component you need use the
-**Fluxo.ConnectStores** function to connect your component with the stores like this:
-
-```js
-var MyComponentConnected = Fluxo.ConnectStores(MyComponent, { comment: comment });
-```
-
-The first argument are the component that you will connect, the second one is the
-literal object where the key is the store name and the value is the store instance.
-
-All connected store data will be placed on the component's props. Take a look on the
-example below.
-
-```jsx
-// A new instance of Fluxo.Store
-var comment = new Fluxo.Store({ content: "My comment" });
-
-// My component
-var MyComponent = React.createClass({
-  render: function() {
-    // Present my store using the object on "this.props.comment"
-    return <p>{this.props.comment.content}</p>;
-  }
-});
-
-// Connect my store on my component
-var MyComponentConnected = Fluxo.ConnectStores(MyComponent, { comment: comment });
-
-// Render my connected component
-React.render(<MyComponentConnected/>, document.getElementById("app"));
-```
+**Read more: https://github.com/samuelsimoes/fluxo-react-connect-stores**
 
 ###And more...
 
