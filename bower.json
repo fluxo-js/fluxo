@@ -10,6 +10,7 @@
     "flux",
     "facebook"
   ],
+  "main": "dist/fluxo.js",
   "ignore": [
     "**/.*",
     "node_modules",
