@@ -19,7 +19,7 @@ of this many things may change.**
 
 Install with bower and include on your page or use some module loader.
 ```
-$ bower install --save-dev fluxo
+$ bower install --save fluxo
 ```
 
 ##Actions
