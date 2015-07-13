@@ -55,7 +55,5 @@
 
   @@include('fluxo.collection_store.js')
 
-  @@include('fluxo.actions.js')
-
   return Fluxo;
 });

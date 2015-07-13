@@ -24,33 +24,30 @@ $ bower install --save fluxo
 
 ##Actions
 
-Everything on Fluxo starts on action handlers, this action handlers are
-javascript objects registered upon a name using the method `Fluxo#registerActionHandler`.
+The action handlers are where you should put the _mediation code_. Example: when
+our user click on a button on our view that should give a new name to our presented
+person, this click event will invoke an action on the action layer that will
+mediate the intended result.
 
-The params are:
-
-1. Action handler identifier.
-2. Action handler prototype, where you put your actions.
-3. (optional) Args that are passed to `initialize` action when your handler is registered.
+Fluxo hasn't any opinion or something like "action creator wrapper". We really
+believe that simple javascript objects can does this job quite well.
 
 ```javascript
-Fluxo.registerActionHandler("Comment",  {
-  initialize: function (options) {
-    this.myOption = options.myOption;
+var CommentActionHandler = {
+  initialize: function (comment) {
+    this.comment = comment;
+  },
+
+  update: function (content) {
+    this.comment.setContent(content);
   }
-}, { myOptions: "Some content here" });
-```
+};
 
-To call an action you need use the method `Fluxo#callAction`.
+var store = new Fluxo.Store({ content: "Hello!" });
 
-The params are:
+CommentActionHandler.initialize(store);
 
-1. Action handler identifier that you want call.
-2. The action name.
-3. The arguments that are passed the action.
-
-```javascript
-Fluxo.callAction("Comment", "create", { content: "This is my comment" });
+CommentActionHandler.update("Hello world!");
 ```
 
 ## Stores
