@@ -89,5 +89,21 @@ describe("Fluxo.CollectionStore", function () {
       expect(collection.where({ name: "simoes" })).to.be.eql([store2, store3]);
       expect(collection.findWhere({ name: "samuel" })).to.be.eql(store1);
     });
+
+    it("#sort", function() {
+      var collection = new Fluxo.CollectionStore();
+
+      collection.sort = function(a, b) {
+        return a.data.price - b.data.price;
+      };
+
+      var store1 = new Fluxo.Store({ price: 100 }),
+          store2 = new Fluxo.Store({ price: 10 }),
+          store3 = new Fluxo.Store({ price: 1 });
+
+      collection.addBunchStores([store1, store2, store3]);
+
+      expect(collection.stores).to.be.eql([store3, store2, store1]);
+    });
   });
 });
