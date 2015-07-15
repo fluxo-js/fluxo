@@ -306,6 +306,10 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
     this.storesOnChangeCancelers[store.changeEventToken] =
       store.on(["change"], onStoreChange.bind(this));
 
+    if (this.sort) {
+      this.stores.sort(this.sort);
+    }
+
     this.trigger(["add", "change"]);
 
     return store;

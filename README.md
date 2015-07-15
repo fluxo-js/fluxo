@@ -106,6 +106,18 @@ to the collection that also emits a change signal.
 
 All your stores instances lives on the `stores` property.
 
+If you want to keep the stores always sorted, you may define a sort method:
+
+```javascript
+var MyComments = Fluxo.CollectionStore.extend({
+  store: MyComment,
+
+  sort: function(a, b) {
+    return a.data.at - b.data.at;
+  }
+});
+```
+
 ##Using with React.js
 
 Fluxo is view layer agnostic, you can use whatever you want, but we highly recommend
