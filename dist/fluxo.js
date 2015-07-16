@@ -1,4 +1,4 @@
-/*! fluxo v0.0.12 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.13 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
