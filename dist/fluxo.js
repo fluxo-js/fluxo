@@ -95,7 +95,7 @@ Fluxo.Base.prototype = {
   on: function(events, callback) {
     var cancelers = [];
 
-    for (var i = 0, l = events.length; i < l; i ++) {
+    for (var i = 0, l = events.length; i < l; i++) {
       var eventName = events[i],
           changeEventToken = (this.changeEventToken + ":" + eventName),
           canceler = Fluxo.Radio.subscribe(changeEventToken, callback.bind(this));
@@ -104,7 +104,7 @@ Fluxo.Base.prototype = {
     }
 
     var aggregatedCanceler = function() {
-      for (var i = 0, l = cancelers.length; i < l; i ++) {
+      for (var i = 0, l = cancelers.length; i < l; i++) {
         var canceler = cancelers[i];
         canceler.call();
       }
@@ -114,7 +114,7 @@ Fluxo.Base.prototype = {
   },
 
   trigger: function(eventsNames) {
-    for (var i = 0, l = eventsNames.length; i < l; i ++) {
+    for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
       Fluxo.Radio.publish(this.changeEventToken + ":" + eventName);
     }
@@ -125,13 +125,15 @@ Fluxo.Base.prototype = {
   attributeParsers: function() {},
 
   registerComputed: function() {
+    var computeValue = function(attrName) {
+      var value = this[attrName].call(this);
+      this.setAttribute(attrName, value);
+    };
+
     for (var attributeName in this.computed) {
       var toComputeEvents = this.computed[attributeName];
 
-      this.on(toComputeEvents, function(attrName) {
-        var value = this[attrName].call(this);
-        this.setAttribute(attrName, value);
-      }.bind(this, attributeName));
+      this.on(toComputeEvents, computeValue.bind(this, attributeName));
 
       this.setAttribute(attributeName, this[attributeName].call(this));
     }
@@ -415,7 +417,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   storesToJSON: function() {
     var collectionData = [];
 
-    for (var i = 0, l = this.stores.length; i < l; i ++) {
+    for (var i = 0, l = this.stores.length; i < l; i++) {
       var store = this.stores[i];
       collectionData.push(store.toJSON());
     }

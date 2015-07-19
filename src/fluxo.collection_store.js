@@ -228,7 +228,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   storesToJSON: function() {
     var collectionData = [];
 
-    for (var i = 0, l = this.stores.length; i < l; i ++) {
+    for (var i = 0, l = this.stores.length; i < l; i++) {
       var store = this.stores[i];
       collectionData.push(store.toJSON());
     }
