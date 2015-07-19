@@ -113,7 +113,7 @@ Fluxo.Base.prototype = {
     return aggregatedCanceler;
   },
 
-  trigger: function(eventsNames) {
+  triggerEvents: function(eventsNames) {
     var args = Array.prototype.slice.call(arguments, 1);
 
     for (var i = 0, l = eventsNames.length; i < l; i++) {
@@ -167,11 +167,11 @@ Fluxo.Base.prototype = {
 
     this.data[attribute] = value;
 
-    this.trigger(["change:" + attribute]);
+    this.triggerEvent(("change:" + attribute));
 
     if (options.silentGlobalChange) { return; }
 
-    this.trigger(["change"]);
+    this.triggerEvent("change");
   },
 
   set: function(data) {
@@ -179,7 +179,7 @@ Fluxo.Base.prototype = {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
 
-    this.trigger(["change"]);
+    this.triggerEvent("change");
   }
 };
 
@@ -282,7 +282,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores = [];
 
-    this.trigger(["remove", "change"]);
+    this.triggerEvents(["remove", "change"]);
   },
 
   /**
@@ -329,7 +329,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
     this.stores.push(store);
 
     var onStoreEvent = function(eventName) {
-      this.trigger([("stores:" + eventName)]);
+      this.triggerEvent(("stores:" + eventName));
     };
 
     this.storesOnChangeCancelers[store.changeEventToken] =
@@ -339,7 +339,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
       this.stores.sort(this.sort);
     }
 
-    this.trigger(["add", "change"]);
+    this.triggerEvents(["add", "change"]);
 
     return store;
   },
@@ -420,7 +420,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
-    this.trigger(["remove", "change"]);
+    this.triggerEvents(["remove", "change"]);
   },
 
   /**
