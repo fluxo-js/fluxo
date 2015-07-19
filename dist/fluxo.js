@@ -208,7 +208,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores = [];
 
-    this.addBunchFromData(storesData);
+    this.setFromData(storesData);
 
     this.registerComputed();
 
@@ -224,21 +224,9 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @returns {null}
    * @instance
    */
-  addBunchFromData: function(storesData) {
-    for (var i = 0, l = storesData.length; i < l; i ++) {
-      var storeData = storesData[i];
-      this.addFromData(storeData);
-    }
-  },
-
-  /**
-   * @param {Object[]} storesData
-   * @returns {null}
-   * @instance
-   */
   resetFromData: function(storesData) {
     this.removeAll();
-    this.addBunchFromData(storesData);
+    this.setFromData(storesData);
   },
 
   /**
@@ -290,12 +278,34 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
+   * This methods add the missing objects and updates the existing stores.
+   *
+   * @param {Object[]} data
+   * @returns undefined
+   * @instance
+   */
+  setFromData: function(data) {
+    for (var i = 0, l = data.length; i < l; i++) {
+      var storeData = data[i],
+          alreadyAddedStore = this.find(storeData.id);
+
+      if (alreadyAddedStore) {
+        alreadyAddedStore.set(storeData);
+      } else {
+        this.addFromData(storeData);
+      }
+    }
+  },
+
+  /**
    * @param {Fluxo.Store} store
    * @returns {Fluxo.Store}
    * @instance
    */
   addStore: function(store) {
-    if (this.storeAlreadyAdded(store)) { return; }
+    var alreadyAddedStore = this.find(store.data.id);
+
+    if (alreadyAddedStore) { return alreadyAddedStore; }
 
     this.stores.push(store);
 
@@ -370,18 +380,6 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
     }
 
     return foundStores;
-  },
-
-  /**
-   * Verifies presence of a store on the collection
-   *
-   * @param {Fluxo.Store} store - the store to verify presence
-   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
-   * @instance
-   */
-  storeAlreadyAdded: function (store) {
-    if (!store.data.id) { return false; }
-    return this.find(store.data.id);
   },
 
   /**

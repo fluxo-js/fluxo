@@ -105,5 +105,18 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(collection.stores).to.be.eql([store3, store2, store1]);
     });
+
+    it("#setFromData", function() {
+      var collection = new Fluxo.CollectionStore();
+
+      var store1 = new Fluxo.Store({ id: 1, name: "Samuel" });
+
+      collection.addStore(store1);
+
+      collection.setFromData([{ id: 1, name: "Simões" }, { id: 2, name: "Foo" }]);
+
+      expect(store1.data.name).to.be.eql("Simões");
+      expect(collection.stores).to.be.eql([store1, collection.find(2)]);
+    });
   });
 });
