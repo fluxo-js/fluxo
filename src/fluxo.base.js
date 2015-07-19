@@ -3,7 +3,7 @@ Fluxo.Base = function() {
 
   this.data = {};
   this.options = args[1] || {};
-  this.changeEventToken = (Fluxo.storesUUID++);
+  this.changeEventToken = ("FS:" + Fluxo.storesUUID++);
 
   this._constructor.apply(this, args);
 };
