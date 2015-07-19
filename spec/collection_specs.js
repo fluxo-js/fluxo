@@ -64,14 +64,14 @@ describe("Fluxo.CollectionStore", function () {
       expect(onChangeCallback).to.have.been.called();
     });
 
-    it("#addBunchStores", function() {
+    it("#addStores", function() {
       var collection = new Fluxo.CollectionStore(),
           store = new Fluxo.Store(),
           onChangeCallback = chai.spy();
 
       collection.on(["change", "add"], onChangeCallback);
 
-      collection.addBunchStores([store]);
+      collection.addStores([store]);
 
       expect(collection.stores).to.be.eql([store]);
       expect(onChangeCallback).to.have.been.called.exactly(2);
@@ -84,7 +84,7 @@ describe("Fluxo.CollectionStore", function () {
           store2 = new Fluxo.Store({ id: 21, name: "simoes" }),
           store3 = new Fluxo.Store({ id: 22, name: "simoes" });
 
-      collection.addBunchStores([store1, store2, store3]);
+      collection.addStores([store1, store2, store3]);
 
       expect(collection.where({ name: "simoes" })).to.be.eql([store2, store3]);
       expect(collection.findWhere({ name: "samuel" })).to.be.eql(store1);
@@ -101,7 +101,7 @@ describe("Fluxo.CollectionStore", function () {
           store2 = new Fluxo.Store({ price: 10 }),
           store3 = new Fluxo.Store({ price: 1 });
 
-      collection.addBunchStores([store1, store2, store3]);
+      collection.addStores([store1, store2, store3]);
 
       expect(collection.stores).to.be.eql([store3, store2, store1]);
     });
