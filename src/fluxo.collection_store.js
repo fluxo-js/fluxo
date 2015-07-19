@@ -122,12 +122,12 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores.push(store);
 
-    var onStoreChange = function() {
-      this.trigger(["change:stores", "change"]);
+    var onStoreEvent = function(eventName) {
+      this.trigger([("stores:" + eventName)]);
     };
 
     this.storesOnChangeCancelers[store.changeEventToken] =
-      store.on(["change"], onStoreChange.bind(this));
+      store.on(["*"], onStoreEvent.bind(this));
 
     if (this.sort) {
       this.stores.sort(this.sort);

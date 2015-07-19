@@ -27,12 +27,15 @@ describe("Fluxo.CollectionStore", function () {
 
     it("calls onChangeCallback when a child store changes", function() {
       var collection = new Fluxo.CollectionStore([{ name: "Samuel" }]),
-          onChangeCallback = chai.spy();
+          onChangeCallback = chai.spy(),
+          onStoreNameChangeCallback = chai.spy();
 
-      collection.on(["change"], onChangeCallback);
+      collection.on(["stores:change"], onChangeCallback);
+      collection.on(["stores:change:name"], onStoreNameChangeCallback);
 
       collection.stores[0].setAttribute("name", "Samuel S");
       expect(onChangeCallback).to.have.been.called();
+      expect(onStoreNameChangeCallback).to.have.been.called();
     });
 
     it("#remove", function() {

@@ -116,8 +116,15 @@ Fluxo.Base.prototype = {
   trigger: function(eventsNames) {
     for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
-      Fluxo.Radio.publish(this.changeEventToken + ":" + eventName);
+      this.triggerEvent(eventName);
     }
+  },
+
+  triggerEvent: function(eventName) {
+    var changeChannel = (this.changeEventToken + ":" + eventName);
+
+    Fluxo.Radio.publish(changeChannel);
+    Fluxo.Radio.publish((this.changeEventToken + ":*"), eventName);
   },
 
   computed: {},
@@ -311,12 +318,12 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     this.stores.push(store);
 
-    var onStoreChange = function() {
-      this.trigger(["change:stores", "change"]);
+    var onStoreEvent = function(eventName) {
+      this.trigger([("stores:" + eventName)]);
     };
 
     this.storesOnChangeCancelers[store.changeEventToken] =
-      store.on(["change"], onStoreChange.bind(this));
+      store.on(["*"], onStoreEvent.bind(this));
 
     if (this.sort) {
       this.stores.sort(this.sort);

@@ -37,8 +37,15 @@ Fluxo.Base.prototype = {
   trigger: function(eventsNames) {
     for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
-      Fluxo.Radio.publish(this.changeEventToken + ":" + eventName);
+      this.triggerEvent(eventName);
     }
+  },
+
+  triggerEvent: function(eventName) {
+    var changeChannel = (this.changeEventToken + ":" + eventName);
+
+    Fluxo.Radio.publish(changeChannel);
+    Fluxo.Radio.publish((this.changeEventToken + ":*"), eventName);
   },
 
   computed: {},
