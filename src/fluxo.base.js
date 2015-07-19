@@ -35,17 +35,27 @@ Fluxo.Base.prototype = {
   },
 
   trigger: function(eventsNames) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
     for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
-      this.triggerEvent(eventName);
+      this.triggerEvent.apply(this, [eventName].concat(args));
     }
   },
 
   triggerEvent: function(eventName) {
-    var changeChannel = (this.changeEventToken + ":" + eventName);
+    var changeChannel = (this.changeEventToken + ":" + eventName),
+        args = Array.prototype.slice.call(arguments, 1);
 
-    Fluxo.Radio.publish(changeChannel);
-    Fluxo.Radio.publish((this.changeEventToken + ":*"), eventName);
+    Fluxo.Radio.publish.apply(
+      Fluxo.Radio,
+      [changeChannel, this].concat(args)
+    );
+
+    Fluxo.Radio.publish.apply(
+      Fluxo.Radio,
+      [(this.changeEventToken + ":*"), eventName, this].concat(args)
+    );
   },
 
   computed: {},

@@ -83,4 +83,18 @@ describe("Fluxo.Store", function () {
       expect(store.myCustomMethod()).to.be.eql("Samuel");
     });
   });
+
+  it("#triggerEvent", function() {
+    var store = new Fluxo.Store(),
+        callback = chai.spy(),
+        wildcardCallback = chai.spy();
+
+    store.on(["myEvent"], callback);
+    store.on(["*"], wildcardCallback);
+
+    store.triggerEvent("myEvent", "myArg");
+
+    expect(callback).to.have.been.called.with(store, "myArg");
+    expect(wildcardCallback).to.have.been.called.with("myEvent", store, "myArg");
+  });
 });
