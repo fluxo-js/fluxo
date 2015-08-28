@@ -1,4 +1,4 @@
-/*! fluxo v0.0.14 | (c) 2014, 2015 Samuel Simões |  */
+/*! fluxo v0.0.15 | (c) 2014, 2015 Samuel Simões |  */
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -329,7 +329,11 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
     this.stores.push(store);
 
     var onStoreEvent = function(eventName) {
-      this.triggerEvent(("stores:" + eventName));
+      var args = Array.prototype.slice.call(arguments, 1);
+
+      args.unshift("stores:" + eventName);
+
+      this.triggerEvent.apply(this, args);
     };
 
     this.storesOnChangeCancelers[store.changeEventToken] =
