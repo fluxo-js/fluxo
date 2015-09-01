@@ -361,6 +361,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     if (storeID) {
       foundStore = this.findWhere({ id: storeID });
+
+      if (!foundStore) {
+        this.stores.some(function(store) {
+          if (store.cid === storeID) {
+            foundStore = store;
+
+            return true;
+          }
+        });
+      }
     }
 
     return foundStore;

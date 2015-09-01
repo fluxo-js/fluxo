@@ -131,5 +131,13 @@ describe("Fluxo.CollectionStore", function () {
       expect(store1.data.name).to.be.eql("Simões");
       expect(collection.stores).to.be.eql([store1, collection.find(2)]);
     });
+
+    it("#find", function() {
+      var collection = new Fluxo.CollectionStore(),
+          store = collection.addFromData({ id: 1 });
+
+      expect(collection.find(store.cid)).to.equal(store);
+      expect(collection.find(store.data.id)).to.equal(store);
+    });
   });
 });
