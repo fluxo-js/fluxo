@@ -1,9 +1,9 @@
 Fluxo.Base = function() {
   var args = Array.prototype.slice.call(arguments);
 
+  this.cid = "FS:" + Fluxo.storesUUID++;
   this.data = {};
   this.options = args[1] || {};
-  this.changeEventToken = ("FS:" + Fluxo.storesUUID++);
 
   this._constructor.apply(this, args);
 };
@@ -18,7 +18,7 @@ Fluxo.Base.prototype = {
 
     for (var i = 0, l = events.length; i < l; i++) {
       var eventName = events[i],
-          changeEventToken = (this.changeEventToken + ":" + eventName),
+          changeEventToken = (this.cid + ":" + eventName),
           canceler = Fluxo.Radio.subscribe(changeEventToken, callback.bind(this));
 
       cancelers.push(canceler);
@@ -44,7 +44,7 @@ Fluxo.Base.prototype = {
   },
 
   triggerEvent: function(eventName) {
-    var changeChannel = (this.changeEventToken + ":" + eventName),
+    var changeChannel = (this.cid + ":" + eventName),
         args = Array.prototype.slice.call(arguments, 1);
 
     Fluxo.Radio.publish.apply(
@@ -54,7 +54,7 @@ Fluxo.Base.prototype = {
 
     Fluxo.Radio.publish.apply(
       Fluxo.Radio,
-      [(this.changeEventToken + ":*"), eventName, this].concat(args)
+      [(this.cid + ":*"), eventName, this].concat(args)
     );
   },
 

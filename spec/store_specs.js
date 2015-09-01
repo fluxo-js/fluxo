@@ -1,5 +1,15 @@
 describe("Fluxo.Store", function () {
   context("on an instance", function() {
+    it("#cid", function() {
+      var store1 = new Fluxo.Store(),
+          store2 = new Fluxo.Store();
+
+      expect(store1.cid).to.exist;
+      expect(store2.cid).to.exist;
+
+      expect(store1.cid).to.not.equal(store2.cid);
+    });
+
     it("#setAttribute", function() {
       var store = new Fluxo.Store(),
           onChangeCallback = chai.spy(),
@@ -32,7 +42,7 @@ describe("Fluxo.Store", function () {
 
     it("#toJSON", function() {
       var store = new Fluxo.Store({ name: "Samuel" });
-      expect(store.toJSON()).to.be.eql({ name: "Samuel" });
+      expect(store.toJSON()).to.be.eql({ cid: store.cid, name: "Samuel" });
     });
 
     it("computed attributes", function() {
