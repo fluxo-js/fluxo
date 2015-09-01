@@ -1,14 +1,24 @@
 describe("Fluxo.CollectionStore", function () {
   context("on an instance", function() {
+    it("#cid", function() {
+      var collection1 = new Fluxo.CollectionStore(),
+          collection2 = new Fluxo.CollectionStore();
+
+      expect(collection1.cid).to.exist;
+      expect(collection2.cid).to.exist;
+
+      expect(collection1.cid).to.not.equal(collection2.cid);
+    });
+
     it("#addFromData", function() {
       var collection = new Fluxo.CollectionStore(),
           onChangeCallback = chai.spy();
 
       collection.on(["change"], onChangeCallback);
 
-      collection.addFromData({ name: "Samuel" });
+      var store = collection.addFromData({ name: "Samuel" });
 
-      expect(collection.toJSON()).to.be.eql({ data: {}, stores: [{ name: "Samuel" }]});
+      expect(collection.toJSON()).to.be.eql({ data: { cid: collection.cid }, stores: [{ cid: store.cid, name: "Samuel" }]});
       expect(onChangeCallback).to.have.been.called();
     });
 
@@ -21,7 +31,7 @@ describe("Fluxo.CollectionStore", function () {
 
       collection.addStore(store);
 
-      expect(collection.toJSON()).to.be.eql({ data: {}, stores: [{ name: "Samuel" }]});
+      expect(collection.toJSON()).to.be.eql({ data: { cid: collection.cid }, stores: [{ cid: store.cid, name: "Samuel" }]});
       expect(onChangeCallback).to.have.been.called();
     });
 
@@ -120,6 +130,14 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(store1.data.name).to.be.eql("Simões");
       expect(collection.stores).to.be.eql([store1, collection.find(2)]);
+    });
+
+    it("#find", function() {
+      var collection = new Fluxo.CollectionStore(),
+          store = collection.addFromData({ id: 1 });
+
+      expect(collection.find(store.cid)).to.equal(store);
+      expect(collection.find(store.data.id)).to.equal(store);
     });
   });
 });

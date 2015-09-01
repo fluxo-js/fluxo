@@ -80,9 +80,9 @@
   Fluxo.Base = function() {
   var args = Array.prototype.slice.call(arguments);
 
+  this.cid = "FS:" + Fluxo.storesUUID++;
   this.data = {};
   this.options = args[1] || {};
-  this.changeEventToken = ("FS:" + Fluxo.storesUUID++);
 
   this._constructor.apply(this, args);
 };
@@ -97,7 +97,7 @@ Fluxo.Base.prototype = {
 
     for (var i = 0, l = events.length; i < l; i++) {
       var eventName = events[i],
-          changeEventToken = (this.changeEventToken + ":" + eventName),
+          changeEventToken = (this.cid + ":" + eventName),
           canceler = Fluxo.Radio.subscribe(changeEventToken, callback.bind(this));
 
       cancelers.push(canceler);
@@ -123,7 +123,7 @@ Fluxo.Base.prototype = {
   },
 
   triggerEvent: function(eventName) {
-    var changeChannel = (this.changeEventToken + ":" + eventName),
+    var changeChannel = (this.cid + ":" + eventName),
         args = Array.prototype.slice.call(arguments, 1);
 
     Fluxo.Radio.publish.apply(
@@ -133,7 +133,7 @@ Fluxo.Base.prototype = {
 
     Fluxo.Radio.publish.apply(
       Fluxo.Radio,
-      [(this.changeEventToken + ":*"), eventName, this].concat(args)
+      [(this.cid + ":*"), eventName, this].concat(args)
     );
   },
 
@@ -199,7 +199,10 @@ Fluxo.Base.prototype = {
   },
 
   toJSON: function() {
-    return this.data;
+    var data = JSON.parse(JSON.stringify(this.data));
+    data.cid = this.cid;
+
+    return data;
   }
 });
 
@@ -336,7 +339,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
       this.triggerEvent.apply(this, args);
     };
 
-    this.storesOnChangeCancelers[store.changeEventToken] =
+    this.storesOnChangeCancelers[store.cid] =
       store.on(["*"], onStoreEvent.bind(this));
 
     if (this.sort) {
@@ -358,6 +361,16 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
     if (storeID) {
       foundStore = this.findWhere({ id: storeID });
+
+      if (!foundStore) {
+        this.stores.some(function(store) {
+          if (store.cid === storeID) {
+            foundStore = store;
+
+            return true;
+          }
+        });
+      }
     }
 
     return foundStore;
@@ -410,8 +423,8 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @instance
    */
   removeListenersOn: function(store) {
-    this.storesOnChangeCancelers[store.changeEventToken].call();
-    delete this.storesOnChangeCancelers[store.changeEventToken];
+    this.storesOnChangeCancelers[store.cid].call();
+    delete this.storesOnChangeCancelers[store.cid];
   },
 
   /**
@@ -461,8 +474,11 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @instance
    */
   toJSON: function() {
+    var data = JSON.parse(JSON.stringify(this.data));
+    data.cid = this.cid;
+
     return {
-      data: this.data,
+      data: data,
       stores: this.storesToJSON()
     };
   }

@@ -13,6 +13,9 @@ Fluxo.Store = Fluxo.Base.extend({
   },
 
   toJSON: function() {
-    return this.data;
+    var data = JSON.parse(JSON.stringify(this.data));
+    data.cid = this.cid;
+
+    return data;
   }
 });
