@@ -26,28 +26,6 @@
     return toExtend;
   };
 
-  var extend = function (protoProps, staticProps) {
-    var parent = this,
-        child;
-
-    child = function(){ return parent.apply(this, arguments); };
-
-    // Add static properties to the constructor function, if supplied.
-    Fluxo.extend(child, parent, staticProps);
-
-    var Surrogate = function() { this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate;
-
-    if (protoProps) {
-      Fluxo.extend(child.prototype, protoProps);
-    }
-
-    child.__super__ = parent.prototype;
-
-    return child;
-  };
-
   Fluxo.Radio = {
   callbackIds: 1,
 
@@ -77,20 +55,31 @@
 };
 
 
-  Fluxo.Base = function() {
-  var args = Array.prototype.slice.call(arguments);
+  Fluxo.Base = {
+  setup: function () {
+    this.cid = "FS:" + Fluxo.storesUUID++;
 
-  this.cid = "FS:" + Fluxo.storesUUID++;
-  this.data = {};
-  this.options = args[1] || {};
+    var previousData = this.data;
 
-  this._constructor.apply(this, args);
-};
+    this.data = {};
 
-Fluxo.Base.extend = extend;
+    this.set(previousData || {});
 
-Fluxo.Base.prototype = {
+    this.registerComputed();
+
+    this.initialize();
+  },
+
   initialize: function () {},
+
+  create: function(obj) {
+    var extension = Fluxo.extend({}, this, (obj || {})),
+        instance = Object.create(extension);
+
+    instance.setup.apply(instance);
+
+    return instance;
+  },
 
   on: function(events, callback) {
     var cancelers = [];
@@ -184,20 +173,7 @@ Fluxo.Base.prototype = {
 };
 
 
-  Fluxo.ObjectStore = Fluxo.Base.extend({
-  _constructor: function(data, options) {
-    // Copy data to not mutate the original object
-    if (data) {
-      data = JSON.parse(JSON.stringify(data));
-    }
-
-    this.set(data || {});
-
-    this.registerComputed();
-
-    this.initialize(data, options);
-  },
-
+  Fluxo.ObjectStore = Fluxo.Base.create({
   toJSON: function() {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;
@@ -217,39 +193,21 @@ Fluxo.Base.prototype = {
  *
  * @class
  */
-Fluxo.CollectionStore = Fluxo.Base.extend(
+Fluxo.CollectionStore = Fluxo.Base.create({
 /** @lends Fluxo.CollectionStore */
-{
- _constructor: function(storesData, options) {
-    // Copy data to not mutate the original object
-    if (storesData) {
-      storesData = JSON.parse(JSON.stringify(storesData));
-    } else {
-      storesData = [];
-    }
+  setup: function() {
+    var previousStores = this.stores || [];
 
     this.stores = [];
 
-    this.setFromData(storesData);
+    this.setStores(previousStores);
 
-    this.registerComputed();
-
-    this.initialize(storesData, options);
+    Fluxo.Base.setup.apply(this);
   },
 
-  store: Fluxo.ObjectStore,
+  store: {},
 
   storesOnChangeCancelers: {},
-
-  /**
-   * @param {Object[]} storesData
-   * @returns {null}
-   * @instance
-   */
-  resetFromData: function(storesData) {
-    this.removeAll();
-    this.setFromData(storesData);
-  },
 
   /**
    * @param {Fluxo.ObjectStore[]} stores
@@ -268,7 +226,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @returns {null}
    * @instance
    */
-  resetFromStores: function(stores) {
+  reset: function(stores) {
     this.removeAll();
     this.addStores(stores);
   },
@@ -289,32 +247,21 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Object} data
-   * @returns {Object}
-   * @instance
-   */
-  addFromData: function(data) {
-    var store = new this.store(data);
-
-    return this.addStore(store);
-  },
-
-  /**
    * This methods add the missing objects and updates the existing stores.
    *
    * @param {Object[]} data
    * @returns undefined
    * @instance
    */
-  setFromData: function(data) {
+  setStores: function(data) {
     for (var i = 0, l = data.length; i < l; i++) {
       var storeData = data[i],
-          alreadyAddedStore = this.find(storeData.id);
+          alreadyAddedStore = this.find(storeData.id || storeData.cid);
 
       if (alreadyAddedStore) {
         alreadyAddedStore.set(storeData);
       } else {
-        this.addFromData(storeData);
+        this.addStore(storeData);
       }
     }
   },
@@ -325,6 +272,10 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @instance
    */
   addStore: function(store) {
+    if (!store.cid) {
+      store = Fluxo.ObjectStore.create(Fluxo.extend({}, this.store, { data: store }));
+    }
+
     var alreadyAddedStore = this.find(store.data.id);
 
     if (alreadyAddedStore) { return alreadyAddedStore; }

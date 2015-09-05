@@ -1,8 +1,8 @@
 describe("Fluxo.ObjectStore", function () {
   context("on an instance", function() {
     it("#cid", function() {
-      var store1 = new Fluxo.ObjectStore(),
-          store2 = new Fluxo.ObjectStore();
+      var store1 = Fluxo.ObjectStore.create(),
+          store2 = Fluxo.ObjectStore.create();
 
       expect(store1.cid).to.exist;
       expect(store2.cid).to.exist;
@@ -11,7 +11,7 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("#setAttribute", function() {
-      var store = new Fluxo.ObjectStore(),
+      var store = Fluxo.ObjectStore.create(),
           onChangeCallback = chai.spy(),
           onChangeNameCallback = chai.spy();
 
@@ -26,9 +26,11 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("#set", function() {
-      var store = new Fluxo.ObjectStore({ name: "Samuel" }),
+      var store = Fluxo.ObjectStore.create({ data: { name: "Samuel" } }),
           onChangeCallback = chai.spy(),
           onChangeNameCallback = chai.spy();
+
+      expect(store.data).to.be.eql({ name: "Samuel" });
 
       store.on(["change"], onChangeCallback);
       store.on(["change:name"], onChangeNameCallback);
@@ -41,12 +43,17 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("#toJSON", function() {
-      var store = new Fluxo.ObjectStore({ name: "Samuel" });
+      var store = Fluxo.ObjectStore.create({ data: { name: "Samuel" } });
       expect(store.toJSON()).to.be.eql({ cid: store.cid, name: "Samuel" });
     });
 
     it("computed attributes", function() {
-      var MyCustomStore = Fluxo.ObjectStore.extend({
+      var store = Fluxo.ObjectStore.create({
+        data: {
+          first_name: "Samuel",
+          last_name: "Simoes"
+        },
+
         computed: {
           "fullName": ["change:first_name", "change:last_name"]
         },
@@ -56,8 +63,6 @@ describe("Fluxo.ObjectStore", function () {
         }
       });
 
-      var store = new MyCustomStore({ first_name: "Samuel", last_name: "Simoes" });
-
       expect(store.data.fullName).to.be.eql("Samuel Simoes");
 
       store.setAttribute("first_name", "Neo");
@@ -66,7 +71,9 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("attributes parser", function() {
-      var MyCustomStore = Fluxo.ObjectStore.extend({
+      var store = Fluxo.ObjectStore.create({
+        data: { count: "1" },
+
         attributeParsers: {
           count: function(value) {
             return parseInt(value, 10);
@@ -74,28 +81,12 @@ describe("Fluxo.ObjectStore", function () {
         }
       });
 
-      var store = new MyCustomStore({ count: "1" });
-
       expect(store.data.count).to.be.eql(1);
     });
   });
 
-  context("on a class", function() {
-    it("#extend", function() {
-      var MyCustomStore = Fluxo.ObjectStore.extend({
-        myCustomMethod: function() {
-          return this.data.name;
-        }
-      });
-
-      var store = new MyCustomStore({ name: "Samuel" });
-
-      expect(store.myCustomMethod()).to.be.eql("Samuel");
-    });
-  });
-
   it("#triggerEvent", function() {
-    var store = new Fluxo.ObjectStore(),
+    var store = Fluxo.ObjectStore.create(),
         callback = chai.spy(),
         wildcardCallback = chai.spy();
 

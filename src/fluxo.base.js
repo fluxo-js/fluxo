@@ -1,17 +1,28 @@
-Fluxo.Base = function() {
-  var args = Array.prototype.slice.call(arguments);
+Fluxo.Base = {
+  setup: function () {
+    this.cid = "FS:" + Fluxo.storesUUID++;
 
-  this.cid = "FS:" + Fluxo.storesUUID++;
-  this.data = {};
-  this.options = args[1] || {};
+    var previousData = this.data;
 
-  this._constructor.apply(this, args);
-};
+    this.data = {};
 
-Fluxo.Base.extend = extend;
+    this.set(previousData || {});
 
-Fluxo.Base.prototype = {
+    this.registerComputed();
+
+    this.initialize();
+  },
+
   initialize: function () {},
+
+  create: function(obj) {
+    var extension = Fluxo.extend({}, this, (obj || {})),
+        instance = Object.create(extension);
+
+    instance.setup.apply(instance);
+
+    return instance;
+  },
 
   on: function(events, callback) {
     var cancelers = [];

@@ -25,28 +25,6 @@
     return toExtend;
   };
 
-  var extend = function (protoProps, staticProps) {
-    var parent = this,
-        child;
-
-    child = function(){ return parent.apply(this, arguments); };
-
-    // Add static properties to the constructor function, if supplied.
-    Fluxo.extend(child, parent, staticProps);
-
-    var Surrogate = function() { this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate;
-
-    if (protoProps) {
-      Fluxo.extend(child.prototype, protoProps);
-    }
-
-    child.__super__ = parent.prototype;
-
-    return child;
-  };
-
   @@include('fluxo.radio.js')
 
   @@include('fluxo.base.js')

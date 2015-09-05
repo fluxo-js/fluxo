@@ -8,39 +8,21 @@
  *
  * @class
  */
-Fluxo.CollectionStore = Fluxo.Base.extend(
+Fluxo.CollectionStore = Fluxo.Base.create({
 /** @lends Fluxo.CollectionStore */
-{
- _constructor: function(storesData, options) {
-    // Copy data to not mutate the original object
-    if (storesData) {
-      storesData = JSON.parse(JSON.stringify(storesData));
-    } else {
-      storesData = [];
-    }
+  setup: function() {
+    var previousStores = this.stores || [];
 
     this.stores = [];
 
-    this.setFromData(storesData);
+    this.setStores(previousStores);
 
-    this.registerComputed();
-
-    this.initialize(storesData, options);
+    Fluxo.Base.setup.apply(this);
   },
 
-  store: Fluxo.ObjectStore,
+  store: {},
 
   storesOnChangeCancelers: {},
-
-  /**
-   * @param {Object[]} storesData
-   * @returns {null}
-   * @instance
-   */
-  resetFromData: function(storesData) {
-    this.removeAll();
-    this.setFromData(storesData);
-  },
 
   /**
    * @param {Fluxo.ObjectStore[]} stores
@@ -59,7 +41,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @returns {null}
    * @instance
    */
-  resetFromStores: function(stores) {
+  reset: function(stores) {
     this.removeAll();
     this.addStores(stores);
   },
@@ -80,32 +62,21 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Object} data
-   * @returns {Object}
-   * @instance
-   */
-  addFromData: function(data) {
-    var store = new this.store(data);
-
-    return this.addStore(store);
-  },
-
-  /**
    * This methods add the missing objects and updates the existing stores.
    *
    * @param {Object[]} data
    * @returns undefined
    * @instance
    */
-  setFromData: function(data) {
+  setStores: function(data) {
     for (var i = 0, l = data.length; i < l; i++) {
       var storeData = data[i],
-          alreadyAddedStore = this.find(storeData.id);
+          alreadyAddedStore = this.find(storeData.id || storeData.cid);
 
       if (alreadyAddedStore) {
         alreadyAddedStore.set(storeData);
       } else {
-        this.addFromData(storeData);
+        this.addStore(storeData);
       }
     }
   },
@@ -116,6 +87,10 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
    * @instance
    */
   addStore: function(store) {
+    if (!store.cid) {
+      store = Fluxo.ObjectStore.create(Fluxo.extend({}, this.store, { data: store }));
+    }
+
     var alreadyAddedStore = this.find(store.data.id);
 
     if (alreadyAddedStore) { return alreadyAddedStore; }
