@@ -1,12 +1,6 @@
 /** @namespace Fluxo */
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
- *
- * @param {Object} storesData - Literal object with the initial payload
- * @param {Object} options - Literal object with any data. This data can
- * be accessed on the instance property with the same name.
- *
- * @class
  */
 Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 /** @lends Fluxo.CollectionStore */
@@ -25,9 +19,8 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
   storesOnChangeCancelers: {},
 
   /**
-   * @param {Fluxo.ObjectStore[]} stores
+   * @param {Object[]} stores data
    * @returns {null}
-   * @instance
    */
   addStores: function(stores) {
     for (var i = 0, l = stores.length; i < l; i++) {
@@ -37,9 +30,8 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
   },
 
   /**
-   * @param {Fluxo.ObjectStore[]} stores
+   * @param {Object[]} stores data
    * @returns {null}
-   * @instance
    */
   reset: function(stores) {
     this.removeAll();
@@ -64,7 +56,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
   /**
    * This methods add the missing objects and updates the existing stores.
    *
-   * @param {Object[]} data
+   * @param {Object[]} stores data
    * @returns undefined
    * @instance
    */
@@ -82,8 +74,8 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
   },
 
   /**
-   * @param {Fluxo.ObjectStore} store
-   * @returns {Fluxo.ObjectStore}
+   * @param {Object} store data
+   * @returns {Object}
    * @instance
    */
   addStore: function(store) {
@@ -119,7 +111,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 
   /**
    * @param {number} storeID
-   * @returns {Fluxo.ObjectStore|undefined} - the found flux store or undefined
+   * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
   find: function (storeID) {
@@ -143,8 +135,8 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
   },
 
   /**
-   * @param {object} criteria
-   * @returns {Fluxo.ObjectStore|undefined} - the found flux store or undefined
+   * @param {Object} criteria
+   * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
   findWhere: function(criteria) {
@@ -152,7 +144,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
   },
 
   /**
-   * @param {object} criteria
+   * @param {Object} criteria
    * @returns {Fluxo.ObjectStore[]} - the found flux stores or empty array
    * @instance
    */
