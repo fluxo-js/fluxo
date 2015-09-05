@@ -20,12 +20,11 @@ Fluxo.ObjectStore = {
 
     extensions.unshift({}, this);
 
-    var extension = Fluxo.extend.apply(null, extensions),
-        instance = Object.create(extension);
+    var extension = Fluxo.extend.apply(null, extensions);
 
-    instance.setup.apply(instance);
+    extension.setup.apply(extension);
 
-    return instance;
+    return extension;
   },
 
   on: function(events, callback) {
