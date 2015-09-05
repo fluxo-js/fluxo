@@ -88,7 +88,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
    */
   addStore: function(store) {
     if (!store.cid) {
-      store = Fluxo.ObjectStore.create(Fluxo.extend({}, this.store, { data: store }));
+      store = Fluxo.ObjectStore.create(this.store, { data: store });
     }
 
     var alreadyAddedStore = this.find(store.data.id);

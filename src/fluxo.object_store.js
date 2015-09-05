@@ -15,8 +15,12 @@ Fluxo.ObjectStore = {
 
   initialize: function () {},
 
-  create: function(obj) {
-    var extension = Fluxo.extend({}, this, (obj || {})),
+  create: function() {
+    var extensions = Array.prototype.slice.call(arguments);
+
+    extensions.unshift({}, this);
+
+    var extension = Fluxo.extend.apply(null, extensions),
         instance = Object.create(extension);
 
     instance.setup.apply(instance);
