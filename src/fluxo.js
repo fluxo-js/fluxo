@@ -27,8 +27,6 @@
 
   @@include('fluxo.radio.js')
 
-  @@include('fluxo.base.js')
-
   @@include('fluxo.object_store.js')
 
   @@include('fluxo.collection_store.js')

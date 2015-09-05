@@ -8,7 +8,7 @@
  *
  * @class
  */
-Fluxo.CollectionStore = Fluxo.Base.create({
+Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 /** @lends Fluxo.CollectionStore */
   setup: function() {
     var previousStores = this.stores || [];
@@ -17,7 +17,7 @@ Fluxo.CollectionStore = Fluxo.Base.create({
 
     this.setStores(previousStores);
 
-    Fluxo.Base.setup.apply(this);
+    Fluxo.ObjectStore.setup.apply(this);
   },
 
   store: {},

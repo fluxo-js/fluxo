@@ -55,7 +55,7 @@
 };
 
 
-  Fluxo.Base = {
+  Fluxo.ObjectStore = {
   setup: function () {
     this.cid = "FS:" + Fluxo.storesUUID++;
 
@@ -169,18 +169,15 @@
     }
 
     this.triggerEvent("change");
-  }
-};
+  },
 
-
-  Fluxo.ObjectStore = Fluxo.Base.create({
   toJSON: function() {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;
 
     return data;
   }
-});
+};
 
 
   /** @namespace Fluxo */
@@ -193,7 +190,7 @@
  *
  * @class
  */
-Fluxo.CollectionStore = Fluxo.Base.create({
+Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 /** @lends Fluxo.CollectionStore */
   setup: function() {
     var previousStores = this.stores || [];
@@ -202,7 +199,7 @@ Fluxo.CollectionStore = Fluxo.Base.create({
 
     this.setStores(previousStores);
 
-    Fluxo.Base.setup.apply(this);
+    Fluxo.ObjectStore.setup.apply(this);
   },
 
   store: {},
