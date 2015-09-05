@@ -1,5 +1,21 @@
 describe("Fluxo.CollectionStore", function () {
   context("on an instance", function() {
+    it("parsing store's data on collection's store object", function() {
+      var collection = Fluxo.CollectionStore.create({
+        stores: [
+          { name: "Fluxo" }
+        ],
+
+        store: {
+          customMethod: function() {
+            return this.data.name + "foo";
+          }
+        }
+      });
+
+      expect(collection.stores[0].customMethod()).to.be.eql("Fluxofoo");
+    });
+
     it("#cid", function() {
       var collection1 = Fluxo.CollectionStore.create(),
           collection2 = Fluxo.CollectionStore.create();
