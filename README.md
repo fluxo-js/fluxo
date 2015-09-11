@@ -43,7 +43,7 @@ var CommentActionHandler = {
   }
 };
 
-var store = new Fluxo.Store({ content: "Hello!" });
+var store = new Fluxo.ObjectStore({ content: "Hello!" });
 
 CommentActionHandler.initialize(store);
 
@@ -62,8 +62,8 @@ array with literal objects.
 You can create stores like this:
 
 ```javascript
-// Create a Comment Store class extending the Fluxo.Store class
-var Comment = Fluxo.Store.extend({
+// Create a Comment Store class extending the Fluxo.ObjectStore class
+var Comment = Fluxo.ObjectStore.extend({
   myStoreMethod: function() {
     // ...
   }
@@ -73,7 +73,7 @@ var Comment = Fluxo.Store.extend({
 var comment = new Comment({ content: "This is my comment" });
 ```
 
-If you need update your data, use the `Fluxo.Store#set` method.
+If you need update your data, use the `Fluxo.ObjectStore#set` method.
 
 ```javascript
 comment.set({ content: "This is my edited comment" });
@@ -88,12 +88,12 @@ comment.data.content // => "This is my comment"
 ##CollectionStore
 
 Fluxo.CollectionStore is a wrapper to your array of objects. When you create
-a CollectionStore, each item of your array is wrapped on a instance of Fluxo.Store,
+a CollectionStore, each item of your array is wrapped on a instance of Fluxo.ObjectStore,
 which you can change extending the Fluxo.CollectionStore and specifying your
 store class.
 
-Note: Fluxo.CollectionStore has the same methods of the Fluxo.Store, so you
-can use methods like `set` of Fluxo.Store.
+Note: Fluxo.CollectionStore has the same methods of the Fluxo.ObjectStore, so you
+can use methods like `set` of Fluxo.ObjectStore.
 
 ```javascript
 var MyComments = Fluxo.CollectionStore.extend({
