@@ -184,7 +184,7 @@ Fluxo.Base.prototype = {
 };
 
 
-  Fluxo.Store = Fluxo.Base.extend({
+  Fluxo.ObjectStore = Fluxo.Base.extend({
   _constructor: function(data, options) {
     // Copy data to not mutate the original object
     if (data) {
@@ -237,7 +237,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
     this.initialize(storesData, options);
   },
 
-  store: Fluxo.Store,
+  store: Fluxo.ObjectStore,
 
   storesOnChangeCancelers: {},
 
@@ -252,7 +252,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Fluxo.Store[]} stores
+   * @param {Fluxo.ObjectStore[]} stores
    * @returns {null}
    * @instance
    */
@@ -264,7 +264,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Fluxo.Store[]} stores
+   * @param {Fluxo.ObjectStore[]} stores
    * @returns {null}
    * @instance
    */
@@ -320,8 +320,8 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Fluxo.Store} store
-   * @returns {Fluxo.Store}
+   * @param {Fluxo.ObjectStore} store
+   * @returns {Fluxo.ObjectStore}
    * @instance
    */
   addStore: function(store) {
@@ -353,7 +353,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
   /**
    * @param {number} storeID
-   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   * @returns {Fluxo.ObjectStore|undefined} - the found flux store or undefined
    * @instance
    */
   find: function (storeID) {
@@ -378,7 +378,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
   /**
    * @param {object} criteria
-   * @returns {Fluxo.Store|undefined} - the found flux store or undefined
+   * @returns {Fluxo.ObjectStore|undefined} - the found flux store or undefined
    * @instance
    */
   findWhere: function(criteria) {
@@ -387,7 +387,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
   /**
    * @param {object} criteria
-   * @returns {Fluxo.Store[]} - the found flux stores or empty array
+   * @returns {Fluxo.ObjectStore[]} - the found flux stores or empty array
    * @instance
    */
   where: function(criteria, stopOnFirstMatch) {
@@ -428,7 +428,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Fluxo.Store} store - the store to remove
+   * @param {Fluxo.ObjectStore} store - the store to remove
    * @returns {null}
    * @instance
    */

@@ -1,4 +1,4 @@
-Fluxo.Store = Fluxo.Base.extend({
+Fluxo.ObjectStore = Fluxo.Base.extend({
   _constructor: function(data, options) {
     // Copy data to not mutate the original object
     if (data) {

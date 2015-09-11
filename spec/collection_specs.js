@@ -24,7 +24,7 @@ describe("Fluxo.CollectionStore", function () {
 
     it("#addStore", function() {
       var collection = new Fluxo.CollectionStore(),
-          store = new Fluxo.Store({ name: "Samuel" }),
+          store = new Fluxo.ObjectStore({ name: "Samuel" }),
           onChangeCallback = chai.spy();
 
       collection.on(["change"], onChangeCallback);
@@ -49,7 +49,7 @@ describe("Fluxo.CollectionStore", function () {
     });
 
     it("#remove", function() {
-      var store = new Fluxo.Store({ name: "Samuel" }),
+      var store = new Fluxo.ObjectStore({ name: "Samuel" }),
           collection = new Fluxo.CollectionStore(),
           onChangeCallback = chai.spy();
 
@@ -79,7 +79,7 @@ describe("Fluxo.CollectionStore", function () {
 
     it("#addStores", function() {
       var collection = new Fluxo.CollectionStore(),
-          store = new Fluxo.Store(),
+          store = new Fluxo.ObjectStore(),
           onChangeCallback = chai.spy();
 
       collection.on(["change", "add"], onChangeCallback);
@@ -93,9 +93,9 @@ describe("Fluxo.CollectionStore", function () {
     it("#where", function() {
       var collection = new Fluxo.CollectionStore();
 
-      var store1 = new Fluxo.Store({ id: 20, name: "samuel" }),
-          store2 = new Fluxo.Store({ id: 21, name: "simoes" }),
-          store3 = new Fluxo.Store({ id: 22, name: "simoes" });
+      var store1 = new Fluxo.ObjectStore({ id: 20, name: "samuel" }),
+          store2 = new Fluxo.ObjectStore({ id: 21, name: "simoes" }),
+          store3 = new Fluxo.ObjectStore({ id: 22, name: "simoes" });
 
       collection.addStores([store1, store2, store3]);
 
@@ -110,9 +110,9 @@ describe("Fluxo.CollectionStore", function () {
         return a.data.price - b.data.price;
       };
 
-      var store1 = new Fluxo.Store({ price: 100 }),
-          store2 = new Fluxo.Store({ price: 10 }),
-          store3 = new Fluxo.Store({ price: 1 });
+      var store1 = new Fluxo.ObjectStore({ price: 100 }),
+          store2 = new Fluxo.ObjectStore({ price: 10 }),
+          store3 = new Fluxo.ObjectStore({ price: 1 });
 
       collection.addStores([store1, store2, store3]);
 
@@ -122,7 +122,7 @@ describe("Fluxo.CollectionStore", function () {
     it("#setFromData", function() {
       var collection = new Fluxo.CollectionStore();
 
-      var store1 = new Fluxo.Store({ id: 1, name: "Samuel" });
+      var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel" });
 
       collection.addStore(store1);
 
