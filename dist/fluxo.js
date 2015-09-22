@@ -198,12 +198,39 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 
     this.setStores(previousStores);
 
+    this.createDelegateMethods();
+
     Fluxo.ObjectStore.setup.apply(this);
   },
 
   store: {},
 
   storesOnChangeCancelers: {},
+
+  childrenDelegate: [],
+
+  /**
+   * @returns {null}
+   */
+  createDelegateMethods: function() {
+    for (var i = 0, l = this.childrenDelegate.length; i < l; i++) {
+      var methodName = this.childrenDelegate[i];
+      this.createDelegateMethod(methodName);
+    }
+  },
+
+  /**
+   * @param {string} method to delegate to children
+   * @returns {null}
+   */
+  createDelegateMethod: function(methodName) {
+    this[methodName] = function(method, id) {
+      var args = Array.prototype.slice.call(arguments, 2),
+          child = this.find(id);
+
+      child[method].apply(child, args);
+    }.bind(this, methodName);
+  },
 
   /**
    * @param {Object[]} stores data

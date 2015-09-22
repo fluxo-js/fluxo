@@ -145,4 +145,22 @@ describe("Fluxo.CollectionStore", function () {
     expect(collection.find(store.cid)).to.equal(store);
     expect(collection.find(store.data.id)).to.equal(store);
   });
+
+  it("children's methods delegation", function() {
+    var customMethod = chai.spy();
+
+    var collection = Fluxo.CollectionStore.create({
+      stores: [{ id: 20 }],
+
+      store: {
+        myCustomMethod: customMethod
+      },
+
+      childrenDelegate: ["myCustomMethod"]
+    });
+
+    collection.myCustomMethod(20, "Hello", 300);
+
+    expect(customMethod).to.have.been.called.exactly(1).with("Hello", 300);
+  });
 });
