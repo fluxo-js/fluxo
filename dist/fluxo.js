@@ -59,6 +59,8 @@
   setup: function () {
     this.cid = "FS:" + Fluxo.storesUUID++;
 
+    this._fluxo = true;
+
     var previousData = this.data;
 
     this.data = {};
@@ -264,7 +266,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
    * @instance
    */
   addStore: function(store) {
-    if (!store.cid) {
+    if (store._fluxo !== true) {
       store = Fluxo.ObjectStore.create(this.store, { data: store });
     }
 

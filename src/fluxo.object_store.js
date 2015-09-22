@@ -2,6 +2,8 @@ Fluxo.ObjectStore = {
   setup: function () {
     this.cid = "FS:" + Fluxo.storesUUID++;
 
+    this._fluxo = true;
+
     var previousData = this.data;
 
     this.data = {};
