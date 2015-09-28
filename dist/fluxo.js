@@ -188,6 +188,22 @@
     this.triggerEvent("change");
   },
 
+  reset: function (data) {
+    data = data || {};
+
+    for (var key in this.data) {
+      if (data[key] === undefined) {
+        this.unsetAttribute(key, { silentGlobalChange: true });
+      }
+    }
+
+    for (var key in data) {
+      this.setAttribute(key, data[key], { silentGlobalChange: true });
+    }
+
+    this.triggerEvent("change");
+  },
+
   toJSON: function() {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;

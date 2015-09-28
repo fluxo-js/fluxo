@@ -106,4 +106,15 @@ describe("Fluxo.ObjectStore", function () {
 
     expect(store.data).to.not.contain.key("name");
   });
+
+  it("reset", function () {
+    var store = Fluxo.ObjectStore.create({ data: { name: "Fluxo" } });
+
+    expect(store.data).to.contain.all.keys({ name: "Fluxo" });
+
+    store.reset({ type: "Object" });
+
+    expect(store.data).to.contain.all.keys({ type: "Object" });
+    expect(store.data).to.not.contain.key("name");
+  });
 });
