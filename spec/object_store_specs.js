@@ -96,4 +96,14 @@ describe("Fluxo.ObjectStore", function () {
     expect(callback).to.have.been.called.with(store, "myArg");
     expect(wildcardCallback).to.have.been.called.with("myEvent", store, "myArg");
   });
+
+  it("unset", function () {
+    var store = Fluxo.ObjectStore.create({ data: { name: "Fluxo" } });
+
+    expect(store.data).to.contain.all.keys({ name: "Fluxo" });
+
+    store.unsetAttribute("name");
+
+    expect(store.data).to.not.contain.key("name");
+  });
 });

@@ -168,6 +168,18 @@
     this.triggerEvent("change");
   },
 
+  unsetAttribute: function (attribute, options) {
+    options = options || {};
+
+    delete this.data[attribute];
+
+    this.triggerEvent(("change:" + attribute));
+
+    if (options.silentGlobalChange) { return; }
+
+    this.triggerEvent("change");
+  },
+
   set: function(data) {
     for (var key in data) {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
