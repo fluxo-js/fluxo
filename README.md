@@ -43,7 +43,7 @@ var CommentActionHandler = {
   }
 };
 
-var store = new Fluxo.ObjectStore({ content: "Hello!" });
+var store = new Fluxo.ObjectStore.create({ data: { content: "Hello!" } });
 
 CommentActionHandler.initialize(store);
 
