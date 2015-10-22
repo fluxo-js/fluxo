@@ -1,51 +1,53 @@
 /** @namespace Fluxo */
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
- *
- * @param {Object} storesData - Literal object with the initial payload
- * @param {Object} options - Literal object with any data. This data can
- * be accessed on the instance property with the same name.
- *
- * @class
  */
-Fluxo.CollectionStore = Fluxo.Base.extend(
+Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 /** @lends Fluxo.CollectionStore */
-{
- _constructor: function(storesData, options) {
-    // Copy data to not mutate the original object
-    if (storesData) {
-      storesData = JSON.parse(JSON.stringify(storesData));
-    } else {
-      storesData = [];
-    }
+  setup: function() {
+    var previousStores = this.stores || [];
 
     this.stores = [];
 
-    this.setFromData(storesData);
+    this.setStores(previousStores);
 
-    this.registerComputed();
+    this.createDelegateMethods();
 
-    this.initialize(storesData, options);
+    Fluxo.ObjectStore.setup.apply(this);
   },
 
-  store: Fluxo.ObjectStore,
+  store: {},
 
   storesOnChangeCancelers: {},
 
+  childrenDelegate: [],
+
   /**
-   * @param {Object[]} storesData
    * @returns {null}
-   * @instance
    */
-  resetFromData: function(storesData) {
-    this.removeAll();
-    this.setFromData(storesData);
+  createDelegateMethods: function() {
+    for (var i = 0, l = this.childrenDelegate.length; i < l; i++) {
+      var methodName = this.childrenDelegate[i];
+      this.createDelegateMethod(methodName);
+    }
   },
 
   /**
-   * @param {Fluxo.ObjectStore[]} stores
+   * @param {string} method to delegate to children
    * @returns {null}
-   * @instance
+   */
+  createDelegateMethod: function(methodName) {
+    this[methodName] = function(method, id) {
+      var args = Array.prototype.slice.call(arguments, 2),
+          child = this.find(id);
+
+      child[method].apply(child, args);
+    }.bind(this, methodName);
+  },
+
+  /**
+   * @param {Object[]} stores data
+   * @returns {null}
    */
   addStores: function(stores) {
     for (var i = 0, l = stores.length; i < l; i++) {
@@ -55,11 +57,10 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Fluxo.ObjectStore[]} stores
+   * @param {Object[]} stores data
    * @returns {null}
-   * @instance
    */
-  resetFromStores: function(stores) {
+  reset: function(stores) {
     this.removeAll();
     this.addStores(stores);
   },
@@ -80,42 +81,35 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {Object} data
-   * @returns {Object}
-   * @instance
-   */
-  addFromData: function(data) {
-    var store = new this.store(data);
-
-    return this.addStore(store);
-  },
-
-  /**
    * This methods add the missing objects and updates the existing stores.
    *
-   * @param {Object[]} data
+   * @param {Object[]} stores data
    * @returns undefined
    * @instance
    */
-  setFromData: function(data) {
+  setStores: function(data) {
     for (var i = 0, l = data.length; i < l; i++) {
       var storeData = data[i],
-          alreadyAddedStore = this.find(storeData.id);
+          alreadyAddedStore = this.find(storeData.id || storeData.cid);
 
       if (alreadyAddedStore) {
         alreadyAddedStore.set(storeData);
       } else {
-        this.addFromData(storeData);
+        this.addStore(storeData);
       }
     }
   },
 
   /**
-   * @param {Fluxo.ObjectStore} store
-   * @returns {Fluxo.ObjectStore}
+   * @param {Object} store data
+   * @returns {Object}
    * @instance
    */
   addStore: function(store) {
+    if (store._fluxo !== true) {
+      store = Fluxo.ObjectStore.create(this.store, { data: store });
+    }
+
     var alreadyAddedStore = this.find(store.data.id);
 
     if (alreadyAddedStore) { return alreadyAddedStore; }
@@ -144,7 +138,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
 
   /**
    * @param {number} storeID
-   * @returns {Fluxo.ObjectStore|undefined} - the found flux store or undefined
+   * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
   find: function (storeID) {
@@ -168,8 +162,8 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {object} criteria
-   * @returns {Fluxo.ObjectStore|undefined} - the found flux store or undefined
+   * @param {Object} criteria
+   * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
   findWhere: function(criteria) {
@@ -177,7 +171,7 @@ Fluxo.CollectionStore = Fluxo.Base.extend(
   },
 
   /**
-   * @param {object} criteria
+   * @param {Object} criteria
    * @returns {Fluxo.ObjectStore[]} - the found flux stores or empty array
    * @instance
    */

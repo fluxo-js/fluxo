@@ -56,21 +56,20 @@ You hold the state of your Fluxo app on the store, the stores should emit an eve
 to the component/view layer when something change and then your view layer renders the
 changes.
 
-On Fluxo, the store is a convenient wrapper to your literal javascript objects or
-array with literal objects.
+On Fluxo, the store is a javascript literal object that inherits some conveniences
+from Fluxo.ObjectStore (attributes parser, computed properties and things like this).
 
 You can create stores like this:
 
 ```javascript
-// Create a Comment Store class extending the Fluxo.ObjectStore class
-var Comment = Fluxo.ObjectStore.extend({
+// Create a comment store object that inherits the Fluxo.ObjectStore capacities
+var comment = Fluxo.ObjectStore.create({
+  data: { content: "This is my comment"  },
+
   myStoreMethod: function() {
     // ...
   }
 });
-
-// Instantiate a new Comment Store with some initial data on the constructor
-var comment = new Comment({ content: "This is my comment" });
 ```
 
 If you need update your data, use the `Fluxo.ObjectStore#set` method.
@@ -87,30 +86,31 @@ comment.data.content // => "This is my comment"
 
 ##CollectionStore
 
-Fluxo.CollectionStore is a wrapper to your array of objects. When you create
-a CollectionStore, each item of your array is wrapped on a instance of Fluxo.ObjectStore,
-which you can change extending the Fluxo.CollectionStore and specifying your
-store class.
+If you need deal with multiple stores you can use a javascript array with your
+stores, using Fluxo.CollectionStore you can give some habilites to your array,
+like emit change signal when some children store change, compute changes on children
+stores and more.
+
+You create collection stores like this:
+
+```javascript
+var myComments = Fluxo.CollectionStore.create({
+  stores: [{ content: "children content" }],
+
+  store: {
+    childrenStoreMethod: function () {}
+  }
+});
+```
 
 Note: Fluxo.CollectionStore has the same methods of the Fluxo.ObjectStore, so you
 can use methods like `set` of Fluxo.ObjectStore.
 
-```javascript
-var MyComments = Fluxo.CollectionStore.extend({
-  store: MyComment
-});
-```
-
-When a child store of a collection emits a signal of change, this signal is propagated
-to the collection that also emits a change signal.
-
-All your stores instances lives on the `stores` property.
-
 If you want to keep the stores always sorted, you may define a sort method:
 
 ```javascript
-var MyComments = Fluxo.CollectionStore.extend({
-  store: MyComment,
+var myComments = Fluxo.CollectionStore.create({
+  stores: [{ content: "children content", at: (new Date()) }],
 
   sort: function(a, b) {
     return a.data.at - b.data.at;
