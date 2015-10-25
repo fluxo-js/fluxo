@@ -1,7 +1,7 @@
 {
   "name": "fluxo-js",
   "version": "0.0.17",
-  "description": "Yet another Facebook Flux lib",
+  "description": "Fluxo is a simple, lightweight and dependency free state manager lib.",
   "main": "dist/fluxo.js",
   "repository": {
     "type": "git",
