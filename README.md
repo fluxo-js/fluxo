@@ -17,10 +17,18 @@ of this many things may change.**
 
 ###Installation
 
-Install with bower and include on your page or use some module loader.
+Install with bower:
 ```
 $ bower install --save fluxo
 ```
+
+or with npm:
+
+```
+$ npm install --save fluxo-js
+```
+
+and include on your page or use some module loader.
 
 ##Actions
 
