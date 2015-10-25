@@ -2,6 +2,7 @@
   "name": "fluxo",
   "version": "0.0.17",
   "description": "Yet another Facebook Flux lib",
+  "main": "dist/fluxo.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/fluxo-js/fluxo"
