@@ -4,7 +4,7 @@
   "description": "Yet another Facebook Flux lib",
   "repository": {
     "type": "git",
-    "url": "https://github.com/samuelsimoes/fluxo"
+    "url": "https://github.com/fluxo-js/fluxo"
   },
   "author": {
     "name": "Samuel Simões",
