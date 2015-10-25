@@ -60,7 +60,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
    * @param {Object[]} stores data
    * @returns {null}
    */
-  reset: function(stores) {
+  resetStores: function(stores) {
     this.removeAll();
     this.addStores(stores);
   },
