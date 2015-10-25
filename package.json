@@ -1,5 +1,5 @@
 {
-  "name": "fluxo",
+  "name": "fluxo-js",
   "version": "0.0.17",
   "description": "Yet another Facebook Flux lib",
   "main": "dist/fluxo.js",

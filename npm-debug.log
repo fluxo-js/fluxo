@@ -1,0 +1,130 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/share/npm/bin/npm', 'publish' ]
+2 info using npm@1.4.10
+3 info using node@v0.10.28
+4 verbose node symlink /usr/local/bin/node
+5 verbose publish [ '.' ]
+6 verbose cache add [ '.', null ]
+7 verbose cache add name=undefined spec="." args=[".",null]
+8 verbose parsed url { protocol: null,
+8 verbose parsed url   slashes: null,
+8 verbose parsed url   auth: null,
+8 verbose parsed url   host: null,
+8 verbose parsed url   port: null,
+8 verbose parsed url   hostname: null,
+8 verbose parsed url   hash: null,
+8 verbose parsed url   search: null,
+8 verbose parsed url   query: null,
+8 verbose parsed url   pathname: '.',
+8 verbose parsed url   path: '.',
+8 verbose parsed url   href: '.' }
+9 silly lockFile 3a52ce78- .
+10 verbose lock . /Users/samuelsimoes/.npm/3a52ce78-.lock
+11 verbose tar pack [ '/var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz',
+11 verbose tar pack   '.' ]
+12 verbose tarball /var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+13 verbose folder .
+14 info prepublish fluxo@0.0.17
+15 silly lockFile 1f1177db-tar tar://.
+16 verbose lock tar://. /Users/samuelsimoes/.npm/1f1177db-tar.lock
+17 silly lockFile 53e51dc5-98675-0-1887982077896595-tmp-tgz tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+18 verbose lock tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz /Users/samuelsimoes/.npm/53e51dc5-98675-0-1887982077896595-tmp-tgz.lock
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile 1f1177db-tar tar://.
+21 silly lockFile 53e51dc5-98675-0-1887982077896595-tmp-tgz tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+22 silly lockFile 53e51dc5-98675-0-1887982077896595-tmp-tgz tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+23 verbose tar unpack /var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+24 silly lockFile 016e36d1-lsimoes-npm-fluxo-0-0-17-package tar:///Users/samuelsimoes/.npm/fluxo/0.0.17/package
+25 verbose lock tar:///Users/samuelsimoes/.npm/fluxo/0.0.17/package /Users/samuelsimoes/.npm/016e36d1-lsimoes-npm-fluxo-0-0-17-package.lock
+26 silly lockFile 53e51dc5-98675-0-1887982077896595-tmp-tgz tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+27 verbose lock tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz /Users/samuelsimoes/.npm/53e51dc5-98675-0-1887982077896595-tmp-tgz.lock
+28 silly gunzTarPerm modes [ '755', '644' ]
+29 silly gunzTarPerm extractEntry package.json
+30 silly gunzTarPerm extractEntry .npmignore
+31 silly gunzTarPerm extractEntry README.md
+32 silly gunzTarPerm extractEntry Gruntfile.js
+33 silly gunzTarPerm extractEntry .travis.yml
+34 silly gunzTarPerm extractEntry bower.json
+35 silly gunzTarPerm extractEntry dist/fluxo.js
+36 silly gunzTarPerm extractEntry dist/fluxo.min.js
+37 silly gunzTarPerm extractEntry dist/fluxo.map
+38 silly gunzTarPerm extractEntry spec/bind_polyfill.js
+39 silly gunzTarPerm extractEntry spec/collection_specs.js
+40 silly gunzTarPerm extractEntry spec/object_store_specs.js
+41 silly gunzTarPerm extractEntry spec/radio_specs.js
+42 silly gunzTarPerm extractEntry spec/index.html
+43 silly gunzTarPerm extractEntry src/fluxo.collection_store.js
+44 silly gunzTarPerm extractEntry src/fluxo.js
+45 silly gunzTarPerm extractEntry src/fluxo.object_store.js
+46 silly gunzTarPerm extractEntry src/fluxo.radio.js
+47 silly lockFile 016e36d1-lsimoes-npm-fluxo-0-0-17-package tar:///Users/samuelsimoes/.npm/fluxo/0.0.17/package
+48 silly lockFile 016e36d1-lsimoes-npm-fluxo-0-0-17-package tar:///Users/samuelsimoes/.npm/fluxo/0.0.17/package
+49 silly lockFile 53e51dc5-98675-0-1887982077896595-tmp-tgz tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+50 silly lockFile 53e51dc5-98675-0-1887982077896595-tmp-tgz tar:///var/folders/sj/_0ygqmmx5nqd6vhlddj_jql80000gn/T/npm-16880-YEpaFs_L/1445813298675-0.1887982077896595/tmp.tgz
+51 silly lockFile 3a52ce78- .
+52 silly lockFile 3a52ce78- .
+53 silly publish { name: 'fluxo',
+53 silly publish   version: '0.0.17',
+53 silly publish   description: 'Yet another Facebook Flux lib',
+53 silly publish   main: 'dist/fluxo.js',
+53 silly publish   repository: { type: 'git', url: 'https://github.com/fluxo-js/fluxo' },
+53 silly publish   author: { name: 'Samuel Simões', email: 'slip.cm@gmail.com' },
+53 silly publish   devDependencies:
+53 silly publish    { chai: '*',
+53 silly publish      'chai-spies': '*',
+53 silly publish      grunt: '*',
+53 silly publish      'grunt-cli': '*',
+53 silly publish      'grunt-contrib-clean': '*',
+53 silly publish      'grunt-contrib-concat': '*',
+53 silly publish      'grunt-contrib-uglify': '*',
+53 silly publish      'grunt-contrib-watch': '^0.6.1',
+53 silly publish      'grunt-include-replace': '^3.0.0',
+53 silly publish      'grunt-mocha': '*',
+53 silly publish      'grunt-settings': '*',
+53 silly publish      mocha: '*' },
+53 silly publish   scripts: { test: 'grunt test' },
+53 silly publish   readme: '#Fluxo [![Build Status](https://travis-ci.org/samuelsimoes/fluxo.svg?branch=master)](https://travis-ci.org/samuelsimoes/fluxo)\n\nFluxo is a simple, lightweight (~300LOC) and dependency free data infrastructure lib based\non [Facebook Flux](https://facebook.github.io/flux) and [Backbone.js](http://backbonejs.org). It\'s compatible with [React.js](https://facebook.github.io/react), but you can use\nwith whatever you want to the view/component layer.\n\n:warning: **This project is under development and experimental phase and because\nof this many things may change.**\n\n:ballot_box_with_check: Read the **[Getting started](https://github.com/samuelsimoes/fluxo/wiki/Getting-Started)**.\n\n:ballot_box_with_check: Check the **[TodoMVC implementation](https://github.com/samuelsimoes/todomvc-fluxo)** with Fluxo.\n\n##How to use\n\n:warning: Before I highly recomend you to read about the [React.js](https://facebook.github.io/react) and [Facebook Flux](https://facebook.github.io/flux) to a better understanding.\n\n###Installation\n\nInstall with bower and include on your page or use some module loader.\n```\n$ bower install --save fluxo\n```\n\n##Actions\n\nThe action handlers are where you should put the _mediation code_. Example: when\nour user click on a button on our view that should give a new name to our presented\nperson, this click event will invoke an action on the action layer that will\nmediate the intended result.\n\nFluxo hasn\'t any opinion or something like "action creator wrapper". We really\nbelieve that simple javascript objects can does this job quite well.\n\n```javascript\nvar CommentActionHandler = {\n  initialize: function (comment) {\n    this.comment = comment;\n  },\n\n  update: function (content) {\n    this.comment.setContent(content);\n  }\n};\n\nvar store = new Fluxo.ObjectStore.create({ data: { content: "Hello!" } });\n\nCommentActionHandler.initialize(store);\n\nCommentActionHandler.update("Hello world!");\n```\n\n## Stores\n\nYou hold the state of your Fluxo app on the store, the stores should emit an event\nto the component/view layer when something change and then your view layer renders the\nchanges.\n\nOn Fluxo, the store is a javascript literal object that inherits some conveniences\nfrom Fluxo.ObjectStore (attributes parser, computed properties and things like this).\n\nYou can create stores like this:\n\n```javascript\n// Create a comment store object that inherits the Fluxo.ObjectStore capacities\nvar comment = Fluxo.ObjectStore.create({\n  data: { content: "This is my comment"  },\n\n  myStoreMethod: function() {\n    // ...\n  }\n});\n```\n\nIf you need update your data, use the `Fluxo.ObjectStore#set` method.\n\n```javascript\ncomment.set({ content: "This is my edited comment" });\n```\n\nAll your data lives on your store\'s `data` property.\n\n```javascript\ncomment.data.content // => "This is my comment"\n```\n\n##CollectionStore\n\nIf you need deal with multiple stores you can use a javascript array with your\nstores, using Fluxo.CollectionStore you can give some habilites to your array,\nlike emit change signal when some children store change, compute changes on children\nstores and more.\n\nYou create collection stores like this:\n\n```javascript\nvar myComments = Fluxo.CollectionStore.create({\n  stores: [{ content: "children content" }],\n\n  store: {\n    childrenStoreMethod: function () {}\n  }\n});\n```\n\nNote: Fluxo.CollectionStore has the same methods of the Fluxo.ObjectStore, so you\ncan use methods like `set` of Fluxo.ObjectStore.\n\nIf you want to keep the stores always sorted, you may define a sort method:\n\n```javascript\nvar myComments = Fluxo.CollectionStore.create({\n  stores: [{ content: "children content", at: (new Date()) }],\n\n  sort: function(a, b) {\n    return a.data.at - b.data.at;\n  }\n});\n```\n\n##Using with React.js\n\nFluxo is view layer agnostic, you can use whatever you want, but we highly recommend\nthe React.js. If you choose the React.js we already created a way to connect your\nstores on your React.js components.\n\n**Read more: https://github.com/samuelsimoes/fluxo-react-connect-stores**\n\n###And more...\n\n* [Store\'s Computed Properties](https://github.com/samuelsimoes/fluxo/wiki/Store\'s-Computed-Properties)\n* [Store\'s Events](https://github.com/samuelsimoes/fluxo/wiki/Store\'s-Events)\n\n-----------------------------------------\n\n**Samuel Simões ~ [@samuelsimoes](https://twitter.com/samuelsimoes) ~ [samuelsimoes.com](http://samuelsimoes.com)**\n',
+53 silly publish   readmeFilename: 'README.md',
+53 silly publish   bugs: { url: 'https://github.com/fluxo-js/fluxo/issues' },
+53 silly publish   homepage: 'https://github.com/fluxo-js/fluxo',
+53 silly publish   _id: 'fluxo@0.0.17',
+53 silly publish   _shasum: '787444f220e9ea6bad91e4564b925a8be927c6da',
+53 silly publish   _from: '.' }
+54 verbose url raw fluxo
+55 verbose url resolving [ 'https://registry.npmjs.org/', './fluxo' ]
+56 verbose url resolved https://registry.npmjs.org/fluxo
+57 info trying registry request attempt 1 at 20:48:18
+58 http PUT https://registry.npmjs.org/fluxo
+59 http 403 https://registry.npmjs.org/fluxo
+60 verbose headers { 'content-type': 'application/json',
+60 verbose headers   'cache-control': 'max-age=60',
+60 verbose headers   'content-length': '97',
+60 verbose headers   'accept-ranges': 'bytes',
+60 verbose headers   date: 'Sun, 25 Oct 2015 22:48:20 GMT',
+60 verbose headers   via: '1.1 varnish',
+60 verbose headers   connection: 'keep-alive',
+60 verbose headers   'x-served-by': 'cache-jfk1024-JFK',
+60 verbose headers   'x-cache': 'MISS',
+60 verbose headers   'x-cache-hits': '0',
+60 verbose headers   'x-timer': 'S1445813299.700038,VS0,VE961' }
+61 error publish Failed PUT 403
+62 error Error: You do not have permission to publish 'fluxo'. Are you logged in as the correct user? : fluxo
+62 error     at RegClient.<anonymous> (/usr/local/share/npm/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:273:14)
+62 error     at Request._callback (/usr/local/share/npm/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:211:65)
+62 error     at Request.self.callback (/usr/local/share/npm/lib/node_modules/npm/node_modules/request/request.js:123:22)
+62 error     at Request.EventEmitter.emit (events.js:98:17)
+62 error     at Request.<anonymous> (/usr/local/share/npm/lib/node_modules/npm/node_modules/request/request.js:893:14)
+62 error     at Request.EventEmitter.emit (events.js:117:20)
+62 error     at IncomingMessage.<anonymous> (/usr/local/share/npm/lib/node_modules/npm/node_modules/request/request.js:844:12)
+62 error     at IncomingMessage.EventEmitter.emit (events.js:117:20)
+62 error     at _stream_readable.js:919:16
+62 error     at process._tickCallback (node.js:419:13)
+63 error If you need help, you may report this *entire* log,
+63 error including the npm and node versions, at:
+63 error     <http://github.com/npm/npm/issues>
+64 error System Darwin 13.4.0
+65 error command "node" "/usr/local/share/npm/bin/npm" "publish"
+66 error cwd /Users/samuelsimoes/code/fluxo-js
+67 error node -v v0.10.28
+68 error npm -v 1.4.10
+69 verbose exit [ 1, true ]
