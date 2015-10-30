@@ -21,15 +21,19 @@ module.exports = function (grunt) {
     ' <%= pkg.author.url %> */'
   );
 
-  config.set("clean.dist.src", ["dist"]);
-
-  config.set("concat.dist", {
-    src: ["dist/fluxo.js"],
-    dest: "dist/fluxo.js",
+  config.set("browserify.dist", {
+    files: {
+      "dist/fluxo.js": ["src/fluxo.js"]
+    },
     options: {
-      banner: "<%= meta.banner %>\n",
+      banner: "<%= meta.banner %>",
+      browserifyOptions: {
+        standalone: "Fluxo"
+      }
     }
   });
+
+  config.set("clean.dist.src", ["dist"]);
 
   config.set("uglify.dist", {
     options: {
@@ -37,7 +41,6 @@ module.exports = function (grunt) {
       sourceMap: true,
       sourceMapName: "dist/fluxo.map"
     },
-
     files: {
       "dist/fluxo.min.js": "dist/fluxo.js"
     }
@@ -48,21 +51,15 @@ module.exports = function (grunt) {
     tasks: ["build"]
   });
 
-  config.set("includereplace.dist", {
-    src: "src/fluxo.js",
-    dest: "dist/fluxo.js"
-  });
-
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-mocha");
-  grunt.loadNpmTasks("grunt-include-replace");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks("grunt-browserify");
 
   config.registerTask("build", [
     "clean:dist",
-    "includereplace:dist",
-    "concat:dist",
+    "browserify:dist",
     "uglify:dist"
   ]);
 

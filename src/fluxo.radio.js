@@ -1,4 +1,4 @@
-Fluxo.Radio = {
+module.exports = {
   callbackIds: 1,
 
   events: {},

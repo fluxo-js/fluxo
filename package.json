@@ -15,6 +15,7 @@
     "chai": "*",
     "chai-spies": "*",
     "grunt": "*",
+    "grunt-browserify": "^4.0.1",
     "grunt-cli": "*",
     "grunt-contrib-clean": "*",
     "grunt-contrib-concat": "*",

@@ -1,8 +1,10 @@
+var ObjectStore = require("./fluxo.object_store.js");
+
 /** @namespace Fluxo */
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
  */
-Fluxo.CollectionStore = Fluxo.ObjectStore.create({
+module.exports = ObjectStore.create({
 /** @lends Fluxo.CollectionStore */
   setup: function() {
     var previousStores = this.stores || [];
@@ -13,7 +15,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
 
     this.createDelegateMethods();
 
-    Fluxo.ObjectStore.setup.apply(this);
+    ObjectStore.setup.apply(this);
   },
 
   store: {},
@@ -107,7 +109,7 @@ Fluxo.CollectionStore = Fluxo.ObjectStore.create({
    */
   addStore: function(store) {
     if (store._fluxo !== true) {
-      store = Fluxo.ObjectStore.create(this.store, { data: store });
+      store = ObjectStore.create(this.store, { data: store });
     }
 
     var alreadyAddedStore = this.find(store.data.id);

@@ -1,6 +1,11 @@
-Fluxo.ObjectStore = {
+var Radio = require("./fluxo.radio.js"),
+    extend = require("./fluxo.extend.js");
+
+var storesUUID = 1;
+
+module.exports = {
   setup: function () {
-    this.cid = "FS:" + Fluxo.storesUUID++;
+    this.cid = "FS:" + storesUUID++;
 
     this._fluxo = true;
 
@@ -22,7 +27,7 @@ Fluxo.ObjectStore = {
 
     extensions.unshift({}, this);
 
-    var extension = Fluxo.extend.apply(null, extensions);
+    var extension = extend.apply(null, extensions);
 
     extension.setup.apply(extension);
 
@@ -35,7 +40,7 @@ Fluxo.ObjectStore = {
     for (var i = 0, l = events.length; i < l; i++) {
       var eventName = events[i],
           changeEventToken = (this.cid + ":" + eventName),
-          canceler = Fluxo.Radio.subscribe(changeEventToken, callback.bind(this));
+          canceler = Radio.subscribe(changeEventToken, callback.bind(this));
 
       cancelers.push(canceler);
     }
@@ -63,13 +68,13 @@ Fluxo.ObjectStore = {
     var changeChannel = (this.cid + ":" + eventName),
         args = Array.prototype.slice.call(arguments, 1);
 
-    Fluxo.Radio.publish.apply(
-      Fluxo.Radio,
+    Radio.publish.apply(
+      Radio,
       [changeChannel, this].concat(args)
     );
 
-    Fluxo.Radio.publish.apply(
-      Fluxo.Radio,
+    Radio.publish.apply(
+      Radio,
       [(this.cid + ":*"), eventName, this].concat(args)
     );
   },
