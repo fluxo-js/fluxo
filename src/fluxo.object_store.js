@@ -3,34 +3,22 @@ import extend from "./fluxo.extend.js";
 
 var storesUUID = 1;
 
-export default {
-  setup: function () {
+export default class {
+  constructor (data={}) {
     this.cid = `FS:${storesUUID++}`;
-
-    this._fluxo = true;
-
-    var previousData = this.data;
 
     this.data = {};
 
-    this.set(extend(this.defaults, previousData || {}));
+    this.computed = (this.constructor.computed || {});
+
+    this.attributeParsers = (this.constructor.attributeParsers || {});
+
+    this.set({ ...this.constructor.defaults, ...data });
 
     this.registerComputed();
+  }
 
-    this.initialize();
-  },
-
-  initialize: function () {},
-
-  create: function(...extensions) {
-    let extension = extend({}, this, ...extensions);
-
-    extension.setup.call(extension);
-
-    return extension;
-  },
-
-  on: function(events, callback) {
+  on (events, callback) {
     var cancelers = [];
 
     for (var i = 0, l = events.length; i < l; i++) {
@@ -49,28 +37,24 @@ export default {
     };
 
     return aggregatedCanceler;
-  },
+  }
 
-  triggerEvents: function(eventsNames, ...args) {
+  triggerEvents (eventsNames, ...args) {
     for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
       this.triggerEvent(eventName, ...args);
     }
-  },
+  }
 
-  triggerEvent: function(eventName, ...args) {
+  triggerEvent (eventName, ...args) {
     var changeChannel = `${this.cid}:${eventName}`;
 
     Radio.publish(changeChannel, this, ...args);
 
     Radio.publish(`${this.cid}:*`, eventName, this, ...args);
-  },
+  }
 
-  computed: {},
-
-  attributeParsers: {},
-
-  registerComputed: function() {
+  registerComputed () {
     var computeValue = function(attrName) {
       var value = this[attrName].call(this);
       this.setAttribute(attrName, value);
@@ -83,9 +67,9 @@ export default {
 
       this.setAttribute(attributeName, this[attributeName].call(this));
     }
-  },
+  }
 
-  setAttribute: function(attribute, value, options) {
+  setAttribute (attribute, value, options) {
     options = options || {};
 
     if (this.data[attribute] === value) { return; }
@@ -101,9 +85,9 @@ export default {
     if (options.silentGlobalChange) { return; }
 
     this.triggerEvent("change");
-  },
+  }
 
-  unsetAttribute: function (attribute, options) {
+  unsetAttribute  (attribute, options) {
     options = options || {};
 
     delete this.data[attribute];
@@ -113,17 +97,17 @@ export default {
     if (options.silentGlobalChange) { return; }
 
     this.triggerEvent("change");
-  },
+  }
 
-  set: function(data) {
+  set (data) {
     for (var key in data) {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
 
     this.triggerEvent("change");
-  },
+  }
 
-  reset: function (data) {
+  reset  (data) {
     data = data || {};
 
     for (var key in this.data) {
@@ -137,9 +121,9 @@ export default {
     }
 
     this.triggerEvent("change");
-  },
+  }
 
-  toJSON: function() {
+  toJSON () {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;
 

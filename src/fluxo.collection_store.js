@@ -4,72 +4,70 @@ import ObjectStore from "./fluxo.object_store.js";
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
  */
-export default ObjectStore.create({
+export default class extends ObjectStore {
 /** @lends Fluxo.CollectionStore */
-  setup: function() {
-    var previousStores = this.stores || [];
+  constructor (stores=[], data={}) {
+    super(data);
+
+    this.store = this.constructor.store || ObjectStore;
 
     this.stores = [];
 
-    this.setStores(previousStores);
+    this.storesOnChangeCancelers = {};
+
+    this.childrenDelegate = (this.constructor.childrenDelegate || []);
+
+    this.setStores(stores);
 
     this.createDelegateMethods();
-
-    ObjectStore.setup.apply(this);
-  },
-
-  store: {},
-
-  storesOnChangeCancelers: {},
-
-  childrenDelegate: [],
+  }
 
   /**
    * @returns {null}
    */
-  createDelegateMethods: function() {
+  createDelegateMethods () {
     for (var i = 0, l = this.childrenDelegate.length; i < l; i++) {
       var methodName = this.childrenDelegate[i];
       this.createDelegateMethod(methodName);
     }
-  },
+  }
 
   /**
    * @param {string} method to delegate to children
    * @returns {null}
    */
-  createDelegateMethod: function(methodName) {
+  createDelegateMethod (methodName) {
     this[methodName] = function(method, id, ...args) {
       var child = this.find(id);
       child[method](...args);
     }.bind(this, methodName);
-  },
+  }
 
   /**
    * @param {Object[]} stores data
    * @returns {null}
    */
-  addStores: function(stores) {
+  addStores (stores) {
     for (var i = 0, l = stores.length; i < l; i++) {
       var store = stores[i];
       this.addStore(store);
     }
-  },
+  }
 
   /**
    * @param {Object[]} stores data
    * @returns {null}
    */
-  resetStores: function(stores) {
+  resetStores (stores) {
     this.removeAll();
     this.addStores(stores);
-  },
+  }
 
   /**
    * @returns {null}
    * @instance
    */
-  removeAll: function() {
+  removeAll () {
     for (var i = (this.stores.length - 1), l = 0; i >= l; i--) {
       var store = this.stores[i];
       this.removeListenersOn(store);
@@ -78,7 +76,7 @@ export default ObjectStore.create({
     this.stores = [];
 
     this.triggerEvents(["remove", "change"]);
-  },
+  }
 
   /**
    * This methods add the missing objects and updates the existing stores.
@@ -87,7 +85,7 @@ export default ObjectStore.create({
    * @returns undefined
    * @instance
    */
-  setStores: function(data) {
+  setStores (data) {
     for (var i = 0, l = data.length; i < l; i++) {
       var storeData = data[i],
           alreadyAddedStore = this.find(storeData.id || storeData.cid);
@@ -98,16 +96,16 @@ export default ObjectStore.create({
         this.addStore(storeData);
       }
     }
-  },
+  }
 
   /**
    * @param {Object} store data
    * @returns {Object}
    * @instance
    */
-  addStore: function(store) {
-    if (store._fluxo !== true) {
-      store = ObjectStore.create(this.store, { data: store });
+  addStore (store) {
+    if (!(store instanceof this.store)) {
+      store = new this.store(store);
     }
 
     var alreadyAddedStore = this.find(store.data.id);
@@ -131,14 +129,14 @@ export default ObjectStore.create({
     this.triggerEvents(["add", "change"]);
 
     return store;
-  },
+  }
 
   /**
    * @param {number} storeID
    * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
-  find: function (storeID) {
+  find  (storeID) {
     var foundStore;
 
     if (storeID) {
@@ -156,23 +154,23 @@ export default ObjectStore.create({
     }
 
     return foundStore;
-  },
+  }
 
   /**
    * @param {Object} criteria
    * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
-  findWhere: function(criteria) {
+  findWhere (criteria) {
     return this.where(criteria, true)[0];
-  },
+  }
 
   /**
    * @param {Object} criteria
    * @returns {Fluxo.ObjectStore[]} - the found flux stores or empty array
    * @instance
    */
-  where: function(criteria, stopOnFirstMatch) {
+  where (criteria, stopOnFirstMatch) {
     var foundStores = [];
 
     if (!criteria) { return []; }
@@ -198,29 +196,29 @@ export default ObjectStore.create({
     }
 
     return foundStores;
-  },
+  }
 
   /**
    * @returns {null}
    * @instance
    */
-  removeListenersOn: function(store) {
+  removeListenersOn (store) {
     this.storesOnChangeCancelers[store.cid].call();
     delete this.storesOnChangeCancelers[store.cid];
-  },
+  }
 
   /**
    * @param {Fluxo.ObjectStore} store - the store to remove
    * @returns {null}
    * @instance
    */
-  remove: function(store) {
+  remove (store) {
     this.removeListenersOn(store);
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
     this.triggerEvents(["remove", "change"]);
-  },
+  }
 
   /**
    * It returns an array with the result of toJSON method invoked
@@ -230,7 +228,7 @@ export default ObjectStore.create({
    *
    * @instance
    */
-  storesToJSON: function() {
+  storesToJSON () {
     var collectionData = [];
 
     for (var i = 0, l = this.stores.length; i < l; i++) {
@@ -239,7 +237,7 @@ export default ObjectStore.create({
     }
 
     return collectionData;
-  },
+  }
 
   /**
    * It returns a JSON with two keys. The first, "data", is the
@@ -255,7 +253,7 @@ export default ObjectStore.create({
    *
    * @instance
    */
-  toJSON: function() {
+  toJSON () {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;
 
@@ -264,4 +262,4 @@ export default ObjectStore.create({
       stores: this.storesToJSON()
     };
   }
-});
+}
