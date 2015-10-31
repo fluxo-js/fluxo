@@ -26,6 +26,7 @@ module.exports = function (grunt) {
       "dist/fluxo.js": ["src/fluxo.js"]
     },
     options: {
+      transform: ["babelify"],
       banner: "<%= meta.banner %>",
       browserifyOptions: {
         standalone: "Fluxo"

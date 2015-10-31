@@ -1,4 +1,4 @@
-module.exports = function(toExtend) {
+export default function(toExtend) {
   toExtend = toExtend || {};
 
   var extensions = Array.prototype.slice.call(arguments, 1);

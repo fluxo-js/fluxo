@@ -1,10 +1,10 @@
-var ObjectStore = require("./fluxo.object_store.js");
+import ObjectStore from "./fluxo.object_store.js";
 
 /** @namespace Fluxo */
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
  */
-module.exports = ObjectStore.create({
+export default ObjectStore.create({
 /** @lends Fluxo.CollectionStore */
   setup: function() {
     var previousStores = this.stores || [];

@@ -1,14 +1,24 @@
 /*! fluxo-js v0.0.17 | (c) 2014, 2015 Samuel Simões |  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Fluxo = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var ObjectStore = require("./fluxo.object_store.js");
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _fluxoObject_storeJs = require("./fluxo.object_store.js");
+
+var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
 
 /** @namespace Fluxo */
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
  */
-module.exports = ObjectStore.create({
-/** @lends Fluxo.CollectionStore */
-  setup: function() {
+exports["default"] = _fluxoObject_storeJs2["default"].create({
+  /** @lends Fluxo.CollectionStore */
+  setup: function setup() {
     var previousStores = this.stores || [];
 
     this.stores = [];
@@ -17,7 +27,7 @@ module.exports = ObjectStore.create({
 
     this.createDelegateMethods();
 
-    ObjectStore.setup.apply(this);
+    _fluxoObject_storeJs2["default"].setup.apply(this);
   },
 
   store: {},
@@ -29,7 +39,7 @@ module.exports = ObjectStore.create({
   /**
    * @returns {null}
    */
-  createDelegateMethods: function() {
+  createDelegateMethods: function createDelegateMethods() {
     for (var i = 0, l = this.childrenDelegate.length; i < l; i++) {
       var methodName = this.childrenDelegate[i];
       this.createDelegateMethod(methodName);
@@ -40,20 +50,20 @@ module.exports = ObjectStore.create({
    * @param {string} method to delegate to children
    * @returns {null}
    */
-  createDelegateMethod: function(methodName) {
-    this[methodName] = function(method, id) {
+  createDelegateMethod: function createDelegateMethod(methodName) {
+    this[methodName] = (function (method, id) {
       var args = Array.prototype.slice.call(arguments, 2),
           child = this.find(id);
 
       child[method].apply(child, args);
-    }.bind(this, methodName);
+    }).bind(this, methodName);
   },
 
   /**
    * @param {Object[]} stores data
    * @returns {null}
    */
-  addStores: function(stores) {
+  addStores: function addStores(stores) {
     for (var i = 0, l = stores.length; i < l; i++) {
       var store = stores[i];
       this.addStore(store);
@@ -64,7 +74,7 @@ module.exports = ObjectStore.create({
    * @param {Object[]} stores data
    * @returns {null}
    */
-  resetStores: function(stores) {
+  resetStores: function resetStores(stores) {
     this.removeAll();
     this.addStores(stores);
   },
@@ -73,8 +83,8 @@ module.exports = ObjectStore.create({
    * @returns {null}
    * @instance
    */
-  removeAll: function() {
-    for (var i = (this.stores.length - 1), l = 0; i >= l; i--) {
+  removeAll: function removeAll() {
+    for (var i = this.stores.length - 1, l = 0; i >= l; i--) {
       var store = this.stores[i];
       this.removeListenersOn(store);
     }
@@ -91,7 +101,7 @@ module.exports = ObjectStore.create({
    * @returns undefined
    * @instance
    */
-  setStores: function(data) {
+  setStores: function setStores(data) {
     for (var i = 0, l = data.length; i < l; i++) {
       var storeData = data[i],
           alreadyAddedStore = this.find(storeData.id || storeData.cid);
@@ -109,18 +119,20 @@ module.exports = ObjectStore.create({
    * @returns {Object}
    * @instance
    */
-  addStore: function(store) {
+  addStore: function addStore(store) {
     if (store._fluxo !== true) {
-      store = ObjectStore.create(this.store, { data: store });
+      store = _fluxoObject_storeJs2["default"].create(this.store, { data: store });
     }
 
     var alreadyAddedStore = this.find(store.data.id);
 
-    if (alreadyAddedStore) { return alreadyAddedStore; }
+    if (alreadyAddedStore) {
+      return alreadyAddedStore;
+    }
 
     this.stores.push(store);
 
-    var onStoreEvent = function(eventName) {
+    var onStoreEvent = function onStoreEvent(eventName) {
       var args = Array.prototype.slice.call(arguments, 1);
 
       args.unshift("stores:" + eventName);
@@ -128,8 +140,7 @@ module.exports = ObjectStore.create({
       this.triggerEvent.apply(this, args);
     };
 
-    this.storesOnChangeCancelers[store.cid] =
-      store.on(["*"], onStoreEvent.bind(this));
+    this.storesOnChangeCancelers[store.cid] = store.on(["*"], onStoreEvent.bind(this));
 
     if (this.sort) {
       this.stores.sort(this.sort);
@@ -145,14 +156,14 @@ module.exports = ObjectStore.create({
    * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
-  find: function (storeID) {
+  find: function find(storeID) {
     var foundStore;
 
     if (storeID) {
       foundStore = this.findWhere({ id: storeID });
 
       if (!foundStore) {
-        this.stores.some(function(store) {
+        this.stores.some(function (store) {
           if (store.cid === storeID) {
             foundStore = store;
 
@@ -170,7 +181,7 @@ module.exports = ObjectStore.create({
    * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
-  findWhere: function(criteria) {
+  findWhere: function findWhere(criteria) {
     return this.where(criteria, true)[0];
   },
 
@@ -179,10 +190,12 @@ module.exports = ObjectStore.create({
    * @returns {Fluxo.ObjectStore[]} - the found flux stores or empty array
    * @instance
    */
-  where: function(criteria, stopOnFirstMatch) {
+  where: function where(criteria, stopOnFirstMatch) {
     var foundStores = [];
 
-    if (!criteria) { return []; }
+    if (!criteria) {
+      return [];
+    }
 
     for (var i = 0, l = this.stores.length; i < l; i++) {
       var comparedStore = this.stores[i],
@@ -211,7 +224,7 @@ module.exports = ObjectStore.create({
    * @returns {null}
    * @instance
    */
-  removeListenersOn: function(store) {
+  removeListenersOn: function removeListenersOn(store) {
     this.storesOnChangeCancelers[store.cid].call();
     delete this.storesOnChangeCancelers[store.cid];
   },
@@ -221,7 +234,7 @@ module.exports = ObjectStore.create({
    * @returns {null}
    * @instance
    */
-  remove: function(store) {
+  remove: function remove(store) {
     this.removeListenersOn(store);
 
     this.stores.splice(this.stores.indexOf(store), 1);
@@ -237,7 +250,7 @@ module.exports = ObjectStore.create({
    *
    * @instance
    */
-  storesToJSON: function() {
+  storesToJSON: function storesToJSON() {
     var collectionData = [];
 
     for (var i = 0, l = this.stores.length; i < l; i++) {
@@ -262,7 +275,7 @@ module.exports = ObjectStore.create({
    *
    * @instance
    */
-  toJSON: function() {
+  toJSON: function toJSON() {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;
 
@@ -272,14 +285,21 @@ module.exports = ObjectStore.create({
     };
   }
 });
+module.exports = exports["default"];
 
 },{"./fluxo.object_store.js":4}],2:[function(require,module,exports){
-module.exports = function(toExtend) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function (toExtend) {
   toExtend = toExtend || {};
 
   var extensions = Array.prototype.slice.call(arguments, 1);
 
-  for (var i = 0, l = extensions.length; i < l; i ++) {
+  for (var i = 0, l = extensions.length; i < l; i++) {
     var extension = extensions[i];
 
     for (var extensionProperty in extension) {
@@ -290,27 +310,59 @@ module.exports = function(toExtend) {
   return toExtend;
 };
 
-},{}],3:[function(require,module,exports){
-var ObjectStore = require("./fluxo.object_store.js"),
-    CollectionStore = require("./fluxo.collection_store.js"),
-    Extend = require("./fluxo.extend.js"),
-    Radio = require("./fluxo.radio.js");
+;
+module.exports = exports["default"];
 
-module.exports = {
-  ObjectStore: ObjectStore,
-  CollectionStore: CollectionStore,
-  Extend: Extend,
-  Radio: Radio
+},{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _fluxoObject_storeJs = require("./fluxo.object_store.js");
+
+var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
+
+var _fluxoCollection_storeJs = require("./fluxo.collection_store.js");
+
+var _fluxoCollection_storeJs2 = _interopRequireDefault(_fluxoCollection_storeJs);
+
+var _fluxoExtendJs = require("./fluxo.extend.js");
+
+var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
+
+var _fluxoRadioJs = require("./fluxo.radio.js");
+
+var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
+
+exports["default"] = {
+  ObjectStore: _fluxoObject_storeJs2["default"],
+  CollectionStore: _fluxoCollection_storeJs2["default"],
+  Extend: _fluxoExtendJs2["default"],
+  Radio: _fluxoRadioJs2["default"]
 };
+module.exports = exports["default"];
 
 },{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(require,module,exports){
-var Radio = require("./fluxo.radio.js"),
-    extend = require("./fluxo.extend.js");
+"use strict";
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _fluxoRadioJs = require("./fluxo.radio.js");
+
+var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
+
+var _fluxoExtendJs = require("./fluxo.extend.js");
+
+var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
 var storesUUID = 1;
 
 module.exports = {
-  setup: function () {
+  setup: function setup() {
     this.cid = "FS:" + storesUUID++;
 
     this._fluxo = true;
@@ -326,32 +378,32 @@ module.exports = {
     this.initialize();
   },
 
-  initialize: function () {},
+  initialize: function initialize() {},
 
-  create: function() {
+  create: function create() {
     var extensions = Array.prototype.slice.call(arguments);
 
     extensions.unshift({}, this);
 
-    var extension = extend.apply(null, extensions);
+    var extension = _fluxoExtendJs2["default"].apply(null, extensions);
 
     extension.setup.apply(extension);
 
     return extension;
   },
 
-  on: function(events, callback) {
+  on: function on(events, callback) {
     var cancelers = [];
 
     for (var i = 0, l = events.length; i < l; i++) {
       var eventName = events[i],
-          changeEventToken = (this.cid + ":" + eventName),
-          canceler = Radio.subscribe(changeEventToken, callback.bind(this));
+          changeEventToken = this.cid + ":" + eventName,
+          canceler = _fluxoRadioJs2["default"].subscribe(changeEventToken, callback.bind(this));
 
       cancelers.push(canceler);
     }
 
-    var aggregatedCanceler = function() {
+    var aggregatedCanceler = function aggregatedCanceler() {
       for (var i = 0, l = cancelers.length; i < l; i++) {
         var canceler = cancelers[i];
         canceler.call();
@@ -361,7 +413,7 @@ module.exports = {
     return aggregatedCanceler;
   },
 
-  triggerEvents: function(eventsNames) {
+  triggerEvents: function triggerEvents(eventsNames) {
     var args = Array.prototype.slice.call(arguments, 1);
 
     for (var i = 0, l = eventsNames.length; i < l; i++) {
@@ -370,27 +422,21 @@ module.exports = {
     }
   },
 
-  triggerEvent: function(eventName) {
-    var changeChannel = (this.cid + ":" + eventName),
+  triggerEvent: function triggerEvent(eventName) {
+    var changeChannel = this.cid + ":" + eventName,
         args = Array.prototype.slice.call(arguments, 1);
 
-    Radio.publish.apply(
-      Radio,
-      [changeChannel, this].concat(args)
-    );
+    _fluxoRadioJs2["default"].publish.apply(_fluxoRadioJs2["default"], [changeChannel, this].concat(args));
 
-    Radio.publish.apply(
-      Radio,
-      [(this.cid + ":*"), eventName, this].concat(args)
-    );
+    _fluxoRadioJs2["default"].publish.apply(_fluxoRadioJs2["default"], [this.cid + ":*", eventName, this].concat(args));
   },
 
   computed: {},
 
-  attributeParsers: function() {},
+  attributeParsers: {},
 
-  registerComputed: function() {
-    var computeValue = function(attrName) {
+  registerComputed: function registerComputed() {
+    var computeValue = function computeValue(attrName) {
       var value = this[attrName].call(this);
       this.setAttribute(attrName, value);
     };
@@ -404,10 +450,12 @@ module.exports = {
     }
   },
 
-  setAttribute: function(attribute, value, options) {
+  setAttribute: function setAttribute(attribute, value, options) {
     options = options || {};
 
-    if (this.data[attribute] === value) { return; }
+    if (this.data[attribute] === value) {
+      return;
+    }
 
     if (this.attributeParsers[attribute]) {
       value = this.attributeParsers[attribute](value);
@@ -415,26 +463,30 @@ module.exports = {
 
     this.data[attribute] = value;
 
-    this.triggerEvent(("change:" + attribute));
+    this.triggerEvent("change:" + attribute);
 
-    if (options.silentGlobalChange) { return; }
+    if (options.silentGlobalChange) {
+      return;
+    }
 
     this.triggerEvent("change");
   },
 
-  unsetAttribute: function (attribute, options) {
+  unsetAttribute: function unsetAttribute(attribute, options) {
     options = options || {};
 
     delete this.data[attribute];
 
-    this.triggerEvent(("change:" + attribute));
+    this.triggerEvent("change:" + attribute);
 
-    if (options.silentGlobalChange) { return; }
+    if (options.silentGlobalChange) {
+      return;
+    }
 
     this.triggerEvent("change");
   },
 
-  set: function(data) {
+  set: function set(data) {
     for (var key in data) {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
@@ -442,7 +494,7 @@ module.exports = {
     this.triggerEvent("change");
   },
 
-  reset: function (data) {
+  reset: function reset(data) {
     data = data || {};
 
     for (var key in this.data) {
@@ -458,7 +510,7 @@ module.exports = {
     this.triggerEvent("change");
   },
 
-  toJSON: function() {
+  toJSON: function toJSON() {
     var data = JSON.parse(JSON.stringify(this.data));
     data.cid = this.cid;
 
@@ -467,12 +519,17 @@ module.exports = {
 };
 
 },{"./fluxo.extend.js":2,"./fluxo.radio.js":5}],5:[function(require,module,exports){
-module.exports = {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = {
   callbackIds: 1,
 
   events: {},
 
-  subscribe: function(eventName, callback) {
+  subscribe: function subscribe(eventName, callback) {
     var subscriptionId = this.callbackIds++;
 
     this.events[eventName] = this.events[eventName] || {};
@@ -481,12 +538,12 @@ module.exports = {
     return this.removeSubscription.bind(this, eventName, subscriptionId);
   },
 
-  removeSubscription: function(eventName, subscriptionId) {
+  removeSubscription: function removeSubscription(eventName, subscriptionId) {
     this.events[eventName] = this.events[eventName] || {};
     delete this.events[eventName][subscriptionId];
   },
 
-  publish: function(eventName) {
+  publish: function publish(eventName) {
     var callbacks = this.events[eventName] || {};
 
     for (var subscriptionId in callbacks) {
@@ -494,6 +551,7 @@ module.exports = {
     }
   }
 };
+module.exports = exports["default"];
 
 },{}]},{},[3])(3)
 });

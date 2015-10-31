@@ -1,5 +1,5 @@
-var Radio = require("./fluxo.radio.js"),
-    extend = require("./fluxo.extend.js");
+import Radio from "./fluxo.radio.js";
+import extend from "./fluxo.extend.js";
 
 var storesUUID = 1;
 
@@ -81,7 +81,7 @@ module.exports = {
 
   computed: {},
 
-  attributeParsers: function() {},
+  attributeParsers: {},
 
   registerComputed: function() {
     var computeValue = function(attrName) {

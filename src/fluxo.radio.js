@@ -1,4 +1,4 @@
-module.exports = {
+ export default {
   callbackIds: 1,
 
   events: {},
