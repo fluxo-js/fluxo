@@ -35,7 +35,7 @@ module.exports = {
 
     for (var i = 0, l = events.length; i < l; i++) {
       var eventName = events[i],
-          changeEventToken = (this.cid + ":" + eventName),
+          changeEventToken = `${this.cid}:${eventName}`,
           canceler = Radio.subscribe(changeEventToken, callback.bind(this));
 
       cancelers.push(canceler);
@@ -59,11 +59,11 @@ module.exports = {
   },
 
   triggerEvent: function(eventName, ...args) {
-    var changeChannel = (this.cid + ":" + eventName);
+    var changeChannel = `${this.cid}:${eventName}`;
 
     Radio.publish(changeChannel, this, ...args);
 
-    Radio.publish((this.cid + ":*"), eventName, this, ...args);
+    Radio.publish(`${this.cid}:*`, eventName, this, ...args);
   },
 
   computed: {},
