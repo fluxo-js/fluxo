@@ -355,6 +355,10 @@ module.exports = exports["default"];
 },{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var _fluxoRadioJs = require("./fluxo.radio.js");
@@ -367,7 +371,7 @@ var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
 var storesUUID = 1;
 
-module.exports = {
+exports["default"] = {
   setup: function setup() {
     this.cid = "FS:" + storesUUID++;
 
@@ -528,6 +532,7 @@ module.exports = {
     return data;
   }
 };
+module.exports = exports["default"];
 
 },{"./fluxo.extend.js":2,"./fluxo.radio.js":5}],5:[function(require,module,exports){
 "use strict";

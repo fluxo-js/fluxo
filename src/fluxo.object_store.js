@@ -3,7 +3,7 @@ import extend from "./fluxo.extend.js";
 
 var storesUUID = 1;
 
-module.exports = {
+export default {
   setup: function () {
     this.cid = "FS:" + storesUUID++;
 
