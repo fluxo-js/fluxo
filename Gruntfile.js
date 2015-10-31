@@ -18,7 +18,7 @@ module.exports = function (grunt) {
   config.set("meta.banner",
     '/*! <%= pkg.name %> v<%= pkg.version %> | ' +
     '(c) 2014, <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> |' +
-    ' <%= pkg.author.url %> */'
+    ' <%= pkg.repository.url %> */'
   );
 
   config.set("browserify.dist", {
