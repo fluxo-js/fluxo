@@ -22,14 +22,10 @@ module.exports = {
 
   initialize: function () {},
 
-  create: function() {
-    var extensions = Array.prototype.slice.call(arguments);
+  create: function(...extensions) {
+    let extension = extend({}, this, ...extensions);
 
-    extensions.unshift({}, this);
-
-    var extension = extend.apply(null, extensions);
-
-    extension.setup.apply(extension);
+    extension.setup.call(extension);
 
     return extension;
   },
@@ -55,28 +51,19 @@ module.exports = {
     return aggregatedCanceler;
   },
 
-  triggerEvents: function(eventsNames) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
+  triggerEvents: function(eventsNames, ...args) {
     for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
-      this.triggerEvent.apply(this, [eventName].concat(args));
+      this.triggerEvent(eventName, ...args);
     }
   },
 
-  triggerEvent: function(eventName) {
-    var changeChannel = (this.cid + ":" + eventName),
-        args = Array.prototype.slice.call(arguments, 1);
+  triggerEvent: function(eventName, ...args) {
+    var changeChannel = (this.cid + ":" + eventName);
 
-    Radio.publish.apply(
-      Radio,
-      [changeChannel, this].concat(args)
-    );
+    Radio.publish(changeChannel, this, ...args);
 
-    Radio.publish.apply(
-      Radio,
-      [(this.cid + ":*"), eventName, this].concat(args)
-    );
+    Radio.publish((this.cid + ":*"), eventName, this, ...args);
   },
 
   computed: {},

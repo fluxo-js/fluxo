@@ -17,11 +17,11 @@
     delete this.events[eventName][subscriptionId];
   },
 
-  publish: function(eventName) {
+  publish: function(eventName, ...args) {
     var callbacks = this.events[eventName] || {};
 
     for (var subscriptionId in callbacks) {
-      callbacks[subscriptionId].apply(null, Array.prototype.slice.call(arguments, 1));
+      callbacks[subscriptionId].apply(null, args);
     }
   }
 };

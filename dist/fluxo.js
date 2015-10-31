@@ -52,8 +52,11 @@ exports["default"] = _fluxoObject_storeJs2["default"].create({
    */
   createDelegateMethod: function createDelegateMethod(methodName) {
     this[methodName] = (function (method, id) {
-      var args = Array.prototype.slice.call(arguments, 2),
-          child = this.find(id);
+      var child = this.find(id);
+
+      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        args[_key - 2] = arguments[_key];
+      }
 
       child[method].apply(child, args);
     }).bind(this, methodName);
@@ -133,10 +136,11 @@ exports["default"] = _fluxoObject_storeJs2["default"].create({
     this.stores.push(store);
 
     var onStoreEvent = function onStoreEvent(eventName) {
-      var args = Array.prototype.slice.call(arguments, 1);
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
 
       args.unshift("stores:" + eventName);
-
       this.triggerEvent.apply(this, args);
     };
 
@@ -294,10 +298,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports["default"] = function (toExtend) {
-  toExtend = toExtend || {};
+exports["default"] = function () {
+  var toExtend = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-  var extensions = Array.prototype.slice.call(arguments, 1);
+  for (var _len = arguments.length, extensions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    extensions[_key - 1] = arguments[_key];
+  }
 
   for (var i = 0, l = extensions.length; i < l; i++) {
     var extension = extensions[i];
@@ -381,13 +387,13 @@ module.exports = {
   initialize: function initialize() {},
 
   create: function create() {
-    var extensions = Array.prototype.slice.call(arguments);
+    for (var _len = arguments.length, extensions = Array(_len), _key = 0; _key < _len; _key++) {
+      extensions[_key] = arguments[_key];
+    }
 
-    extensions.unshift({}, this);
+    var extension = _fluxoExtendJs2["default"].apply(undefined, [{}, this].concat(extensions));
 
-    var extension = _fluxoExtendJs2["default"].apply(null, extensions);
-
-    extension.setup.apply(extension);
+    extension.setup.call(extension);
 
     return extension;
   },
@@ -414,7 +420,9 @@ module.exports = {
   },
 
   triggerEvents: function triggerEvents(eventsNames) {
-    var args = Array.prototype.slice.call(arguments, 1);
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
 
     for (var i = 0, l = eventsNames.length; i < l; i++) {
       var eventName = eventsNames[i];
@@ -423,8 +431,11 @@ module.exports = {
   },
 
   triggerEvent: function triggerEvent(eventName) {
-    var changeChannel = this.cid + ":" + eventName,
-        args = Array.prototype.slice.call(arguments, 1);
+    var changeChannel = this.cid + ":" + eventName;
+
+    for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      args[_key3 - 1] = arguments[_key3];
+    }
 
     _fluxoRadioJs2["default"].publish.apply(_fluxoRadioJs2["default"], [changeChannel, this].concat(args));
 
@@ -546,8 +557,12 @@ exports["default"] = {
   publish: function publish(eventName) {
     var callbacks = this.events[eventName] || {};
 
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
     for (var subscriptionId in callbacks) {
-      callbacks[subscriptionId].apply(null, Array.prototype.slice.call(arguments, 1));
+      callbacks[subscriptionId].apply(null, args);
     }
   }
 };

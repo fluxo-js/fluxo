@@ -1,8 +1,4 @@
-export default function(toExtend) {
-  toExtend = toExtend || {};
-
-  var extensions = Array.prototype.slice.call(arguments, 1);
-
+export default function(toExtend={}, ...extensions) {
   for (var i = 0, l = extensions.length; i < l; i ++) {
     var extension = extensions[i];
 

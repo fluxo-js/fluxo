@@ -39,11 +39,9 @@ export default ObjectStore.create({
    * @returns {null}
    */
   createDelegateMethod: function(methodName) {
-    this[methodName] = function(method, id) {
-      var args = Array.prototype.slice.call(arguments, 2),
-          child = this.find(id);
-
-      child[method].apply(child, args);
+    this[methodName] = function(method, id, ...args) {
+      var child = this.find(id);
+      child[method](...args);
     }.bind(this, methodName);
   },
 
@@ -118,12 +116,9 @@ export default ObjectStore.create({
 
     this.stores.push(store);
 
-    var onStoreEvent = function(eventName) {
-      var args = Array.prototype.slice.call(arguments, 1);
-
+    var onStoreEvent = function(eventName, ...args) {
       args.unshift("stores:" + eventName);
-
-      this.triggerEvent.apply(this, args);
+      this.triggerEvent(...args);
     };
 
     this.storesOnChangeCancelers[store.cid] =
