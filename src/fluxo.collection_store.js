@@ -117,7 +117,7 @@ export default ObjectStore.create({
     this.stores.push(store);
 
     var onStoreEvent = function(eventName, ...args) {
-      args.unshift("stores:" + eventName);
+      args.unshift(`stores:${eventName}`);
       this.triggerEvent(...args);
     };
 

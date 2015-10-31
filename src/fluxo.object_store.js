@@ -5,7 +5,7 @@ var storesUUID = 1;
 
 export default {
   setup: function () {
-    this.cid = "FS:" + storesUUID++;
+    this.cid = `FS:${storesUUID++}`;
 
     this._fluxo = true;
 
@@ -96,7 +96,7 @@ export default {
 
     this.data[attribute] = value;
 
-    this.triggerEvent(("change:" + attribute));
+    this.triggerEvent(`change:${attribute}`);
 
     if (options.silentGlobalChange) { return; }
 
@@ -108,7 +108,7 @@ export default {
 
     delete this.data[attribute];
 
-    this.triggerEvent(("change:" + attribute));
+    this.triggerEvent(`change:${attribute}`);
 
     if (options.silentGlobalChange) { return; }
 
