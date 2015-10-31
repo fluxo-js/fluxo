@@ -34,6 +34,15 @@ module.exports = function (grunt) {
     }
   });
 
+  config.set("browserify.test", {
+    files: {
+      "spec/specs_bundle.js": ["spec/specs.js"]
+    },
+    options: {
+      transform: ["babelify"]
+    }
+  });
+
   config.set("clean.dist.src", ["dist"]);
 
   config.set("uglify.dist", {
@@ -64,5 +73,5 @@ module.exports = function (grunt) {
     "uglify:dist"
   ]);
 
-  grunt.registerTask("test", ["build", "mocha"]);
+  grunt.registerTask("test", ["build", "browserify:test", "mocha"]);
 };
