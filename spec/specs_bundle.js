@@ -280,6 +280,56 @@ describe("Fluxo.CollectionStore", function () {
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
   });
+
+  describe("subset", function () {
+    it("subset computing", function () {
+      var Collection = (function (_Fluxo$CollectionStore6) {
+        _inherits(Collection, _Fluxo$CollectionStore6);
+
+        function Collection() {
+          _classCallCheck(this, Collection);
+
+          _get(Object.getPrototypeOf(Collection.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        _createClass(Collection, [{
+          key: "online",
+          value: function online() {
+            return this.where({ online: true });
+          }
+        }]);
+
+        return Collection;
+      })(Fluxo.CollectionStore);
+
+      Collection.subset = {
+        online: ["stores:change:online"]
+      };
+
+      var onChangeCallback = chai.spy();
+
+      var store1 = new Fluxo.ObjectStore({ online: true }),
+          store2 = new Fluxo.ObjectStore({ online: false });
+
+      var collection = new Collection([store1, store2]);
+
+      collection.on(["change:online"], onChangeCallback);
+
+      expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }]);
+
+      var store3 = new Fluxo.ObjectStore({ online: true });
+
+      collection.addStore(store3);
+
+      expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }, { cid: store3.cid, online: true }]);
+
+      store3.setAttribute("online", false);
+
+      expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }]);
+
+      expect(onChangeCallback).to.have.been.called.exactly(2);
+    });
+  });
 });
 
 },{}],2:[function(require,module,exports){
