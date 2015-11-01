@@ -13,7 +13,7 @@ export default {
 
     this.data = {};
 
-    this.set(previousData || {});
+    this.set(extend(this.defaults, previousData || {}));
 
     this.registerComputed();
 

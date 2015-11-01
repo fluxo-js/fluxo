@@ -92,6 +92,18 @@ All your data lives on your store's `data` property.
 comment.data.content // => "This is my comment"
 ```
 
+You can provide default values to the store which may be overriden:
+
+```javascript
+var comment = Fluxo.ObjectStore.create({
+  defaults: { title: "This is my title", content: "This is my default comment" },
+
+  data: { content: "This is my comment" }
+});
+
+comment.data // => { title: "This is my title", content: "This is my comment" }
+```
+
 ##CollectionStore
 
 If you need deal with multiple stores you can use a javascript array with your

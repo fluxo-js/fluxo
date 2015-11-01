@@ -117,4 +117,30 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.data).to.contain.all.keys({ type: "Object" });
     expect(store.data).to.not.contain.key("name");
   });
+
+  describe("default values", function () {
+    it("initialise with default values", function () {
+      var store = Fluxo.ObjectStore.create({
+        defaults: {
+          name: "Fluxo"
+        }
+      });
+
+      expect(store.data).to.be.eql({ name: "Fluxo" });
+    });
+
+    it("allow to override the default values", function () {
+      var store = Fluxo.ObjectStore.create({
+        defaults: {
+          name: "Redux"
+        },
+
+        data: {
+          name: "Fluxo"
+        }
+      });
+
+      expect(store.data).to.be.eql({ name: "Fluxo" });
+    });
+  });
 });
