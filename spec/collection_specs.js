@@ -163,4 +163,30 @@ describe("Fluxo.CollectionStore", function () {
 
     expect(customMethod).to.have.been.called.exactly(1).with("Hello", 300);
   });
+
+  describe("default values", function () {
+    it("initialise with default values", function () {
+      var store = Fluxo.CollectionStore.create({
+        defaults: {
+          name: "Fluxo"
+        }
+      });
+
+      expect(store.data).to.be.eql({ name: "Fluxo" });
+    });
+
+    it("allow to override the default values", function () {
+      var store = Fluxo.CollectionStore.create({
+        defaults: {
+          name: "Redux"
+        },
+
+        data: {
+          name: "Fluxo"
+        }
+      });
+
+      expect(store.data).to.be.eql({ name: "Fluxo" });
+    });
+  });
 });

@@ -381,7 +381,7 @@ exports["default"] = {
 
     this.data = {};
 
-    this.set(previousData || {});
+    this.set((0, _fluxoExtendJs2["default"])(this.defaults, previousData || {}));
 
     this.registerComputed();
 
