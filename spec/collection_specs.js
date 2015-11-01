@@ -1,23 +1,23 @@
 describe("Fluxo.CollectionStore", function () {
   it("parsing store's data on collection's store object", function() {
-    var collection = Fluxo.CollectionStore.create({
-      stores: [
-        { name: "Fluxo" }
-      ],
+    class Collection extends Fluxo.CollectionStore {}
 
-      store: {
-        customMethod: function() {
-          return this.data.name + "foo";
-        }
+    class Store extends Fluxo.ObjectStore {
+      customMethod () {
+        return this.data.name + "foo";
       }
-    });
+    }
+
+    Collection.store = Store;
+
+    var collection = new Collection([{ name: "Fluxo" }]);
 
     expect(collection.stores[0].customMethod()).to.be.eql("Fluxofoo");
   });
 
   it("#cid", function() {
-    var collection1 = Fluxo.CollectionStore.create(),
-        collection2 = Fluxo.CollectionStore.create();
+    var collection1 = new Fluxo.CollectionStore(),
+        collection2 = new Fluxo.CollectionStore();
 
     expect(collection1.cid).to.exist;
     expect(collection2.cid).to.exist;
@@ -26,11 +26,10 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#addStore", function() {
-    var collection = Fluxo.CollectionStore.create(),
+    var collection = new Fluxo.CollectionStore(),
         onChangeCallback = chai.spy();
 
     collection.on(["change"], onChangeCallback);
-
 
     var store = collection.addStore({ name: "Samuel" });
 
@@ -42,7 +41,7 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("calls onChangeCallback when a child store changes", function() {
-    var collection = Fluxo.CollectionStore.create({ stores: [{ name: "Samuel" }] }),
+    var collection = new Fluxo.CollectionStore([{ name: "Samuel" }]),
         onChangeCallback = chai.spy(),
         onStoreNameChangeCallback = chai.spy();
 
@@ -55,8 +54,8 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#remove", function() {
-    var store = Fluxo.ObjectStore.create({ data: { name: "Samuel" } }),
-        collection = Fluxo.CollectionStore.create(),
+    var store = new Fluxo.ObjectStore({ name: "Samuel" }),
+        collection = new Fluxo.CollectionStore(),
         onChangeCallback = chai.spy();
 
     collection.addStore(store);
@@ -72,7 +71,7 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#removeAll", function() {
-    var collection = Fluxo.CollectionStore.create({ stores: [{ name: "Samuel" }, { name: "Fluxo" }] }),
+    var collection = new Fluxo.CollectionStore({ name: "Samuel" }, { name: "Fluxo" }),
         onChangeCallback = chai.spy();
 
     collection.on(["change"], onChangeCallback);
@@ -84,8 +83,8 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#addStores", function() {
-    var collection = Fluxo.CollectionStore.create(),
-        store = Fluxo.ObjectStore.create(),
+    var collection = new Fluxo.CollectionStore(),
+        store = new Fluxo.ObjectStore(),
         onChangeCallback = chai.spy();
 
     collection.on(["change", "add"], onChangeCallback);
@@ -97,38 +96,36 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#where", function() {
-    var collection = Fluxo.CollectionStore.create();
+    var store1 = new Fluxo.ObjectStore({ id: 20, name: "samuel" }),
+        store2 = new Fluxo.ObjectStore({ id: 21, name: "simoes" }),
+        store3 = new Fluxo.ObjectStore({ id: 22, name: "simoes" });
 
-    var store1 = Fluxo.ObjectStore.create({ data: { id: 20, name: "samuel" } }),
-        store2 = Fluxo.ObjectStore.create({ data: { id: 21, name: "simoes" } }),
-        store3 = Fluxo.ObjectStore.create({ data: { id: 22, name: "simoes" } });
-
-    collection.addStores([store1, store2, store3]);
+    var collection = new Fluxo.CollectionStore([store1, store2, store3]);
 
     expect(collection.where({ name: "simoes" })).to.be.eql([store2, store3]);
     expect(collection.findWhere({ name: "samuel" })).to.be.eql(store1);
   });
 
   it("#sort", function() {
-    var collection = Fluxo.CollectionStore.create();
+    class Collection extends Fluxo.CollectionStore {
+      sort (a, b) {
+        return a.data.price - b.data.price;
+      }
+    }
 
-    collection.sort = function(a, b) {
-      return a.data.price - b.data.price;
-    };
+    var store1 = new Fluxo.ObjectStore({ price: 100 }),
+        store2 = new Fluxo.ObjectStore({ price: 10 }),
+        store3 = new Fluxo.ObjectStore({ price: 1 });
 
-    var store1 = Fluxo.ObjectStore.create({ data: { price: 100 } }),
-        store2 = Fluxo.ObjectStore.create({ data: { price: 10 } }),
-        store3 = Fluxo.ObjectStore.create({ data: { price: 1 } });
-
-    collection.addStores([store1, store2, store3]);
+    var collection = new Collection([store1, store2, store3]);
 
     expect(collection.stores).to.be.eql([store3, store2, store1]);
   });
 
   it("#setStores", function() {
-    var collection = Fluxo.CollectionStore.create();
+    var collection = new Fluxo.CollectionStore();
 
-    var store1 = Fluxo.ObjectStore.create({ data: { id: 1, name: "Samuel" } });
+    var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel" });
 
     collection.addStore(store1);
 
@@ -139,7 +136,7 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#find", function() {
-    var collection = Fluxo.CollectionStore.create(),
+    var collection = new Fluxo.CollectionStore(),
         store = collection.addStore({ id: 1 });
 
     expect(collection.find(store.cid)).to.equal(store);
@@ -149,42 +146,46 @@ describe("Fluxo.CollectionStore", function () {
   it("children's methods delegation", function() {
     var customMethod = chai.spy();
 
-    var collection = Fluxo.CollectionStore.create({
-      stores: [{ id: 20 }],
+    class Collection extends Fluxo.CollectionStore {}
 
-      store: {
-        myCustomMethod: customMethod
-      },
+    Collection.childrenDelegate = ["customMethod"];
 
-      childrenDelegate: ["myCustomMethod"]
-    });
+    class Store extends Fluxo.ObjectStore {
+      customMethod (...args) {
+        customMethod(...args);
+      }
+    }
 
-    collection.myCustomMethod(20, "Hello", 300);
+    Collection.store = Store;
+
+    var collection = new Collection([{ id: 20 }]);
+
+    collection.customMethod(20, "Hello", 300);
 
     expect(customMethod).to.have.been.called.exactly(1).with("Hello", 300);
   });
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var store = Fluxo.CollectionStore.create({
-        defaults: {
-          name: "Fluxo"
-        }
-      });
+      class Collection extends Fluxo.CollectionStore {}
+
+      Collection.defaults = {
+        name: "Fluxo"
+      };
+
+      var store = new Collection();
 
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
 
     it("allow to override the default values", function () {
-      var store = Fluxo.CollectionStore.create({
-        defaults: {
-          name: "Redux"
-        },
+      class Collection extends Fluxo.CollectionStore {}
 
-        data: {
-          name: "Fluxo"
-        }
-      });
+      Collection.defaults = {
+        name: "Redux"
+      };
+
+      var store = new Collection([], { name: "Fluxo" });
 
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });

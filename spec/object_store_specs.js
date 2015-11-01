@@ -1,7 +1,7 @@
 describe("Fluxo.ObjectStore", function () {
   it("#cid", function() {
-    var store1 = Fluxo.ObjectStore.create(),
-        store2 = Fluxo.ObjectStore.create();
+    var store1 = new Fluxo.ObjectStore(),
+        store2 = new Fluxo.ObjectStore();
 
     expect(store1.cid).to.exist;
     expect(store2.cid).to.exist;
@@ -10,7 +10,7 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("#setAttribute", function() {
-    var store = Fluxo.ObjectStore.create(),
+    var store = new Fluxo.ObjectStore(),
         onChangeCallback = chai.spy(),
         onChangeNameCallback = chai.spy();
 
@@ -25,7 +25,7 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("#set", function() {
-    var store = Fluxo.ObjectStore.create({ data: { name: "Samuel" } }),
+    var store = new Fluxo.ObjectStore({ name: "Samuel" }),
         onChangeCallback = chai.spy(),
         onChangeNameCallback = chai.spy();
 
@@ -42,25 +42,22 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("#toJSON", function() {
-    var store = Fluxo.ObjectStore.create({ data: { name: "Samuel" } });
+    var store = new Fluxo.ObjectStore({ name: "Samuel" });
     expect(store.toJSON()).to.be.eql({ cid: store.cid, name: "Samuel" });
   });
 
   it("computed attributes", function() {
-    var store = Fluxo.ObjectStore.create({
-      data: {
-        first_name: "Samuel",
-        last_name: "Simoes"
-      },
-
-      computed: {
-        "fullName": ["change:first_name", "change:last_name"]
-      },
-
-      fullName: function() {
+    class Store extends Fluxo.ObjectStore {
+      fullName () {
         return (this.data.first_name + " " + this.data.last_name);
       }
-    });
+    }
+
+    Store.computed = {
+      fullName: ["change:first_name", "change:last_name"]
+    };
+
+    var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
 
     expect(store.data.fullName).to.be.eql("Samuel Simoes");
 
@@ -70,21 +67,21 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("attributes parser", function() {
-    var store = Fluxo.ObjectStore.create({
-      data: { count: "1" },
+    class Store extends Fluxo.ObjectStore {};
 
-      attributeParsers: {
-        count: function(value) {
-          return parseInt(value, 10);
-        }
+    Store.attributeParsers ={
+      count: function(value) {
+        return parseInt(value, 10);
       }
-    });
+    };
+
+    var store = new Store({ count: "1" });
 
     expect(store.data.count).to.be.eql(1);
   });
 
   it("#triggerEvent", function() {
-    var store = Fluxo.ObjectStore.create(),
+    var store = new Fluxo.ObjectStore(),
         callback = chai.spy(),
         wildcardCallback = chai.spy();
 
@@ -98,7 +95,7 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("unset", function () {
-    var store = Fluxo.ObjectStore.create({ data: { name: "Fluxo" } });
+    var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 
     expect(store.data).to.contain.all.keys({ name: "Fluxo" });
 
@@ -108,7 +105,7 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("reset", function () {
-    var store = Fluxo.ObjectStore.create({ data: { name: "Fluxo" } });
+    var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 
     expect(store.data).to.contain.all.keys({ name: "Fluxo" });
 
@@ -120,25 +117,25 @@ describe("Fluxo.ObjectStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var store = Fluxo.ObjectStore.create({
-        defaults: {
-          name: "Fluxo"
-        }
-      });
+      class Store extends Fluxo.ObjectStore {}
+
+      Store.defaults = {
+        name: "Fluxo"
+      };
+
+      var store = new Store();
 
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
 
     it("allow to override the default values", function () {
-      var store = Fluxo.ObjectStore.create({
-        defaults: {
-          name: "Redux"
-        },
+      class Store extends Fluxo.ObjectStore {}
 
-        data: {
-          name: "Fluxo"
-        }
-      });
+      Store.defaults = {
+        name: "Redux"
+      };
+
+      var store = new Store({ name: "Fluxo" });
 
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
