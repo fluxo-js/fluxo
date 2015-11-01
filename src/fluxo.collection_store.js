@@ -253,11 +253,8 @@ export default class extends ObjectStore {
    * @instance
    */
   toJSON () {
-    var data = JSON.parse(JSON.stringify(this.data));
-    data.cid = this.cid;
-
     return {
-      data: data,
+      data: super.toJSON(),
       stores: this.storesToJSON()
     };
   }

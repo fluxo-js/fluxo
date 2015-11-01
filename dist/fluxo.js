@@ -323,11 +323,8 @@ var _default = (function (_ObjectStore) {
   }, {
     key: "toJSON",
     value: function toJSON() {
-      var data = JSON.parse(JSON.stringify(this.data));
-      data.cid = this.cid;
-
       return {
-        data: data,
+        data: _get(Object.getPrototypeOf(_default.prototype), "toJSON", this).call(this),
         stores: this.storesToJSON()
       };
     }
