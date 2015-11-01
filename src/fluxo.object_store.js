@@ -54,18 +54,25 @@ export default class {
     Radio.publish(`${this.cid}:*`, eventName, this, ...args);
   }
 
-  registerComputed () {
-    var computeValue = function(attrName) {
-      var value = this[attrName].call(this);
-      this.setAttribute(attrName, value);
-    };
+  getComputed (attributeName) {
+    if (!this[attributeName]) {
+      throw new Error(`Compute function to "${attributeName}" value is not defined.`);
+    }
 
+    return this[attributeName].call(this);
+  }
+
+  computeValue (attributeName) {
+    this.setAttribute(attributeName, this.getComputed(attributeName));
+  }
+
+  registerComputed () {
     for (var attributeName in this.computed) {
       var toComputeEvents = this.computed[attributeName];
 
-      this.on(toComputeEvents, computeValue.bind(this, attributeName));
+      this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
 
-      this.setAttribute(attributeName, this[attributeName].call(this));
+      this.setAttribute(attributeName, this.getComputed(attributeName));
     }
   }
 

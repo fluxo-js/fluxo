@@ -489,19 +489,28 @@ var _default = (function () {
       _fluxoRadioJs2["default"].publish.apply(_fluxoRadioJs2["default"], [this.cid + ":*", eventName, this].concat(args));
     }
   }, {
+    key: "getComputed",
+    value: function getComputed(attributeName) {
+      if (!this[attributeName]) {
+        throw new Error("Compute function to \"" + attributeName + "\" value is not defined.");
+      }
+
+      return this[attributeName].call(this);
+    }
+  }, {
+    key: "computeValue",
+    value: function computeValue(attributeName) {
+      this.setAttribute(attributeName, this.getComputed(attributeName));
+    }
+  }, {
     key: "registerComputed",
     value: function registerComputed() {
-      var computeValue = function computeValue(attrName) {
-        var value = this[attrName].call(this);
-        this.setAttribute(attrName, value);
-      };
-
       for (var attributeName in this.computed) {
         var toComputeEvents = this.computed[attributeName];
 
-        this.on(toComputeEvents, computeValue.bind(this, attributeName));
+        this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
 
-        this.setAttribute(attributeName, this[attributeName].call(this));
+        this.setAttribute(attributeName, this.getComputed(attributeName));
       }
     }
   }, {
