@@ -170,8 +170,7 @@ var _default = (function (_ObjectStore) {
           args[_key2 - 1] = arguments[_key2];
         }
 
-        args.unshift("stores:" + eventName);
-        this.triggerEvent.apply(this, args);
+        this.triggerEvent.apply(this, ["stores:" + eventName].concat(args));
       };
 
       this.storesOnChangeCancelers[store.cid] = store.on(["*"], onStoreEvent.bind(this));

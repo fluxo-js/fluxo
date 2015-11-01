@@ -115,8 +115,7 @@ export default class extends ObjectStore {
     this.stores.push(store);
 
     var onStoreEvent = function(eventName, ...args) {
-      args.unshift(`stores:${eventName}`);
-      this.triggerEvent(...args);
+      this.triggerEvent(`stores:${eventName}`, ...args);
     };
 
     this.storesOnChangeCancelers[store.cid] =
