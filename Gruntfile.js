@@ -29,7 +29,8 @@ module.exports = function (grunt) {
       transform: ["babelify"],
       banner: "<%= meta.banner %>",
       browserifyOptions: {
-        standalone: "Fluxo"
+        standalone: "Fluxo",
+        plugin: ["browserify-derequire"]
       }
     }
   });

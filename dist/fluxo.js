@@ -1,5 +1,5 @@
 /*! fluxo-js v0.0.18 | (c) 2014, 2015 Samuel Simões | https://github.com/fluxo-js/fluxo */
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Fluxo = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Fluxo = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20,7 +20,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _fluxoObject_storeJs = require("./fluxo.object_store.js");
+var _fluxoObject_storeJs = _dereq_("./fluxo.object_store.js");
 
 var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
 
@@ -410,7 +410,7 @@ var CollectionStore = (function (_ObjectStore) {
 exports["default"] = CollectionStore;
 module.exports = exports["default"];
 
-},{"./fluxo.object_store.js":4}],2:[function(require,module,exports){
+},{"./fluxo.object_store.js":4}],2:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -438,7 +438,7 @@ exports["default"] = function () {
 ;
 module.exports = exports["default"];
 
-},{}],3:[function(require,module,exports){
+},{}],3:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -447,19 +447,19 @@ Object.defineProperty(exports, "__esModule", {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _fluxoObject_storeJs = require("./fluxo.object_store.js");
+var _fluxoObject_storeJs = _dereq_("./fluxo.object_store.js");
 
 var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
 
-var _fluxoCollection_storeJs = require("./fluxo.collection_store.js");
+var _fluxoCollection_storeJs = _dereq_("./fluxo.collection_store.js");
 
 var _fluxoCollection_storeJs2 = _interopRequireDefault(_fluxoCollection_storeJs);
 
-var _fluxoExtendJs = require("./fluxo.extend.js");
+var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
 
 var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
-var _fluxoRadioJs = require("./fluxo.radio.js");
+var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
 
 var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
 
@@ -471,7 +471,7 @@ exports["default"] = {
 };
 module.exports = exports["default"];
 
-},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(require,module,exports){
+},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -486,11 +486,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _fluxoRadioJs = require("./fluxo.radio.js");
+var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
 
 var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
 
-var _fluxoExtendJs = require("./fluxo.extend.js");
+var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
 
 var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
@@ -668,7 +668,7 @@ exports["default"] = _default;
 ;
 module.exports = exports["default"];
 
-},{"./fluxo.extend.js":2,"./fluxo.radio.js":5}],5:[function(require,module,exports){
+},{"./fluxo.extend.js":2,"./fluxo.radio.js":5}],5:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
