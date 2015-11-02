@@ -6,11 +6,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x3, _x4, _x5) { var _again = true; _function: while (_again) { var object = _x3, property = _x4, receiver = _x5; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x3 = parent; _x4 = property; _x5 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -25,18 +29,18 @@ var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
  */
 
-var _default = (function (_ObjectStore) {
-  _inherits(_default, _ObjectStore);
+var CollectionStore = (function (_ObjectStore) {
+  _inherits(CollectionStore, _ObjectStore);
 
   /** @lends Fluxo.CollectionStore */
 
-  function _default() {
+  function CollectionStore() {
     var stores = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
     var data = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-    _classCallCheck(this, _default);
+    _classCallCheck(this, CollectionStore);
 
-    _get(Object.getPrototypeOf(_default.prototype), "constructor", this).call(this, data);
+    _get(Object.getPrototypeOf(CollectionStore.prototype), "constructor", this).call(this, data);
 
     this.store = this.constructor.store || _fluxoObject_storeJs2["default"];
 
@@ -44,18 +48,59 @@ var _default = (function (_ObjectStore) {
 
     this.storesOnChangeCancelers = {};
 
+    this.subsets = {};
+
+    this.subset = this.constructor.subset || {};
+
     this.childrenDelegate = this.constructor.childrenDelegate || [];
 
     this.setStores(stores);
 
+    this.registerSubsets();
+
     this.createDelegateMethods();
   }
 
-  /**
-   * @returns {null}
-   */
+  _createClass(CollectionStore, [{
+    key: "getSubset",
+    value: function getSubset(subsetName) {
+      if (!this[subsetName]) {
+        throw new Error("Subset compute function to \"" + subsetName + "\" subset is not defined.");
+      }
 
-  _createClass(_default, [{
+      var subsetStores = this[subsetName].call(this);
+
+      return new CollectionStore(subsetStores);
+    }
+  }, {
+    key: "updateSubset",
+    value: function updateSubset(subsetName) {
+      var currentValue = this.subset[subsetName];
+
+      if (currentValue instanceof CollectionStore) {
+        currentValue.removeAll();
+      }
+
+      this.subsets[subsetName] = this.getSubset(subsetName);
+
+      this.triggerEvents(["change", "change:" + subsetName]);
+    }
+  }, {
+    key: "registerSubsets",
+    value: function registerSubsets() {
+      for (var subsetName in this.subset) {
+        var toComputeEvents = ["add", "remove"].concat(_toConsumableArray(this.subset[subsetName]));
+
+        this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
+
+        this.updateSubset(subsetName);
+      }
+    }
+
+    /**
+     * @returns {null}
+     */
+  }, {
     key: "createDelegateMethods",
     value: function createDelegateMethods() {
       for (var i = 0, l = this.childrenDelegate.length; i < l; i++) {
@@ -305,6 +350,17 @@ var _default = (function (_ObjectStore) {
 
       return collectionData;
     }
+  }, {
+    key: "subsetsToJSON",
+    value: function subsetsToJSON() {
+      var subsetsData = {};
+
+      for (var subsetName in this.subsets) {
+        subsetsData[subsetName] = this.subsets[subsetName].toJSON().stores;
+      }
+
+      return subsetsData;
+    }
 
     /**
      * It returns a JSON with two keys. The first, "data", is the
@@ -323,17 +379,17 @@ var _default = (function (_ObjectStore) {
   }, {
     key: "toJSON",
     value: function toJSON() {
-      return {
-        data: _get(Object.getPrototypeOf(_default.prototype), "toJSON", this).call(this),
+      return _extends({
+        data: _get(Object.getPrototypeOf(CollectionStore.prototype), "toJSON", this).call(this),
         stores: this.storesToJSON()
-      };
+      }, this.subsetsToJSON());
     }
   }]);
 
-  return _default;
+  return CollectionStore;
 })(_fluxoObject_storeJs2["default"]);
 
-exports["default"] = _default;
+exports["default"] = CollectionStore;
 module.exports = exports["default"];
 
 },{"./fluxo.object_store.js":4}],2:[function(require,module,exports){

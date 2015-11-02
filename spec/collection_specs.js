@@ -190,4 +190,44 @@ describe("Fluxo.CollectionStore", function () {
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
   });
+
+  describe("subset", function () {
+    it("subset computing", function () {
+      class Collection extends Fluxo.CollectionStore {
+        online () {
+          return this.where({ online: true });
+        }
+      }
+
+      Collection.subset = {
+        online: ["stores:change:online"]
+      }
+
+      var onChangeCallback = chai.spy()
+
+      var store1 = new Fluxo.ObjectStore({ online: true }),
+          store2 = new Fluxo.ObjectStore({ online: false });
+
+      var collection = new Collection([store1, store2]);
+
+      collection.on(["change:online"], onChangeCallback);
+
+      expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }]);
+
+      var store3 = new Fluxo.ObjectStore({ online: true });
+
+      collection.addStore(store3);
+
+      expect(collection.toJSON().online).to.be.eql([
+        { cid: store1.cid, online: true },
+        { cid: store3.cid, online: true }
+      ]);
+
+      store3.setAttribute("online", false);
+
+      expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }]);
+
+      expect(onChangeCallback).to.have.been.called.exactly(2);
+    });
+  });
 });

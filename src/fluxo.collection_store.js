@@ -4,7 +4,7 @@ import ObjectStore from "./fluxo.object_store.js";
 /**
  * Fluxo.CollectionStore is a convenient wrapper to your literal objects arrays.
  */
-export default class extends ObjectStore {
+export default class CollectionStore extends ObjectStore {
 /** @lends Fluxo.CollectionStore */
   constructor (stores=[], data={}) {
     super(data);
@@ -15,11 +15,49 @@ export default class extends ObjectStore {
 
     this.storesOnChangeCancelers = {};
 
+    this.subsets = {};
+
+    this.subset = (this.constructor.subset || {});
+
     this.childrenDelegate = (this.constructor.childrenDelegate || []);
 
     this.setStores(stores);
 
+    this.registerSubsets();
+
     this.createDelegateMethods();
+  }
+
+  getSubset (subsetName) {
+    if (!this[subsetName]) {
+      throw new Error(`Subset compute function to "${subsetName}" subset is not defined.`);
+    }
+
+    var subsetStores = this[subsetName].call(this);
+
+    return (new CollectionStore(subsetStores));
+  }
+
+  updateSubset (subsetName) {
+    var currentValue = this.subset[subsetName];
+
+    if ((currentValue instanceof CollectionStore)) {
+      currentValue.removeAll();
+    }
+
+    this.subsets[subsetName] = this.getSubset(subsetName);
+
+    this.triggerEvents(["change", `change:${subsetName}`]);
+  }
+
+  registerSubsets () {
+    for (var subsetName in this.subset) {
+      var toComputeEvents = ["add", "remove", ...this.subset[subsetName]];
+
+      this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
+
+      this.updateSubset(subsetName);
+    }
   }
 
   /**
@@ -238,6 +276,16 @@ export default class extends ObjectStore {
     return collectionData;
   }
 
+  subsetsToJSON () {
+    var subsetsData = {};
+
+    for (var subsetName in this.subsets) {
+      subsetsData[subsetName] = this.subsets[subsetName].toJSON().stores;
+    }
+
+    return subsetsData;
+  }
+
   /**
    * It returns a JSON with two keys. The first, "data", is the
    * store attributes setted using the setAttribute method and the second key,
@@ -255,7 +303,8 @@ export default class extends ObjectStore {
   toJSON () {
     return {
       data: super.toJSON(),
-      stores: this.storesToJSON()
+      stores: this.storesToJSON(),
+      ...this.subsetsToJSON()
     };
   }
 }
