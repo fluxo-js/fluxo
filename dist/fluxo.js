@@ -466,8 +466,8 @@ var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
 exports["default"] = {
   ObjectStore: _fluxoObject_storeJs2["default"],
   CollectionStore: _fluxoCollection_storeJs2["default"],
-  Extend: _fluxoExtendJs2["default"],
-  Radio: _fluxoRadioJs2["default"]
+  Radio: _fluxoRadioJs2["default"],
+  extend: _fluxoExtendJs2["default"]
 };
 module.exports = exports["default"];
 
