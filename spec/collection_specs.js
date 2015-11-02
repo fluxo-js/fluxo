@@ -34,7 +34,7 @@ describe("Fluxo.CollectionStore", function () {
     var store = collection.addStore({ name: "Samuel" });
 
     expect(collection.toJSON()).to.be.eql({
-      data: { cid: collection.cid },
+      cid: collection.cid,
       stores: [{ cid: store.cid, name: "Samuel" }]
     });
     expect(onChangeCallback).to.have.been.called();
@@ -229,5 +229,27 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(onChangeCallback).to.have.been.called.exactly(2);
     });
+  });
+
+  it("#setAttribute", function () {
+    class Collection extends Fluxo.CollectionStore {
+      online () { return []; }
+    }
+
+    Collection.subset = { online: [] };
+
+    var collection = new Collection();
+
+    expect(function () {
+      collection.setAttribute("stores", true);
+    }).to.throw(Error, `You can't set a attribute with "stores" name on a collection.`);
+
+    expect(function () {
+      collection.setAttribute("online", true);
+    }).to.throw(Error, `The attribute name "online" is reserved to a subset.`);
+
+    collection.setAttribute("name", "Fluxo");
+
+    expect(collection.data.name).to.be.eql("Fluxo");
   });
 });
