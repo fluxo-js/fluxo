@@ -96,6 +96,25 @@ var CollectionStore = (function (_ObjectStore) {
         this.updateSubset(subsetName);
       }
     }
+  }, {
+    key: "setAttribute",
+    value: function setAttribute(attributeName) {
+      var _get2;
+
+      if (this.constructor.subset && this.constructor.subset[attributeName]) {
+        throw new Error("The attribute name \"" + attributeName + "\" is reserved to a subset.");
+      }
+
+      if (attributeName === "stores") {
+        throw new Error("You can't set a attribute with \"stores\" name on a collection.");
+      }
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return (_get2 = _get(Object.getPrototypeOf(CollectionStore.prototype), "setAttribute", this)).call.apply(_get2, [this, attributeName].concat(args));
+    }
 
     /**
      * @returns {null}
@@ -119,8 +138,8 @@ var CollectionStore = (function (_ObjectStore) {
       this[methodName] = (function (method, id) {
         var child = this.find(id);
 
-        for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-          args[_key - 2] = arguments[_key];
+        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+          args[_key2 - 2] = arguments[_key2];
         }
 
         child[method].apply(child, args);
@@ -211,8 +230,8 @@ var CollectionStore = (function (_ObjectStore) {
       this.stores.push(store);
 
       var onStoreEvent = function onStoreEvent(eventName) {
-        for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-          args[_key2 - 1] = arguments[_key2];
+        for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+          args[_key3 - 1] = arguments[_key3];
         }
 
         this.triggerEvent.apply(this, ["stores:" + eventName].concat(args));
@@ -363,13 +382,13 @@ var CollectionStore = (function (_ObjectStore) {
     }
 
     /**
-     * It returns a JSON with two keys. The first, "data", is the
-     * store attributes setted using the setAttribute method and the second key,
-     * stores, is the result of storesToJSON method.
+     * It returns a JSON with the store's attributes, the children stores data
+     * on "stores" key and the subsets store's data.
      *
      * e.g {
-     *   data: { count: 20 },
-     *   stores: [{ name: "Samuel }]
+     *   usersCount: 1,
+     *   onlineUsers: [{ name: "Fluxo" }],
+     *   stores: [{ name: "Fluxo" }]
      * }
      *
      * @returns {Object}
@@ -379,10 +398,9 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "toJSON",
     value: function toJSON() {
-      return _extends({
-        data: _get(Object.getPrototypeOf(CollectionStore.prototype), "toJSON", this).call(this),
+      return _extends({}, _get(Object.getPrototypeOf(CollectionStore.prototype), "toJSON", this).call(this), this.subsetsToJSON(), {
         stores: this.storesToJSON()
-      }, this.subsetsToJSON());
+      });
     }
   }]);
 

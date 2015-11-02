@@ -60,6 +60,18 @@ export default class CollectionStore extends ObjectStore {
     }
   }
 
+  setAttribute (attributeName, ...args) {
+    if (this.constructor.subset && this.constructor.subset[attributeName]) {
+      throw new Error(`The attribute name "${attributeName}" is reserved to a subset.`);
+    }
+
+    if (attributeName === "stores") {
+      throw new Error(`You can't set a attribute with "stores" name on a collection.`);
+    }
+
+    return super.setAttribute(attributeName, ...args);
+  }
+
   /**
    * @returns {null}
    */
@@ -287,13 +299,13 @@ export default class CollectionStore extends ObjectStore {
   }
 
   /**
-   * It returns a JSON with two keys. The first, "data", is the
-   * store attributes setted using the setAttribute method and the second key,
-   * stores, is the result of storesToJSON method.
+   * It returns a JSON with the store's attributes, the children stores data
+   * on "stores" key and the subsets store's data.
    *
    * e.g {
-   *   data: { count: 20 },
-   *   stores: [{ name: "Samuel }]
+   *   usersCount: 1,
+   *   onlineUsers: [{ name: "Fluxo" }],
+   *   stores: [{ name: "Fluxo" }]
    * }
    *
    * @returns {Object}
@@ -302,9 +314,9 @@ export default class CollectionStore extends ObjectStore {
    */
   toJSON () {
     return {
-      data: super.toJSON(),
-      stores: this.storesToJSON(),
-      ...this.subsetsToJSON()
+      ...super.toJSON(),
+      ...this.subsetsToJSON(),
+      stores: this.storesToJSON()
     };
   }
 }
