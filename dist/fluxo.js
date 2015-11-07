@@ -32,36 +32,41 @@ var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
 var CollectionStore = (function (_ObjectStore) {
   _inherits(CollectionStore, _ObjectStore);
 
-  /** @lends Fluxo.CollectionStore */
-
   function CollectionStore() {
-    var stores = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-    var data = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
     _classCallCheck(this, CollectionStore);
 
-    _get(Object.getPrototypeOf(CollectionStore.prototype), "constructor", this).call(this, data);
-
-    this.store = this.constructor.store || _fluxoObject_storeJs2["default"];
-
-    this.stores = [];
-
-    this.storesOnChangeCancelers = {};
-
-    this.subsets = {};
-
-    this.subset = this.constructor.subset || {};
-
-    this.childrenDelegate = this.constructor.childrenDelegate || [];
-
-    this.setStores(stores);
-
-    this.registerSubsets();
-
-    this.createDelegateMethods();
+    _get(Object.getPrototypeOf(CollectionStore.prototype), "constructor", this).apply(this, arguments);
   }
 
   _createClass(CollectionStore, [{
+    key: "initialize",
+
+    /** @lends Fluxo.CollectionStore */
+    value: function initialize() {
+      var stores = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+      var data = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+      this.store = this.constructor.store || _fluxoObject_storeJs2["default"];
+
+      this.stores = [];
+
+      this.storesOnChangeCancelers = {};
+
+      this.subsets = {};
+
+      this.subset = this.constructor.subset || {};
+
+      this.childrenDelegate = this.constructor.childrenDelegate || [];
+
+      _get(Object.getPrototypeOf(CollectionStore.prototype), "initialize", this).call(this, data);
+
+      this.setStores(stores);
+
+      this.registerSubsets();
+
+      this.createDelegateMethods();
+    }
+  }, {
     key: "getSubset",
     value: function getSubset(subsetName) {
       if (!this[subsetName]) {
@@ -99,9 +104,11 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "setAttribute",
     value: function setAttribute(attributeName) {
-      var _get2;
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
 
-      if (this.constructor.subset && this.constructor.subset[attributeName]) {
+      if (this.subset && this.subset[attributeName]) {
         throw new Error("The attribute name \"" + attributeName + "\" is reserved to a subset.");
       }
 
@@ -109,11 +116,7 @@ var CollectionStore = (function (_ObjectStore) {
         throw new Error("You can't set a attribute with \"stores\" name on a collection.");
       }
 
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      return (_get2 = _get(Object.getPrototypeOf(CollectionStore.prototype), "setAttribute", this)).call.apply(_get2, [this, attributeName].concat(args));
+      return _get(Object.getPrototypeOf(CollectionStore.prototype), "setAttribute", this).apply(this, arguments);
     }
 
     /**
@@ -498,24 +501,29 @@ var storesUUID = 1;
 
 var _default = (function () {
   function _default() {
-    var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
     _classCallCheck(this, _default);
 
-    this.cid = "FS:" + storesUUID++;
-
-    this.data = {};
-
-    this.computed = this.constructor.computed || {};
-
-    this.attributeParsers = this.constructor.attributeParsers || {};
-
-    this.set(_extends({}, this.constructor.defaults, data));
-
-    this.registerComputed();
+    return this.initialize.apply(this, arguments);
   }
 
   _createClass(_default, [{
+    key: "initialize",
+    value: function initialize() {
+      var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+      this.cid = "FS:" + storesUUID++;
+
+      this.data = {};
+
+      this.computed = this.constructor.computed || {};
+
+      this.attributeParsers = this.constructor.attributeParsers || {};
+
+      this.set(_extends({}, this.constructor.defaults, data));
+
+      this.registerComputed();
+    }
+  }, {
     key: "on",
     value: function on(events, callback) {
       var cancelers = [];

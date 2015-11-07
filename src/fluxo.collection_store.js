@@ -6,9 +6,7 @@ import ObjectStore from "./fluxo.object_store.js";
  */
 export default class CollectionStore extends ObjectStore {
 /** @lends Fluxo.CollectionStore */
-  constructor (stores=[], data={}) {
-    super(data);
-
+  initialize (stores=[], data={}) {
     this.store = this.constructor.store || ObjectStore;
 
     this.stores = [];
@@ -20,6 +18,8 @@ export default class CollectionStore extends ObjectStore {
     this.subset = (this.constructor.subset || {});
 
     this.childrenDelegate = (this.constructor.childrenDelegate || []);
+
+    super.initialize(data);
 
     this.setStores(stores);
 
@@ -61,7 +61,7 @@ export default class CollectionStore extends ObjectStore {
   }
 
   setAttribute (attributeName, ...args) {
-    if (this.constructor.subset && this.constructor.subset[attributeName]) {
+    if (this.subset && this.subset[attributeName]) {
       throw new Error(`The attribute name "${attributeName}" is reserved to a subset.`);
     }
 
@@ -69,7 +69,7 @@ export default class CollectionStore extends ObjectStore {
       throw new Error(`You can't set a attribute with "stores" name on a collection.`);
     }
 
-    return super.setAttribute(attributeName, ...args);
+    return super.setAttribute(...arguments);
   }
 
   /**

@@ -4,7 +4,11 @@ import extend from "./fluxo.extend.js";
 var storesUUID = 1;
 
 export default class {
-  constructor (data={}) {
+  constructor () {
+    return this.initialize(...arguments);
+  }
+
+  initialize (data={}) {
     this.cid = `FS:${storesUUID++}`;
 
     this.data = {};
