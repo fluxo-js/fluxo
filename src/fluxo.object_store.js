@@ -17,7 +17,13 @@ export default class {
 
     this.attributeParsers = (this.constructor.attributeParsers || {});
 
-    this.set({ ...this.constructor.defaults, ...data });
+    let clonedDefaults;
+
+    if (this.constructor.defaults) {
+      clonedDefaults = JSON.parse(JSON.stringify(this.constructor.defaults));
+    }
+
+    this.set({ ...clonedDefaults, ...data });
 
     this.registerComputed();
   }

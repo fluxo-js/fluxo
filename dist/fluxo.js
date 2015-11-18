@@ -519,7 +519,13 @@ var _default = (function () {
 
       this.attributeParsers = this.constructor.attributeParsers || {};
 
-      this.set(_extends({}, this.constructor.defaults, data));
+      var clonedDefaults = undefined;
+
+      if (this.constructor.defaults) {
+        clonedDefaults = JSON.parse(JSON.stringify(this.constructor.defaults));
+      }
+
+      this.set(_extends({}, clonedDefaults, data));
 
       this.registerComputed();
     }
