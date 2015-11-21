@@ -425,7 +425,24 @@ describe("Fluxo.ObjectStore", function () {
 
   it("#toJSON", function () {
     var store = new Fluxo.ObjectStore({ name: "Samuel" });
-    expect(store.toJSON()).to.be.eql({ cid: store.cid, name: "Samuel" });
+
+    var firstJSON = store.toJSON();
+
+    expect(firstJSON).to.be.eql({ cid: store.cid, name: "Samuel" });
+
+    expect(store.toJSON()).to.be.equal(firstJSON);
+
+    store.setAttribute("name", "John Doe");
+
+    var secondJSON = store.toJSON();
+
+    expect(secondJSON).to.be.eql({ cid: store.cid, name: "John Doe" });
+
+    expect(secondJSON).to.be.not.equal(firstJSON);
+
+    store.unsetAttribute("name");
+
+    expect(store.toJSON()).to.be.eql({ cid: store.cid });
   });
 
   it("computed attributes", function () {

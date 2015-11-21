@@ -610,6 +610,8 @@ var _default = (function () {
         return;
       }
 
+      delete this.lastGeneratedJSON;
+
       if (this.attributeParsers[attribute]) {
         value = this.attributeParsers[attribute](value);
       }
@@ -630,6 +632,8 @@ var _default = (function () {
       options = options || {};
 
       delete this.data[attribute];
+
+      delete this.lastGeneratedJSON;
 
       this.triggerEvent("change:" + attribute);
 
@@ -668,10 +672,12 @@ var _default = (function () {
   }, {
     key: "toJSON",
     value: function toJSON() {
-      var data = JSON.parse(JSON.stringify(this.data));
-      data.cid = this.cid;
+      if (!this.lastGeneratedJSON) {
+        this.lastGeneratedJSON = JSON.parse(JSON.stringify(this.data));
+        this.lastGeneratedJSON.cid = this.cid;
+      }
 
-      return data;
+      return this.lastGeneratedJSON;
     }
   }]);
 

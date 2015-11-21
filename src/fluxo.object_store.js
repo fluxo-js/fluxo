@@ -91,6 +91,8 @@ export default class {
 
     if (this.data[attribute] === value) { return; }
 
+    delete this.lastGeneratedJSON;
+
     if (this.attributeParsers[attribute]) {
       value = this.attributeParsers[attribute](value);
     }
@@ -108,6 +110,8 @@ export default class {
     options = options || {};
 
     delete this.data[attribute];
+
+    delete this.lastGeneratedJSON;
 
     this.triggerEvent(`change:${attribute}`);
 
@@ -141,9 +145,11 @@ export default class {
   }
 
   toJSON () {
-    var data = JSON.parse(JSON.stringify(this.data));
-    data.cid = this.cid;
+    if (!this.lastGeneratedJSON) {
+      this.lastGeneratedJSON = JSON.parse(JSON.stringify(this.data));
+      this.lastGeneratedJSON.cid = this.cid;
+    }
 
-    return data;
+    return this.lastGeneratedJSON;
   }
 };
