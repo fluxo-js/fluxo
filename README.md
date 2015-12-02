@@ -109,7 +109,7 @@ You may want attach some custom behaviors to your stores, you can do this
 creating your own [ES6 class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) and extending `Fluxo.ObjectStore` or `Fluxo.CollectionStore`.
 
 ```js
-class Person extend Fluxo.ObjectStore {
+class Person extends Fluxo.ObjectStore {
   sayHello () {
     return "hello";
   }
@@ -120,7 +120,7 @@ class Person extend Fluxo.ObjectStore {
 You can provide default values to the store which may be overriden:
 
 ```js
-class Comment extend Fluxo.ObjectStore {}
+class Comment extends Fluxo.ObjectStore {}
 
 Comment.defaults = {
   title: "This is my title",
