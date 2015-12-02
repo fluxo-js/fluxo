@@ -29,7 +29,7 @@ $ npm install --save fluxo-js
 ####Using with CommonJS module loaders (Webpack/Browserify)
 ```js
 var Fluxo = require("fluxo-js");
-var jon = Fluxo.ObjectStore({ name: "John Doe" });
+var jon = new Fluxo.ObjectStore({ name: "John Doe" });
 ```
 
 ## Giving super powers to your bare objects
