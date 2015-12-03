@@ -598,7 +598,7 @@ var _default = (function () {
 
         this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
 
-        this.setAttribute(attributeName, this.getComputed(attributeName));
+        this.computeValue(attributeName);
       }
     }
   }, {
