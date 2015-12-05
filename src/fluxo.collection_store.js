@@ -87,6 +87,10 @@ export default class CollectionStore extends ObjectStore {
    * @returns {null}
    */
   createDelegateMethod (methodName) {
+    if (!this.store.prototype[methodName]) {
+      console.warn(`The "${methodName}" children delegated method doesn't exists on children store class`);
+    }
+
     this[methodName] = function(method, id, ...args) {
       var child = this.find(id);
       child[method](...args);
