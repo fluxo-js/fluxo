@@ -272,6 +272,39 @@ class People extends Fluxo.CollectionStore {
 };
 ```
 
+##Collection Subsets
+Sometimes you'll need compute filtered subsets of your collection. Imagine that you
+want show only the done todos on your interface, you can compute this filtered subset
+with the collection subsets.
+
+Collection subsets works pretty much like the **[computed properties](#computed-properties)**, you define what
+are your subsets on the `subset` class property with subset name on the key and on
+the value the events should trigger the computation of your subset. The subset value
+will be stored on the `subsets` collection store's property, it's an basic collection
+store.
+
+Look the example below:
+
+```js
+class Todos extends Fluxo.CollectionStore {
+  pending () {
+    return this.where({ done: false });
+  }
+}
+
+Todos.subset = { filtered: ["stores:change:done"] };
+
+var todo1 = new Fluxo.ObjectStore({ done: true }),
+    todo2 = new Fluxo.ObjectStore({ done: true }),
+    todos = new Todos([todo1, todo2]);
+
+todos.subsets.filtered; // []
+
+todo1.setAttribute("done", false);
+
+todos.subsets.pending; // [todo1]
+```
+
 ##Attributes parsers
 
 Fluxo object stores and collections can enforce casting or parsing on some store's
@@ -310,12 +343,15 @@ like this:
 
 On collection stores the `toJSON` will include the same things of object store
 toJSON, but it'll also include the `stores` property with all data of your children
-stores (it will call `toJSON` on its children), like this:
+stores (it will call `toJSON` on its children) and the **[subsets](#collection-subsets)** on the same way, like this:
 
 ```js
 {
   cid: "FS:2",
   doneCount: 1,
+  pending: [
+    { cid: "FS:4", done: false, content: "Buy a car!" }
+  ],
   stores: [
     { cid: "FS:3", done: true, content: "Buy milk!" },
     { cid: "FS:4", done: false, content: "Buy a car!" }
@@ -447,6 +483,9 @@ todos.data.doneCount; // => 2
 ```
 
 :warning: Computed properties **are computed on the store's creation**.
+
+Don't create computed properties that hold collection subsets, use the specific
+**[subset feature](#collection-subsets)** to this.
 
 ##Using with React.js
 
