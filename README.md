@@ -279,8 +279,8 @@ with the collection subsets.
 
 Collection subsets works pretty much like the **[computed properties](#computed-properties)**, you define what
 are your subsets on the `subset` class property with subset name on the key and on
-the value the events should trigger the computation of your subset. The subset value
-will be stored on the `subsets` collection store's property, it's an basic collection
+the value the events that should trigger the computation of your subset. The subset value
+will be stored on the `subsets` collection store's property, it's a basic collection
 store.
 
 Look the example below:
@@ -311,7 +311,7 @@ Fluxo object stores and collections can enforce casting or parsing on some store
 attributes, like the example below:
 
 ```js
-class Person extends Fluxo.ObjectStore.create {};
+class Person extends Fluxo.ObjectStore {};
 
 Person.attributeParsers = {
   age: function (age) {
@@ -329,7 +329,7 @@ jon.data.age //=> 30 (integer)
 ##toJSON
 Eventually you will pass the state that you are holding on your store to other
 parts to your app, like the view layer. You should avoid pass the `data` or `stores`
-properteis directly, the `toJSON` it's the right tool for this job.
+properties directly, the `toJSON` is the right tool for this job.
 
 On object stores the `toJSON` will include all the properties of your data and the `cid`,
 like this:
@@ -484,7 +484,7 @@ todos.data.doneCount; // => 2
 
 :warning: Computed properties **are computed on the store's creation**.
 
-Don't create computed properties that hold collection subsets, use the specific
+:warning: Don't create computed properties that hold collection subsets, use the specific
 **[subset feature](#collection-subsets)** to this.
 
 ##Using with React.js
