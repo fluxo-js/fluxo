@@ -272,6 +272,41 @@ class People extends Fluxo.CollectionStore {
 };
 ```
 
+##Collection children delegations
+When you are manipulating collections you usually will manipulate the children
+stores, you can do this accessing the store directly on the `stores` property, but
+it breaks the [law of demeter](https://en.wikipedia.org/wiki/Law_of_Demeter), so, to
+avoid this you can use the children delegations.
+
+Children delegations allows you to invoke methods on your children stores through the
+collection. To delegate you need declare on the `childrenDelegate` class property an
+array with the name of methods that you want proxy, like this:
+
+```js
+class Todo extends Fluxo.ObjectStore {
+  setAsDone () {
+    this.setAttribute("done", true);
+  }
+};
+
+class Todos extends Fluxo.CollectionStore {};
+
+Todos.store = Todo;
+Todos.childrenDelegate = ["setAsDone"];
+
+var todos = new Todos([{ id: 2, done: "false" }]);
+
+todos.setAsDone(2);
+
+todos.stores[0].data.done // true
+```
+
+The first argument on the delegated method should be the ID of the child that you want
+invoke the method (you can use the [cid](#cid) too), the rest will be passed to
+child's method.
+
+The last line of our example above will call `setAsDone` on the todo with id 2.
+
 ##Collection Subsets
 Sometimes you'll need compute filtered subsets of your collection. Imagine that you
 want show only the done todos on your interface, you can compute this filtered subset
