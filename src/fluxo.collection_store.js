@@ -98,6 +98,11 @@ export default class CollectionStore extends ObjectStore {
 
     this[methodName] = function(method, id, ...args) {
       var child = this.find(id);
+
+      if (!child) {
+        throw new Error(`You tried call the delegated method "${method}" on a missing child store.`);
+      }
+
       child[method](...args);
     }.bind(this, methodName);
   }

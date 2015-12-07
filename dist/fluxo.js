@@ -151,6 +151,10 @@ var CollectionStore = (function (_ObjectStore) {
       this[methodName] = (function (method, id) {
         var child = this.find(id);
 
+        if (!child) {
+          throw new Error("You tried call the delegated method \"" + method + "\" on a missing child store.");
+        }
+
         for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
           args[_key2 - 2] = arguments[_key2];
         }

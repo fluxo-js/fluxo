@@ -165,6 +165,20 @@ describe("Fluxo.CollectionStore", function () {
     expect(customMethod).to.have.been.called.exactly(1).with("Hello", 300);
   });
 
+  it("warns about calling delegated method on missing child store", function () {
+    class Collection extends Fluxo.CollectionStore {}
+
+    Collection.childrenDelegate = ["customMethod"];
+
+    class Store extends Fluxo.ObjectStore {
+      customMethod () {}
+    }
+
+    expect(function () {
+      (new Collection()).customMethod(20);
+    }).to.throw(Error, `You tried call the delegated method "customMethod" on a missing child store.`);
+  });
+
   describe("default values", function () {
     it("initialise with default values", function () {
       class Collection extends Fluxo.CollectionStore {}
