@@ -339,6 +339,8 @@ todo1.setAttribute("done", false);
 todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 ```
 
+:warning: You don't need specify the `add` and `remove` events to recompute your subset. This events are always declared under the hood as dependencies to all subsets.
+
 ##Attributes parsers
 
 Fluxo object stores and collections can enforce casting or parsing on some store's
