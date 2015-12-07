@@ -489,9 +489,7 @@ class Person extends Fluxo.ObjectStore {
 };
 
 Person.computed = {
-  computed: {
-    fullName: ["change:firstName", "change:lastName"]
-  }
+  fullName: ["change:firstName", "change:lastName"]
 };
 
 var person = new Person({ firstName: "John", lastName:  "Doe" });
