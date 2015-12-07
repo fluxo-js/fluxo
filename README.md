@@ -471,8 +471,15 @@ jon.triggerEvent("sayHello");
 ##Computed properties
 
 Fluxo object store and collection stores can have computed properties like
-Ember.js computed properties, this feature var you declare attributes that are
-computed on some events of your store. Look the example below:
+Ember.js computed properties, this feature allows you declare attributes that are
+computed on some events of your store.
+
+Computed properties are very great to normalize the access of store's information,
+(you don't want deal with `store.fullName()` and `store.data.firstName`, right?)
+and "caching" the computed results helping to avoid possible not necessary expensive
+recomputations.
+
+Look the example below:
 
 ```js
 class Person extends Fluxo.ObjectStore {
