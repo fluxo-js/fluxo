@@ -315,8 +315,7 @@ with the collection subsets.
 Collection subsets works pretty much like the **[computed properties](#computed-properties)**, you define what
 are your subsets on the `subset` class property with subset name on the key and on
 the value the events that should trigger the computation of your subset. The subset value
-will be stored on the `subsets` collection store's property, it's a basic collection
-store.
+will be stored on the `subsets` collection store's property, **it's a basic Fluxo.CollectionStore**.
 
 Look the example below:
 
@@ -327,17 +326,17 @@ class Todos extends Fluxo.CollectionStore {
   }
 }
 
-Todos.subset = { filtered: ["stores:change:done"] };
+Todos.subset = { pending: ["stores:change:done"] };
 
 var todo1 = new Fluxo.ObjectStore({ done: true }),
     todo2 = new Fluxo.ObjectStore({ done: true }),
     todos = new Todos([todo1, todo2]);
 
-todos.subsets.filtered; // []
+todos.subsets.pending; // [] (Empty Fluxo.CollectionStore)
 
 todo1.setAttribute("done", false);
 
-todos.subsets.pending; // [todo1]
+todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 ```
 
 ##Attributes parsers
