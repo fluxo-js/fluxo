@@ -534,4 +534,4 @@ Fluxo is view layer agnostic, you can use whatever you want, but we highly recom
 the React.js. If you choose the React.js we already created a way to connect your
 stores on your React.js components.
 
-**Read more: https://github.com/samuelsimoes/fluxo-react-connect-stores**
+**Read more: https://github.com/fluxo-js/fluxo-react-connect-stores**
