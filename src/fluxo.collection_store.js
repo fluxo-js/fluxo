@@ -28,6 +28,14 @@ export default class CollectionStore extends ObjectStore {
     this.createDelegateMethods();
   }
 
+  firstComputation () {
+    for (var subsetName in this.subset) {
+      this.updateSubset(subsetName);
+    }
+
+    super.firstComputation();
+  }
+
   getSubset (subsetName) {
     if (!this[subsetName]) {
       throw new Error(`Subset compute function to "${subsetName}" subset is not defined.`);
@@ -53,10 +61,7 @@ export default class CollectionStore extends ObjectStore {
   registerSubsets () {
     for (var subsetName in this.subset) {
       var toComputeEvents = ["add", "remove", ...this.subset[subsetName]];
-
       this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
-
-      this.updateSubset(subsetName);
     }
   }
 

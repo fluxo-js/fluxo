@@ -67,6 +67,15 @@ var CollectionStore = (function (_ObjectStore) {
       this.createDelegateMethods();
     }
   }, {
+    key: "firstComputation",
+    value: function firstComputation() {
+      for (var subsetName in this.subset) {
+        this.updateSubset(subsetName);
+      }
+
+      _get(Object.getPrototypeOf(CollectionStore.prototype), "firstComputation", this).call(this);
+    }
+  }, {
     key: "getSubset",
     value: function getSubset(subsetName) {
       if (!this[subsetName]) {
@@ -95,10 +104,7 @@ var CollectionStore = (function (_ObjectStore) {
     value: function registerSubsets() {
       for (var subsetName in this.subset) {
         var toComputeEvents = ["add", "remove"].concat(_toConsumableArray(this.subset[subsetName]));
-
         this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
-
-        this.updateSubset(subsetName);
       }
     }
   }, {
@@ -507,7 +513,8 @@ var _default = (function () {
   function _default() {
     _classCallCheck(this, _default);
 
-    return this.initialize.apply(this, arguments);
+    this.initialize.apply(this, arguments);
+    this.firstComputation();
   }
 
   _createClass(_default, [{
@@ -532,6 +539,13 @@ var _default = (function () {
       this.set(_extends({}, clonedDefaults, data));
 
       this.registerComputed();
+    }
+  }, {
+    key: "firstComputation",
+    value: function firstComputation() {
+      for (var attributeName in this.computed) {
+        this.computeValue(attributeName);
+      }
     }
   }, {
     key: "on",
@@ -599,10 +613,7 @@ var _default = (function () {
     value: function registerComputed() {
       for (var attributeName in this.computed) {
         var toComputeEvents = this.computed[attributeName];
-
         this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
-
-        this.computeValue(attributeName);
       }
     }
   }, {

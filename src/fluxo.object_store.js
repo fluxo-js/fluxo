@@ -5,7 +5,8 @@ var storesUUID = 1;
 
 export default class {
   constructor () {
-    return this.initialize(...arguments);
+    this.initialize(...arguments);
+    this.firstComputation();
   }
 
   initialize (data={}) {
@@ -26,6 +27,12 @@ export default class {
     this.set({ ...clonedDefaults, ...data });
 
     this.registerComputed();
+  }
+
+  firstComputation () {
+    for (var attributeName in this.computed) {
+      this.computeValue(attributeName);
+    }
   }
 
   on (events, callback) {
@@ -79,10 +86,7 @@ export default class {
   registerComputed () {
     for (var attributeName in this.computed) {
       var toComputeEvents = this.computed[attributeName];
-
       this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
-
-      this.computeValue(attributeName);
     }
   }
 
