@@ -49,7 +49,10 @@ export default class CollectionStore extends ObjectStore {
       this.subsets[subsetName] = new CollectionStore();
     }
 
-    this.subsets[subsetName].resetStores(this.getSubset(subsetName));
+    this.subsets[subsetName].resetStores(
+      this.getSubset(subsetName),
+      { releaseStores: false }
+    );
 
     this.triggerEvents(["change", `change:${subsetName}`]);
   }
@@ -118,8 +121,8 @@ export default class CollectionStore extends ObjectStore {
    * @param {Object[]} stores data
    * @returns {null}
    */
-  resetStores (stores=[]) {
-    this.removeAll();
+  resetStores (stores=[], options={}) {
+    this.removeAll(options);
     this.addStores(stores);
   }
 
@@ -127,10 +130,12 @@ export default class CollectionStore extends ObjectStore {
    * @returns {null}
    * @instance
    */
-  removeAll () {
+  removeAll (options={}) {
+    options = { releaseStores: true, ...options };
+
     for (var i = (this.stores.length - 1), l = 0; i >= l; i--) {
       var store = this.stores[i];
-      this.removeListenersOn(store);
+      this.remove(store, { silent: true, release: options.releaseStores });
     }
 
     this.stores = [];
@@ -173,6 +178,10 @@ export default class CollectionStore extends ObjectStore {
   addStore (store) {
     if (!(store instanceof this.store)) {
       store = new this.store(store);
+    }
+
+    if (store instanceof this.store && store.released) {
+      throw new Error(`You can't add a released store on collection.`);
     }
 
     var alreadyAddedStore = this.find(store.data.id);
@@ -278,12 +287,35 @@ export default class CollectionStore extends ObjectStore {
    * @returns {null}
    * @instance
    */
-  remove (store) {
+  remove (store, options={}) {
+    options = { release: false, silent: false, ...options };
+
     this.removeListenersOn(store);
 
     this.stores.splice(this.stores.indexOf(store), 1);
 
-    this.triggerEvents(["remove", "change"]);
+    if (options.release) {
+      store.release();
+    }
+
+    if (!options.silent) {
+      this.triggerEvents(["remove", "change"]);
+    }
+  }
+
+  releaseSubsets () {
+    for (var subsetName in this.subsets) {
+      this.subsets[subsetName].release({ releaseStores: false });
+      delete this.subsets[subsetName];
+    }
+  }
+
+  release (options={}) {
+    super.release();
+
+    this.removeAll(options);
+
+    this.releaseSubsets();
   }
 
   /**

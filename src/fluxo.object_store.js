@@ -12,11 +12,15 @@ export default class {
   initialize (data={}) {
     this.cid = `FS:${storesUUID++}`;
 
+    this.released = false;
+
     this.data = {};
 
     this.computed = (this.constructor.computed || {});
 
     this.attributeParsers = (this.constructor.attributeParsers || {});
+
+    this.signedEventsCancelers = [];
 
     let clonedDefaults;
 
@@ -52,6 +56,8 @@ export default class {
         canceler.call();
       }
     };
+
+    this.signedEventsCancelers.push(aggregatedCanceler);
 
     return aggregatedCanceler;
   }
@@ -93,6 +99,10 @@ export default class {
   setAttribute (attribute, value, options) {
     if (typeof attribute !== "string") {
       throw new Error(`The "attribute" argument on store's "setAttribute" function must be a string.`);
+    }
+
+    if (this.released) {
+      throw new Error(`This store is already released and it can't be used.`);
     }
 
     options = options || {};
@@ -138,6 +148,18 @@ export default class {
     }
 
     this.triggerEvent("change");
+  }
+
+  cancelSignedEvents () {
+    for (var i = 0, l = this.signedEventsCancelers.length; i < l; i++) {
+      var canceler = this.signedEventsCancelers[i];
+      canceler.call();
+    }
+  }
+
+  release () {
+    this.cancelSignedEvents();
+    this.released = true;
   }
 
   reset  (data) {
