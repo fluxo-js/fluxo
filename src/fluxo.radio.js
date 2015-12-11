@@ -13,8 +13,13 @@
   },
 
   removeSubscription: function(eventName, subscriptionId) {
-    this.events[eventName] = this.events[eventName] || {};
-    delete this.events[eventName][subscriptionId];
+    if (this.events[eventName]) {
+      delete this.events[eventName][subscriptionId];
+
+      if (!Object.getOwnPropertyNames(this.events[eventName]).length) {
+        delete this.events[eventName];
+      }
+    }
   },
 
   publish: function(eventName, ...args) {
