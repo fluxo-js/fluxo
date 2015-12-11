@@ -82,20 +82,16 @@ var CollectionStore = (function (_ObjectStore) {
         throw new Error("Subset compute function to \"" + subsetName + "\" subset is not defined.");
       }
 
-      var subsetStores = this[subsetName].call(this);
-
-      return new CollectionStore(subsetStores);
+      return this[subsetName].call(this);
     }
   }, {
     key: "updateSubset",
     value: function updateSubset(subsetName) {
-      var currentValue = this.subset[subsetName];
-
-      if (currentValue instanceof CollectionStore) {
-        currentValue.removeAll();
+      if (!this.subsets[subsetName]) {
+        this.subsets[subsetName] = new CollectionStore();
       }
 
-      this.subsets[subsetName] = this.getSubset(subsetName);
+      this.subsets[subsetName].resetStores(this.getSubset(subsetName));
 
       this.triggerEvents(["change", "change:" + subsetName]);
     }
