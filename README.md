@@ -535,3 +535,6 @@ the React.js. If you choose the React.js we already created a way to connect you
 stores on your React.js components.
 
 **Read more: https://github.com/fluxo-js/fluxo-react-connect-stores**
+
+##License
+Fluxo is released under the [MIT License](http://opensource.org/licenses/MIT).
