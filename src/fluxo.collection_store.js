@@ -118,7 +118,7 @@ export default class CollectionStore extends ObjectStore {
    * @param {Object[]} stores data
    * @returns {null}
    */
-  resetStores (stores) {
+  resetStores (stores=[]) {
     this.removeAll();
     this.addStores(stores);
   }
