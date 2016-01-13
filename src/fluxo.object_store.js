@@ -91,6 +91,10 @@ export default class {
   }
 
   setAttribute (attribute, value, options) {
+    if (typeof attribute !== "string") {
+      throw new Error(`The "attribute" argument on store's "setAttribute" function must be a string.`);
+    }
+
     options = options || {};
 
     if (this.data[attribute] === value) { return; }
@@ -125,6 +129,10 @@ export default class {
   }
 
   set (data) {
+    if (typeof data !== "object") {
+      throw new Error(`The "data" argument on store's "set" function must be an object.`);
+    }
+
     for (var key in data) {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
