@@ -472,7 +472,7 @@ jon.triggerEvent("sayHello");
 
 Fluxo object store and collection stores can have computed properties like
 Ember.js computed properties, this feature allows you declare attributes that are
-computed on some events of your store.
+computed on some **[events of your store](#events)**.
 
 Computed properties are very great to normalize the access of store's information,
 (you don't want deal with `store.fullName()` and `store.data.firstName`, right?)
