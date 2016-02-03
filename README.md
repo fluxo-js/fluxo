@@ -511,7 +511,7 @@ class Todos extends Fluxo.CollectionStore {
 }
 
 Todos.computed = {
-  doneCount: ["stores:change:done"]
+  doneCount: ["add", "remove", "stores:change:done"]
 };
 
 var todos = new Todos([{ done: true }, { done: false }]);
