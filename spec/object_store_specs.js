@@ -63,24 +63,58 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.toJSON()).to.be.eql({ cid: store.cid });
   });
 
-  it("computed attributes", function() {
-    class Store extends Fluxo.ObjectStore {
-      fullName () {
-        return (this.data.first_name + " " + this.data.last_name);
+  describe("computed attributes", function() {
+    it("recomputes when the specified event got triggered", function() {
+      class Store extends Fluxo.ObjectStore {
+        fullName () {
+          return (this.data.first_name + " " + this.data.last_name);
+        }
       }
-    }
 
-    Store.computed = {
-      fullName: ["change:first_name", "change:last_name"]
-    };
+      Store.computed = {
+        fullName: ["change:first_name", "change:last_name"]
+      };
 
-    var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
+      var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
 
-    expect(store.data.fullName).to.be.eql("Samuel Simoes");
+      expect(store.data.fullName).to.be.eql("Samuel Simoes");
 
-    store.setAttribute("first_name", "Neo");
+      store.setAttribute("first_name", "Neo");
 
-    expect(store.data.fullName).to.be.eql("Neo Simoes");
+      expect(store.data.fullName).to.be.eql("Neo Simoes");
+    });
+
+    it("recomputes everything when reset is called", function() {
+      class Store extends Fluxo.ObjectStore {
+        isJohn () {
+          return this.data.name === "John";
+        }
+
+        isAdult () {
+          return this.data.age >= 21;
+        }
+      }
+
+      Store.computed = {
+        isJohn: ["change:name"],
+        isAdult: ["change:age"]
+      };
+
+      var store = new Store({ name: "John", age: 34 });
+
+      expect(store.data.isJohn).to.be.true;
+      expect(store.data.isAdult).to.be.true;
+
+      store.reset({ age: 34 });
+
+      expect(store.data.isJohn).to.be.false;
+      expect(store.data.isAdult).to.be.true;
+
+      store.reset({});
+
+      expect(store.data.isJohn).to.be.false;
+      expect(store.data.isAdult).to.be.false;
+    });
   });
 
   it("attributes parser", function() {
