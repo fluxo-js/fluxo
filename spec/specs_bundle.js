@@ -482,42 +482,90 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.toJSON()).to.be.eql({ cid: store.cid });
   });
 
-  it("computed attributes", function () {
-    var Store = (function (_Fluxo$ObjectStore) {
-      _inherits(Store, _Fluxo$ObjectStore);
+  describe("computed attributes", function () {
+    it("recomputes when the specified event got triggered", function () {
+      var Store = (function (_Fluxo$ObjectStore) {
+        _inherits(Store, _Fluxo$ObjectStore);
 
-      function Store() {
-        _classCallCheck(this, Store);
+        function Store() {
+          _classCallCheck(this, Store);
 
-        _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
-      }
-
-      _createClass(Store, [{
-        key: "fullName",
-        value: function fullName() {
-          return this.data.first_name + " " + this.data.last_name;
+          _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
         }
-      }]);
 
-      return Store;
-    })(Fluxo.ObjectStore);
+        _createClass(Store, [{
+          key: "fullName",
+          value: function fullName() {
+            return this.data.first_name + " " + this.data.last_name;
+          }
+        }]);
 
-    Store.computed = {
-      fullName: ["change:first_name", "change:last_name"]
-    };
+        return Store;
+      })(Fluxo.ObjectStore);
 
-    var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
+      Store.computed = {
+        fullName: ["change:first_name", "change:last_name"]
+      };
 
-    expect(store.data.fullName).to.be.eql("Samuel Simoes");
+      var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
 
-    store.setAttribute("first_name", "Neo");
+      expect(store.data.fullName).to.be.eql("Samuel Simoes");
 
-    expect(store.data.fullName).to.be.eql("Neo Simoes");
+      store.setAttribute("first_name", "Neo");
+
+      expect(store.data.fullName).to.be.eql("Neo Simoes");
+    });
+
+    it("recomputes everything when reset is called", function () {
+      var Store = (function (_Fluxo$ObjectStore2) {
+        _inherits(Store, _Fluxo$ObjectStore2);
+
+        function Store() {
+          _classCallCheck(this, Store);
+
+          _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        _createClass(Store, [{
+          key: "isJohn",
+          value: function isJohn() {
+            return this.data.name === "John";
+          }
+        }, {
+          key: "isAdult",
+          value: function isAdult() {
+            return this.data.age >= 21;
+          }
+        }]);
+
+        return Store;
+      })(Fluxo.ObjectStore);
+
+      Store.computed = {
+        isJohn: ["change:name"],
+        isAdult: ["change:age"]
+      };
+
+      var store = new Store({ name: "John", age: 34 });
+
+      expect(store.data.isJohn).to.be["true"];
+      expect(store.data.isAdult).to.be["true"];
+
+      store.reset({ age: 34 });
+
+      expect(store.data.isJohn).to.be["false"];
+      expect(store.data.isAdult).to.be["true"];
+
+      store.reset({});
+
+      expect(store.data.isJohn).to.be["false"];
+      expect(store.data.isAdult).to.be["false"];
+    });
   });
 
   it("attributes parser", function () {
-    var Store = (function (_Fluxo$ObjectStore2) {
-      _inherits(Store, _Fluxo$ObjectStore2);
+    var Store = (function (_Fluxo$ObjectStore3) {
+      _inherits(Store, _Fluxo$ObjectStore3);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -578,8 +626,8 @@ describe("Fluxo.ObjectStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var Store = (function (_Fluxo$ObjectStore3) {
-        _inherits(Store, _Fluxo$ObjectStore3);
+      var Store = (function (_Fluxo$ObjectStore4) {
+        _inherits(Store, _Fluxo$ObjectStore4);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -600,8 +648,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("allow to override the default values", function () {
-      var Store = (function (_Fluxo$ObjectStore4) {
-        _inherits(Store, _Fluxo$ObjectStore4);
+      var Store = (function (_Fluxo$ObjectStore5) {
+        _inherits(Store, _Fluxo$ObjectStore5);
 
         function Store() {
           _classCallCheck(this, Store);

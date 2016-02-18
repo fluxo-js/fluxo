@@ -144,7 +144,7 @@ export default class {
     data = data || {};
 
     for (var key in this.data) {
-      if (data[key] === undefined) {
+      if (data[key] === undefined && !this.computed.hasOwnProperty(key)) {
         this.unsetAttribute(key, { silentGlobalChange: true });
       }
     }
