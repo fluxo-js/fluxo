@@ -213,15 +213,23 @@ var CollectionStore = (function (_ObjectStore) {
     key: "setStores",
     value: function setStores(data) {
       for (var i = 0, l = data.length; i < l; i++) {
-        var storeData = data[i],
-            alreadyAddedStore = this.find(storeData.id || storeData.cid);
-
-        if (alreadyAddedStore) {
-          alreadyAddedStore.set(storeData);
-        } else {
-          this.addStore(storeData);
-        }
+        this.setStore(data[i]);
       }
+    }
+  }, {
+    key: "setStore",
+    value: function setStore(data) {
+      var alreadyAddedStore = this.find(data.id || data.cid),
+          store = undefined;
+
+      if (alreadyAddedStore) {
+        store = alreadyAddedStore;
+        alreadyAddedStore.set(data);
+      } else {
+        store = this.addStore(data);
+      }
+
+      return store;
     }
 
     /**

@@ -147,15 +147,22 @@ export default class CollectionStore extends ObjectStore {
    */
   setStores (data) {
     for (var i = 0, l = data.length; i < l; i++) {
-      var storeData = data[i],
-          alreadyAddedStore = this.find(storeData.id || storeData.cid);
-
-      if (alreadyAddedStore) {
-        alreadyAddedStore.set(storeData);
-      } else {
-        this.addStore(storeData);
-      }
+      this.setStore(data[i]);
     }
+  }
+
+  setStore (data) {
+    let alreadyAddedStore = this.find(data.id || data.cid),
+        store;
+
+    if (alreadyAddedStore) {
+      store = alreadyAddedStore;
+      alreadyAddedStore.set(data);
+    } else {
+      store = this.addStore(data);
+    }
+
+    return store;
   }
 
   /**
