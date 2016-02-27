@@ -43,6 +43,38 @@ some pattern like Facebook's Flux these kind of things is crucial.
 So Fluxo is a foundation to "entities" with useful capabilities with a tiny
 dependency amount on your application. These entities objects we call **store**.
 
+#Summary
+* [Fluxo.ObjectStore](#fluxoobjectstore)
+  * [Reading and Updating your store data](#reading-and-updating-your-store-data)
+    * [setAttribute](#setattribute)
+    * [set](#set)
+    * [reset](#reset)
+    * [unsetAttribute](#unsetattribute)
+  * [Extending a Store](#extending-a-store)
+  * [Default attributes values](#default-attributes-values)
+* [Fluxo.CollectionStore](#fluxocollectionstore)
+    * [Updating your collection](#updating-your-collection)
+      * [addStore](#addstore)
+      * [addStores](#addstores)
+      * [removeStore](#removestore)
+      * [resetStores](#resetstores)
+    * [Children stores extension](#children-stores-extension)
+    * [Searching](#searching)
+      * [find](#find)
+      * [where](#where)
+    * [Ordering](#ordering)
+    * [Collection children delegations](#collection-children-delegations)
+    * [Collection Subsets](#collection-subsets)
+* [Attributes parsers](#attributes-parsers)
+* [toJSON](#tojson)
+* [CID](#cid)
+* [Events](#events)
+  * [Collections and event bubbling](#collections-and-event-bubbling)
+  * [Wildcard event](#wildcard-event)
+* [Computed properties](#computed-properties)
+* [Using with React.js](#using-with-reactjs)
+* [License](#license)
+
 ##Fluxo.ObjectStore
 
 For objects that represents a "single entity" you must instante the class `Fluxo.ObjectStore`
