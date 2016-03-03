@@ -56,6 +56,7 @@ dependency amount on your application. These entities objects we call **store**.
     * [Updating your collection](#updating-your-collection)
       * [addStore](#addstore)
       * [addStores](#addstores)
+      * [removeAll](#removeall)
       * [removeStore](#removestore)
       * [resetStores](#resetstores)
     * [Children stores extension](#children-stores-extension)
@@ -220,6 +221,11 @@ people.addStores([{ name: "Neo" }, { name: "John" }]);
 people.stores[0].data.name //=> "Neo"
 people.stores[0].data.name //=> "John"
 ```
+
+####\#removeAll
+`removeAll()`
+
+Remove all stores. Emits `change` and `remove` events.
 
 ####\#removeStore
 `removeStore(Fluxo.ObjectStore)`
