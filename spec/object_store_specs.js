@@ -166,6 +166,23 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.data).to.not.contain.key("name");
   });
 
+  it("release", function () {
+    var store = new Fluxo.ObjectStore({ name: "Fluxo" }),
+        callback = chai.spy();
+
+    store.on(["myEvent"], callback);
+
+    store.release();
+
+    store.triggerEvent("myEvent");
+
+    expect(callback).to.not.have.been.called();
+
+    expect(function () {
+      store.setAttribute("name", "New Fluxo");
+    }).to.throw(Error, `This store is already released and it can't be used.`);
+  });
+
   describe("default values", function () {
     it("initialise with default values", function () {
       class Store extends Fluxo.ObjectStore {}
