@@ -1,6 +1,6 @@
 {
   "name": "fluxo-js",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Fluxo is a simple, lightweight and dependency free state manager lib.",
   "main": "dist/fluxo.js",
   "repository": {
