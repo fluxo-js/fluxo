@@ -57,13 +57,14 @@ dependency amount on your application. These entities objects we call **store**.
       * [addStore](#addstore)
       * [addStores](#addstores)
       * [removeAll](#removeall)
-      * [removeStore](#removestore)
+      * [remove](#remove)
       * [resetStores](#resetstores)
     * [Children stores extension](#children-stores-extension)
     * [Searching](#searching)
       * [find](#find)
       * [where](#where)
     * [Ordering](#ordering)
+    * [Release Store](#release-store)
     * [Collection children delegations](#collection-children-delegations)
     * [Collection Subsets](#collection-subsets)
 * [Attributes parsers](#attributes-parsers)
@@ -223,12 +224,14 @@ people.stores[0].data.name //=> "John"
 ```
 
 ####\#removeAll
-`removeAll()`
+`removeAll(options={ releaseStores: true })`
 
 Remove all stores. Emits `change` and `remove` events.
 
-####\#removeStore
-`removeStore(Fluxo.ObjectStore)`
+_:warning: This method [releases the children stores](#release-store)._
+
+####\#remove
+`removeStore(Fluxo.ObjectStore, options={ release: false, silent: false })`
 
 Remove a single store. Emits `change` and `remove` events.
 
@@ -241,7 +244,7 @@ people.stores[0] //=> undefined
 ```
 
 ####\#resetStores
-`resetStores(array[object|Fluxo.ObjectStore])`
+`resetStores(array[object|Fluxo.ObjectStore], options={ releaseStores: true })`
 
 Same that `addStores`, but it will removes all the other stores that isn't included on
 stores array passed on the first argument.
@@ -252,6 +255,8 @@ people.resetStores([{ name: "Neo" }]);
 people.stores[0].data.name //=> "Neo"
 people.stores[1] //=> undefined
 ```
+
+_:warning: This method [releases the children stores](#release-store)._
 
 ###Children stores extension
 
@@ -308,6 +313,15 @@ class People extends Fluxo.CollectionStore {
     return a.data.at - b.data.at;
   }
 };
+```
+
+###Release Store
+Every store can be "released". Releasing a Fluxo store is a way to free internal resources from useless stores, like signed events, for example. A released store can't be used anymore. Invoking state mutations on released stores will throw an error exception.
+
+To release a store you must invoke the `#release` method. The methods `Fluxo.CollectionStore#resetStores` and `Fluxo.CollectionStore#removeStores` **always release all children stores**, if you want to keep using the children stores after the removal you can pass the option releaseStores false, like this:
+
+```js
+myCollection.resetStores([], { releaseStores: false });
 ```
 
 ##Collection children delegations
