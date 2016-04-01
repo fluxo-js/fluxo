@@ -57,6 +57,7 @@ dependency amount on your application. These entities objects we call **store**.
     * [Updating your collection](#updating-your-collection)
       * [addStore](#addstore)
       * [addStores](#addstores)
+      * [setStores](#setstores)
       * [removeAll](#removeall)
       * [remove](#remove)
       * [resetStores](#resetstores)
@@ -234,6 +235,12 @@ people.addStores([{ name: "Neo" }, { name: "John" }]);
 people.stores[0].data.name //=> "Neo"
 people.stores[0].data.name //=> "John"
 ```
+:warning: **If you pass an already added store it will be ignored!**
+
+####\#setStores
+`setStores(array[object|Fluxo.ObjectStore])`
+
+Like `addStore` but **if a store on the parameter is already added it will be updated**.
 
 ####\#removeAll
 `removeAll(options={ releaseStores: true })`
