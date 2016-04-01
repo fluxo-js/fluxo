@@ -265,8 +265,7 @@ people.stores[0] //=> undefined
 ####\#resetStores
 `resetStores(array[object|Fluxo.ObjectStore], options={ releaseStores: true })`
 
-Same that `addStores`, but it will removes all the other stores that isn't included on
-stores array passed on the first argument.
+Remove all previous children stores and add the argument's stores.
 
 ```js
 people.addStores([{ name: "Neo" }, { name: "John" }]);
