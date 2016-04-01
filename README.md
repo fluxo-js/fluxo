@@ -231,15 +231,15 @@ Remove all stores. Emits `change` and `remove` events.
 _:warning: This method [releases the children stores](#release-store)._
 
 ####\#remove
-`removeStore(Fluxo.ObjectStore, options={ release: false, silent: false })`
+`remove(Fluxo.ObjectStore, options={ release: false, silent: false })`
 
 Remove a single store. Emits `change` and `remove` events.
 
 ```js
-var jon = new Fluxo.ObjectCreate({ name: "John" });
+var jon = new Fluxo.ObjectStore({ name: "John" });
 people.addStore(jon);
 people.stores[0] //=> <the store>
-people.removeStore(jon);
+people.remove(jon);
 people.stores[0] //=> undefined
 ```
 
