@@ -184,7 +184,7 @@ export default class CollectionStore extends ObjectStore {
       throw new Error(`You can't add a released store on collection.`);
     }
 
-    var alreadyAddedStore = this.find(store.data.id);
+    var alreadyAddedStore = this.find(store.cid || store.data.id);
 
     if (alreadyAddedStore) { return alreadyAddedStore; }
 
