@@ -651,13 +651,42 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("reset", function () {
+    var Store = (function (_Fluxo$ObjectStore4) {
+      _inherits(Store, _Fluxo$ObjectStore4);
+
+      function Store() {
+        _classCallCheck(this, Store);
+
+        _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+      }
+
+      return Store;
+    })(Fluxo.ObjectStore);
+
+    Store.defaults = {
+      type: "myStore"
+    };
+
+    var store = new Store({ name: "Fluxo" });
+
+    expect(store.data).to.contain.all.keys("type", "name");
+
+    store.setAttribute("type", "newType");
+
+    store.reset({ otherKey: "foo" });
+
+    expect(store.data).to.contain.all.keys("type", "otherKey");
+
+    expect(store.data.type).to.be.eql("myStore");
+  });
+
+  it("clear", function () {
     var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 
-    expect(store.data).to.contain.all.keys({ name: "Fluxo" });
+    expect(store.data).to.contain.all.keys("name");
 
-    store.reset({ type: "Object" });
+    store.clear();
 
-    expect(store.data).to.contain.all.keys({ type: "Object" });
     expect(store.data).to.not.contain.key("name");
   });
 
@@ -680,8 +709,8 @@ describe("Fluxo.ObjectStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var Store = (function (_Fluxo$ObjectStore4) {
-        _inherits(Store, _Fluxo$ObjectStore4);
+      var Store = (function (_Fluxo$ObjectStore5) {
+        _inherits(Store, _Fluxo$ObjectStore5);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -702,8 +731,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("allow to override the default values", function () {
-      var Store = (function (_Fluxo$ObjectStore5) {
-        _inherits(Store, _Fluxo$ObjectStore5);
+      var Store = (function (_Fluxo$ObjectStore6) {
+        _inherits(Store, _Fluxo$ObjectStore6);
 
         function Store() {
           _classCallCheck(this, Store);

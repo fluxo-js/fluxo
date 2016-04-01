@@ -582,15 +582,26 @@ var _default = (function () {
 
       this.signedEventsCancelers = [];
 
-      var clonedDefaults = undefined;
+      this.setDefaults();
 
-      if (this.constructor.defaults) {
-        clonedDefaults = JSON.parse(JSON.stringify(this.constructor.defaults));
-      }
-
-      this.set(_extends({}, clonedDefaults, data));
+      this.set(data);
 
       this.registerComputed();
+    }
+  }, {
+    key: "setDefaults",
+    value: function setDefaults() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? { silentGlobalChange: false } : arguments[0];
+
+      if (!this.constructor.defaults) {
+        return;
+      }
+
+      var data = JSON.parse(JSON.stringify(this.constructor.defaults));
+
+      for (var key in data) {
+        this.setAttribute(key, data[key], options);
+      }
     }
   }, {
     key: "firstComputation",
@@ -749,20 +760,35 @@ var _default = (function () {
     }
   }, {
     key: "reset",
-    value: function reset(data) {
-      data = data || {};
+    value: function reset() {
+      var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-      for (var key in this.data) {
-        if (data[key] === undefined && !this.computed.hasOwnProperty(key)) {
-          this.unsetAttribute(key, { silentGlobalChange: true });
-        }
-      }
+      this.clear({ silentGlobalChange: true });
+
+      this.setDefaults({ silentGlobalChange: true });
 
       for (var key in data) {
         this.setAttribute(key, data[key], { silentGlobalChange: true });
       }
 
       this.triggerEvent("change");
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+      options = _extends({ silentGlobalChange: false }, options);
+
+      for (var key in this.data) {
+        if (!this.computed.hasOwnProperty(key)) {
+          this.unsetAttribute(key, { silentGlobalChange: true });
+        }
+      }
+
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
+      }
     }
   }, {
     key: "toJSON",

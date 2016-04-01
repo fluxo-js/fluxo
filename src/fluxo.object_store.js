@@ -22,15 +22,21 @@ export default class {
 
     this.signedEventsCancelers = [];
 
-    let clonedDefaults;
+    this.setDefaults();
 
-    if (this.constructor.defaults) {
-      clonedDefaults = JSON.parse(JSON.stringify(this.constructor.defaults));
-    }
-
-    this.set({ ...clonedDefaults, ...data });
+    this.set(data);
 
     this.registerComputed();
+  }
+
+  setDefaults (options={ silentGlobalChange: false }) {
+    if (!this.constructor.defaults) { return; }
+
+    let data = JSON.parse(JSON.stringify(this.constructor.defaults));
+
+    for (var key in data) {
+      this.setAttribute(key, data[key], options);
+    }
   }
 
   firstComputation () {
@@ -162,20 +168,30 @@ export default class {
     this.released = true;
   }
 
-  reset  (data) {
-    data = data || {};
+  reset (data={}) {
+    this.clear({ silentGlobalChange: true });
 
-    for (var key in this.data) {
-      if (data[key] === undefined && !this.computed.hasOwnProperty(key)) {
-        this.unsetAttribute(key, { silentGlobalChange: true });
-      }
-    }
+    this.setDefaults({ silentGlobalChange: true });
 
     for (var key in data) {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
 
     this.triggerEvent("change");
+  }
+
+  clear (options={}) {
+    options = { silentGlobalChange: false, ...options };
+
+    for (var key in this.data) {
+      if (!this.computed.hasOwnProperty(key)) {
+        this.unsetAttribute(key, { silentGlobalChange: true });
+      }
+    }
+
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
+    }
   }
 
   toJSON () {

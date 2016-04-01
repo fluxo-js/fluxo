@@ -49,6 +49,7 @@ dependency amount on your application. These entities objects we call **store**.
     * [setAttribute](#setattribute)
     * [set](#set)
     * [reset](#reset)
+    * [clear](#clear)
     * [unsetAttribute](#unsetattribute)
   * [Extending a Store](#extending-a-store)
   * [Default attributes values](#default-attributes-values)
@@ -117,14 +118,25 @@ jon.data.name //=> "John Bar"
 ####\#reset
 `reset(attributes)`
 
-Similar to `set`, but removes the other attributes that aren't included on the
-attributes object.
+Similar to [set](#set), but removes the other attributes that aren't included on the attributes object and **restore the deafult values**.
 
 ```js
 jon.set({ "name": "John Bar" });
 jon.reset({ "age": 30 });
 jon.data.name // => undefined
 jon.data.age // => 30
+```
+
+####\#clear
+`clear()`
+
+Remove all attributes of your store.
+
+```js
+jon.set({ "name": "John Bar", age: 25 });
+jon.clear();
+jon.data.name // => undefined
+jon.data.age // => undefined
 ```
 
 ####\#unsetAttribute

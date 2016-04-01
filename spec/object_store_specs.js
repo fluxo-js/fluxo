@@ -156,13 +156,32 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("reset", function () {
+    class Store extends Fluxo.ObjectStore {}
+
+    Store.defaults = {
+      type: "myStore"
+    };
+
+    let store = new Store({ name: "Fluxo" });
+
+    expect(store.data).to.contain.all.keys("type", "name");
+
+    store.setAttribute("type", "newType");
+
+    store.reset({ otherKey: "foo" });
+
+    expect(store.data).to.contain.all.keys("type", "otherKey");
+
+    expect(store.data.type).to.be.eql("myStore");
+  });
+
+  it("clear", function () {
     var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 
-    expect(store.data).to.contain.all.keys({ name: "Fluxo" });
+    expect(store.data).to.contain.all.keys("name");
 
-    store.reset({ type: "Object" });
+    store.clear();
 
-    expect(store.data).to.contain.all.keys({ type: "Object" });
     expect(store.data).to.not.contain.key("name");
   });
 
