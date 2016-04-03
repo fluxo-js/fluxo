@@ -119,7 +119,7 @@ jon.data.name //=> "John Bar"
 ####\#reset
 `reset(attributes)`
 
-Similar to [set](#set), but removes the other attributes that aren't included on the attributes object and **restore the deafult values**.
+Similar to [set](#set), but removes the other attributes that aren't included on the attributes object and **restore the default values**.
 
 ```js
 jon.set({ "name": "John Bar" });
