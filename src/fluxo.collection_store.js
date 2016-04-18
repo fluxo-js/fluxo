@@ -150,9 +150,42 @@ export default class CollectionStore extends ObjectStore {
    * @returns undefined
    * @instance
    */
-  setStores (data) {
-    for (var i = 0, l = data.length; i < l; i++) {
-      this.setStore(data[i]);
+  setStores (storesData, options={}) {
+    options = { removeMissing: false, ...options };
+
+    let storeMap = {};
+
+    for (let i = 0, l = this.stores.length; i < l; i++) {
+      let store = this.stores[i];
+
+      if (store.data.id) {
+        storeMap[store.data.id] = store;
+      } else {
+        storeMap[store.cid] = store;
+      }
+    }
+
+    for (let i = 0, l = storesData.length; i < l; i++) {
+      let store = storesData[i],
+          identifier = (store.id || (store.data && store.data.id) || store.cid),
+          found = storeMap[identifier];
+
+      if (found) {
+        delete storeMap[identifier];
+      }
+
+      if (found && !store.cid) {
+        found.set(store);
+      } else {
+        this.addStore(store);
+      }
+    }
+
+    if (options.removeMissing) {
+      for (let identifier in storeMap) {
+        let store = storeMap[identifier];
+        this.remove(store, options);
+      }
     }
   }
 

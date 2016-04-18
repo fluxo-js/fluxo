@@ -122,17 +122,33 @@ describe("Fluxo.CollectionStore", function () {
     expect(collection.stores).to.be.eql([store3, store2, store1]);
   });
 
-  it("#setStores", function() {
-    var collection = new Fluxo.CollectionStore();
+  describe("#setStores", function () {
+    it("update and add new stores", function() {
+      var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel", gender: "m" });
+      var store2 = new Fluxo.ObjectStore({ id: 2, name: "Foo" });
 
-    var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel" });
+      var collection = new Fluxo.CollectionStore([store1, store2]);
 
-    collection.addStore(store1);
+      collection.setStores([{ id: 1, name: "Simões" }, { id: 3, name: "Foo" }]);
 
-    collection.setStores([{ id: 1, name: "Simões" }, { id: 2, name: "Foo" }]);
+      expect(store1.data.name).to.be.eql("Simões");
+      expect(store1.data.gender).to.be.eql("m");
+      expect(collection.stores).to.be.eql([store1, store2, collection.find(3)]);
+    });
 
-    expect(store1.data.name).to.be.eql("Simões");
-    expect(collection.stores).to.be.eql([store1, collection.find(2)]);
+    it("update and remove missing stores", function() {
+      var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel", gender: "m" });
+      var store2 = new Fluxo.ObjectStore({ id: 2, name: "Foo" });
+      var store3 = new Fluxo.ObjectStore({ id: 3, name: "Bar" });
+
+      var collection = new Fluxo.CollectionStore([store1, store2, store3]);
+
+      collection.setStores([{ id: 1, name: "Simões" }, store2], { removeMissing: true });
+
+      expect(store1.data.name).to.be.eql("Simões");
+      expect(store1.data.gender).to.be.eql("m");
+      expect(collection.stores).to.be.eql([store1, store2]);
+    });
   });
 
   it("#find", function() {

@@ -238,9 +238,25 @@ people.stores[0].data.name //=> "John"
 :warning: **If you pass an already added store it will be ignored!**
 
 ####\#setStores
-`setStores(array[object|Fluxo.ObjectStore])`
+`setStores(array[object|Fluxo.ObjectStore], options={ removeMissing: false })`
 
-Like `addStore` but **if a store on the parameter is already added it will be updated**.
+Like `addStores` but **if a store on the parameter is already added it will be updated**.
+
+You can specify the option `removeMissing: true` to remove all stores that aren't specified on the payload.
+
+```js
+var collection =
+  new Fluxo.CollectionStore([
+    { id: 1, name: "Foo", gender: "m" },
+    { id: 2, name: "Bar" }
+  ]);
+
+collection.setStores([{ id: 1, name: "FooBar" }], { removeMissing: true });
+
+collection.stores[0].name // => FooBar
+collection.stores[0].gender // => m
+collection.stores[1] // => undefined
+```
 
 ####\#removeAll
 `removeAll(options={ releaseStores: true })`
