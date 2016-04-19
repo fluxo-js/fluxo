@@ -588,6 +588,11 @@ describe("Fluxo.ObjectStore", function () {
         }
 
         _createClass(Store, [{
+          key: "hasEmail",
+          value: function hasEmail() {
+            return this.data.emails.length > 0;
+          }
+        }, {
           key: "isJohn",
           value: function isJohn() {
             return this.data.name === "John";
@@ -602,25 +607,30 @@ describe("Fluxo.ObjectStore", function () {
         return Store;
       })(Fluxo.ObjectStore);
 
+      Store.defaults = { emails: [] };
+
       Store.computed = {
         isJohn: ["change:name"],
-        isAdult: ["change:age"]
+        isAdult: ["change:age"],
+        hasEmail: ["change:emails"]
       };
 
-      var store = new Store({ name: "John", age: 34 });
+      var store = new Store({ name: "John", age: 34, emails: ["foo@foo.com"] });
 
       expect(store.data.isJohn).to.be["true"];
       expect(store.data.isAdult).to.be["true"];
+      expect(store.data.hasEmail).to.be["true"];
 
       store.reset({ age: 34 });
 
       expect(store.data.isJohn).to.be["false"];
       expect(store.data.isAdult).to.be["true"];
 
-      store.reset({});
+      store.reset();
 
       expect(store.data.isJohn).to.be["false"];
       expect(store.data.isAdult).to.be["false"];
+      expect(store.data.hasEmail).to.be["false"];
     });
   });
 

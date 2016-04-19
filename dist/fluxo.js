@@ -636,15 +636,20 @@ var _default = (function () {
       this.registerComputed();
     }
   }, {
-    key: "setDefaults",
-    value: function setDefaults() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? { silentGlobalChange: false } : arguments[0];
-
+    key: "getDefaults",
+    value: function getDefaults() {
       if (!this.constructor.defaults) {
         return;
       }
 
-      var data = JSON.parse(JSON.stringify(this.constructor.defaults));
+      return JSON.parse(JSON.stringify(this.constructor.defaults));
+    }
+  }, {
+    key: "setDefaults",
+    value: function setDefaults() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? { silentGlobalChange: false } : arguments[0];
+
+      var data = this.getDefaults();
 
       for (var key in data) {
         this.setAttribute(key, data[key], options);
@@ -810,12 +815,26 @@ var _default = (function () {
     value: function reset() {
       var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-      this.clear({ silentGlobalChange: true });
+      var attributes = _extends({}, this.data),
+          defaults = this.getDefaults();
 
-      this.setDefaults({ silentGlobalChange: true });
+      for (var attributeName in this.computed) {
+        delete attributes[attributeName];
+      }
 
-      for (var key in data) {
-        this.setAttribute(key, data[key], { silentGlobalChange: true });
+      for (var attributeName in data) {
+        this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
+        delete attributes[attributeName];
+        delete defaults[attributeName];
+      }
+
+      for (var attributeName in defaults) {
+        this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
+        delete attributes[attributeName];
+      }
+
+      for (var attributeName in attributes) {
+        this.unsetAttribute(attributeName, { silentGlobalChange: true });
       }
 
       this.triggerEvent("change");

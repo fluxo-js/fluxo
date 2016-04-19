@@ -29,10 +29,14 @@ export default class {
     this.registerComputed();
   }
 
-  setDefaults (options={ silentGlobalChange: false }) {
+  getDefaults () {
     if (!this.constructor.defaults) { return; }
 
-    let data = JSON.parse(JSON.stringify(this.constructor.defaults));
+    return JSON.parse(JSON.stringify(this.constructor.defaults));
+  }
+
+  setDefaults (options={ silentGlobalChange: false }) {
+    let data = this.getDefaults();
 
     for (var key in data) {
       this.setAttribute(key, data[key], options);
@@ -169,12 +173,26 @@ export default class {
   }
 
   reset (data={}) {
-    this.clear({ silentGlobalChange: true });
+    let attributes = { ...this.data },
+        defaults = this.getDefaults();
 
-    this.setDefaults({ silentGlobalChange: true });
+    for (let attributeName in this.computed) {
+      delete attributes[attributeName];
+    }
 
-    for (var key in data) {
-      this.setAttribute(key, data[key], { silentGlobalChange: true });
+    for (let attributeName in data) {
+      this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
+      delete attributes[attributeName];
+      delete defaults[attributeName];
+    }
+
+    for (let attributeName in defaults) {
+      this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
+      delete attributes[attributeName];
+    }
+
+    for (let attributeName in attributes) {
+      this.unsetAttribute(attributeName, { silentGlobalChange: true });
     }
 
     this.triggerEvent("change");
