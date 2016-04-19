@@ -3,7 +3,7 @@ import extend from "./fluxo.extend.js";
 
 var storesUUID = 1;
 
-export default class {
+class ObjectStore {
   constructor () {
     this.initialize(...arguments);
     this.firstComputation();
@@ -15,6 +15,8 @@ export default class {
     this.released = false;
 
     this.data = {};
+
+    this.storeAttributesEventsCanceler = {};
 
     this.computed = (this.constructor.computed || {});
 
@@ -106,6 +108,31 @@ export default class {
     }
   }
 
+  stopListenStoreAttribute (attributeName) {
+    this.storeAttributesEventsCanceler[attributeName].call();
+    delete this.storeAttributesEventsCanceler[attributeName];
+  }
+
+  listenStoreAttribute (attribute, store) {
+    let onStoreEvent = function(attributeName, eventName, ...args) {
+      if (eventName !== "change") {
+        this.triggerEvent(
+          `change:${attributeName}:${eventName.replace(/^change:/, '')}`,
+          ...args
+        );
+      }
+
+      if (eventName === "change" || eventName === "stores:change") {
+        this.triggerEvent(`change:${attributeName}`);
+        this.triggerEvent(`change`);
+        delete this.lastGeneratedJSON;
+      }
+    };
+
+    this.storeAttributesEventsCanceler[attribute] =
+      store.on(["*"], onStoreEvent.bind(this, attribute));
+  }
+
   setAttribute (attribute, value, options) {
     if (typeof attribute !== "string") {
       throw new Error(`The "attribute" argument on store's "setAttribute" function must be a string.`);
@@ -122,7 +149,15 @@ export default class {
     delete this.lastGeneratedJSON;
 
     if (this.attributeParsers[attribute]) {
-      value = this.attributeParsers[attribute](value);
+      value = this.attributeParsers[attribute].call(this, value);
+    }
+
+    if (this.data[attribute] instanceof ObjectStore) {
+      this.stopListenStoreAttribute(attribute);
+    }
+
+    if (value instanceof ObjectStore) {
+      this.listenStoreAttribute(attribute, value);
     }
 
     let previousValue = this.data[attribute];
@@ -138,6 +173,10 @@ export default class {
 
   unsetAttribute  (attribute, options) {
     options = options || {};
+
+    if (this.data[attribute] instanceof ObjectStore) {
+      this.stopListenStoreAttribute(attribute);
+    }
 
     delete this.data[attribute];
 
@@ -223,3 +262,5 @@ export default class {
     return this.lastGeneratedJSON;
   }
 };
+
+export default ObjectStore;

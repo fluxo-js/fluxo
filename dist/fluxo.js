@@ -615,15 +615,15 @@ var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
 var storesUUID = 1;
 
-var _default = (function () {
-  function _default() {
-    _classCallCheck(this, _default);
+var ObjectStore = (function () {
+  function ObjectStore() {
+    _classCallCheck(this, ObjectStore);
 
     this.initialize.apply(this, arguments);
     this.firstComputation();
   }
 
-  _createClass(_default, [{
+  _createClass(ObjectStore, [{
     key: "initialize",
     value: function initialize() {
       var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -633,6 +633,8 @@ var _default = (function () {
       this.released = false;
 
       this.data = {};
+
+      this.storeAttributesEventsCanceler = {};
 
       this.computed = this.constructor.computed || {};
 
@@ -745,6 +747,33 @@ var _default = (function () {
       }
     }
   }, {
+    key: "stopListenStoreAttribute",
+    value: function stopListenStoreAttribute(attributeName) {
+      this.storeAttributesEventsCanceler[attributeName].call();
+      delete this.storeAttributesEventsCanceler[attributeName];
+    }
+  }, {
+    key: "listenStoreAttribute",
+    value: function listenStoreAttribute(attribute, store) {
+      var onStoreEvent = function onStoreEvent(attributeName, eventName) {
+        if (eventName !== "change") {
+          for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+            args[_key3 - 2] = arguments[_key3];
+          }
+
+          this.triggerEvent.apply(this, ["change:" + attributeName + ":" + eventName.replace(/^change:/, '')].concat(args));
+        }
+
+        if (eventName === "change" || eventName === "stores:change") {
+          this.triggerEvent("change:" + attributeName);
+          this.triggerEvent("change");
+          delete this.lastGeneratedJSON;
+        }
+      };
+
+      this.storeAttributesEventsCanceler[attribute] = store.on(["*"], onStoreEvent.bind(this, attribute));
+    }
+  }, {
     key: "setAttribute",
     value: function setAttribute(attribute, value, options) {
       if (typeof attribute !== "string") {
@@ -764,7 +793,15 @@ var _default = (function () {
       delete this.lastGeneratedJSON;
 
       if (this.attributeParsers[attribute]) {
-        value = this.attributeParsers[attribute](value);
+        value = this.attributeParsers[attribute].call(this, value);
+      }
+
+      if (this.data[attribute] instanceof ObjectStore) {
+        this.stopListenStoreAttribute(attribute);
+      }
+
+      if (value instanceof ObjectStore) {
+        this.listenStoreAttribute(attribute, value);
       }
 
       var previousValue = this.data[attribute];
@@ -783,6 +820,10 @@ var _default = (function () {
     key: "unsetAttribute",
     value: function unsetAttribute(attribute, options) {
       options = options || {};
+
+      if (this.data[attribute] instanceof ObjectStore) {
+        this.stopListenStoreAttribute(attribute);
+      }
 
       delete this.data[attribute];
 
@@ -881,11 +922,12 @@ var _default = (function () {
     }
   }]);
 
-  return _default;
+  return ObjectStore;
 })();
 
-exports["default"] = _default;
 ;
+
+exports["default"] = ObjectStore;
 module.exports = exports["default"];
 
 },{"./fluxo.extend.js":2,"./fluxo.radio.js":5}],5:[function(_dereq_,module,exports){

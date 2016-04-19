@@ -812,6 +812,98 @@ describe("Fluxo.ObjectStore", function () {
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
   });
+
+  describe("children events bubbling", function () {
+    it("parent setup the bubbling", function () {
+      var parentStore = new Fluxo.ObjectStore();
+      var childStore = new Fluxo.ObjectStore();
+      var setStoreCallback = chai.spy();
+      var setStoreAttributeCallback = chai.spy();
+
+      parentStore.on(["change:child", "change"], setStoreCallback);
+
+      parentStore.setAttribute("child", childStore);
+
+      expect(setStoreCallback).to.have.been.called.twice();
+
+      parentStore.on(["change:child:name", "change:child", "change"], setStoreAttributeCallback);
+
+      childStore.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.have.been.called.exactly(3);
+    });
+
+    it("parent remove the bubbling setup on change", function () {
+      var parentStore = new Fluxo.ObjectStore();
+      var firstChildStore = new Fluxo.ObjectStore();
+      var otherChildStore = new Fluxo.ObjectStore();
+      var setStoreAttributeCallback = chai.spy();
+
+      parentStore.setAttribute("child", firstChildStore);
+
+      parentStore.setAttribute("child", otherChildStore);
+
+      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+
+      firstChildStore.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.not.have.been.called();
+    });
+
+    it("parent remove the bubbling setup on unset", function () {
+      var parentStore = new Fluxo.ObjectStore();
+      var childStore = new Fluxo.ObjectStore();
+      var setStoreAttributeCallback = chai.spy();
+
+      parentStore.setAttribute("child", childStore);
+
+      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+
+      parentStore.unsetAttribute("child");
+
+      childStore.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.not.have.been.called();
+    });
+
+    it("setup with different classes", function () {
+      var Post = (function (_Fluxo$ObjectStore7) {
+        _inherits(Post, _Fluxo$ObjectStore7);
+
+        function Post() {
+          _classCallCheck(this, Post);
+
+          _get(Object.getPrototypeOf(Post.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        return Post;
+      })(Fluxo.ObjectStore);
+
+      var Author = (function (_Fluxo$ObjectStore8) {
+        _inherits(Author, _Fluxo$ObjectStore8);
+
+        function Author() {
+          _classCallCheck(this, Author);
+
+          _get(Object.getPrototypeOf(Author.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        return Author;
+      })(Fluxo.ObjectStore);
+
+      var post = new Post();
+      var author = new Author();
+      var setStoreAttributeCallback = chai.spy();
+
+      post.on(["change:author:name"], setStoreAttributeCallback);
+
+      post.setAttribute("author", author);
+
+      author.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.have.been.called();
+    });
+  });
 });
 
 },{}],3:[function(require,module,exports){
