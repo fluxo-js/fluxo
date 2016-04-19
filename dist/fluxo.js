@@ -756,9 +756,11 @@ var _default = (function () {
         value = this.attributeParsers[attribute](value);
       }
 
+      var previousValue = this.data[attribute];
+
       this.data[attribute] = value;
 
-      this.triggerEvent("change:" + attribute);
+      this.triggerEvent("change:" + attribute, previousValue);
 
       if (options.silentGlobalChange) {
         return;

@@ -125,9 +125,11 @@ export default class {
       value = this.attributeParsers[attribute](value);
     }
 
+    let previousValue = this.data[attribute];
+
     this.data[attribute] = value;
 
-    this.triggerEvent(`change:${attribute}`);
+    this.triggerEvent(`change:${attribute}`, previousValue);
 
     if (options.silentGlobalChange) { return; }
 

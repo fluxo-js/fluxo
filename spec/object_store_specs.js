@@ -21,7 +21,11 @@ describe("Fluxo.ObjectStore", function () {
 
     expect(store.data).to.be.eql({ name: "Samuel" });
     expect(onChangeCallback).to.have.been.called();
-    expect(onChangeNameCallback).to.have.been.called();
+    expect(onChangeNameCallback).to.have.been.called.with(undefined);
+
+    store.setAttribute("name", "Foo");
+    expect(store.data).to.be.eql({ name: "Foo" });
+    expect(onChangeNameCallback).to.have.been.called.with("Samuel");
   });
 
   it("#set", function() {
