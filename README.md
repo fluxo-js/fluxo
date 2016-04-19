@@ -253,8 +253,8 @@ var collection =
 
 collection.setStores([{ id: 1, name: "FooBar" }], { removeMissing: true });
 
-collection.stores[0].name // => FooBar
-collection.stores[0].gender // => m
+collection.stores[0].data.name // => FooBar
+collection.stores[0].data.gender // => m
 collection.stores[1] // => undefined
 ```
 
