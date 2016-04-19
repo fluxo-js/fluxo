@@ -465,6 +465,28 @@ describe("Fluxo.CollectionStore", function () {
     expect(collectionCallback).to.not.have.been.called();
     expect(storeCallback).to.not.have.been.called();
   });
+
+  describe("#index", function () {
+    it("keep the correct index", function () {
+      var store1 = new Fluxo.ObjectStore({ id: 10, name: "Foo" });
+
+      var collection = new Fluxo.CollectionStore([store1]);
+
+      expect(collection.index[10]).to.be.eql(store1);
+      expect(collection.index[store1.cid]).to.be.eql(store1);
+
+      store1.setAttribute("id", 30);
+
+      expect(collection.index[10]).to.be.eql(undefined);
+      expect(collection.index[30]).to.be.eql(store1);
+      expect(collection.index[store1.cid]).to.be.eql(store1);
+
+      collection.remove(store1);
+
+      expect(collection.index[30]).to.be.eql(undefined);
+      expect(collection.index[store1.cid]).to.be.eql(undefined);
+    });
+  });
 });
 
 },{}],2:[function(require,module,exports){
