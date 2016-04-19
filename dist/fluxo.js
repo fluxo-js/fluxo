@@ -271,6 +271,14 @@ var CollectionStore = (function (_ObjectStore) {
 
       return store;
     }
+  }, {
+    key: "makeSort",
+    value: function makeSort() {
+      if (!this.sort) {
+        return;
+      }
+      this.stores.sort(this.sort);
+    }
 
     /**
      * @param {Object} store data
@@ -302,13 +310,15 @@ var CollectionStore = (function (_ObjectStore) {
         }
 
         this.triggerEvent.apply(this, ["stores:" + eventName].concat(args));
+
+        if (eventName === "change") {
+          this.makeSort();
+        }
       };
 
       this.storesOnChangeCancelers[store.cid] = store.on(["*"], onStoreEvent.bind(this));
 
-      if (this.sort) {
-        this.stores.sort(this.sort);
-      }
+      this.makeSort();
 
       this.triggerEvents(["add", "change"]);
 
@@ -420,6 +430,8 @@ var CollectionStore = (function (_ObjectStore) {
       if (options.release) {
         store.release();
       }
+
+      this.makeSort();
 
       if (!options.silent) {
         this.triggerEvents(["remove", "change"]);

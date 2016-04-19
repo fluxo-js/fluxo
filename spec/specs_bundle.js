@@ -167,6 +167,14 @@ describe("Fluxo.CollectionStore", function () {
     var collection = new Collection([store1, store2, store3]);
 
     expect(collection.stores).to.be.eql([store3, store2, store1]);
+
+    store3.setAttribute("price", 200);
+
+    expect(collection.stores).to.be.eql([store2, store1, store3]);
+
+    collection.remove(store1);
+
+    expect(collection.stores).to.be.eql([store2, store3]);
   });
 
   describe("#setStores", function () {

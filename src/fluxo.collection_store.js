@@ -203,6 +203,11 @@ export default class CollectionStore extends ObjectStore {
     return store;
   }
 
+  makeSort () {
+    if (!this.sort) { return; }
+    this.stores.sort(this.sort);
+  }
+
   /**
    * @param {Object} store data
    * @returns {Object}
@@ -225,14 +230,16 @@ export default class CollectionStore extends ObjectStore {
 
     var onStoreEvent = function(eventName, ...args) {
       this.triggerEvent(`stores:${eventName}`, ...args);
+
+      if (eventName === "change") {
+        this.makeSort();
+      }
     };
 
     this.storesOnChangeCancelers[store.cid] =
       store.on(["*"], onStoreEvent.bind(this));
 
-    if (this.sort) {
-      this.stores.sort(this.sort);
-    }
+    this.makeSort();
 
     this.triggerEvents(["add", "change"]);
 
@@ -330,6 +337,8 @@ export default class CollectionStore extends ObjectStore {
     if (options.release) {
       store.release();
     }
+
+    this.makeSort();
 
     if (!options.silent) {
       this.triggerEvents(["remove", "change"]);
