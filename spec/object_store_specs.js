@@ -240,4 +240,76 @@ describe("Fluxo.ObjectStore", function () {
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
   });
+
+  describe("children events bubbling", function () {
+    it("parent setup the bubbling", function () {
+      let parentStore = new Fluxo.ObjectStore();
+      let childStore = new Fluxo.ObjectStore();
+      let setStoreCallback = chai.spy();
+      let setStoreAttributeCallback = chai.spy();
+
+      parentStore.on(["change:child", "change"], setStoreCallback);
+
+      parentStore.setAttribute("child", childStore);
+
+      expect(setStoreCallback).to.have.been.called.twice();
+
+      parentStore.on(["change:child:name", "change:child", "change"], setStoreAttributeCallback);
+
+      childStore.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.have.been.called.exactly(3);
+    });
+
+    it("parent remove the bubbling setup on change", function () {
+      let parentStore = new Fluxo.ObjectStore();
+      let firstChildStore = new Fluxo.ObjectStore();
+      let otherChildStore = new Fluxo.ObjectStore();
+      let setStoreAttributeCallback = chai.spy();
+
+      parentStore.setAttribute("child", firstChildStore);
+
+      parentStore.setAttribute("child", otherChildStore);
+
+      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+
+      firstChildStore.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.not.have.been.called();
+    });
+
+    it("parent remove the bubbling setup on unset", function () {
+      let parentStore = new Fluxo.ObjectStore();
+      let childStore = new Fluxo.ObjectStore();
+      let setStoreAttributeCallback = chai.spy();
+
+      parentStore.setAttribute("child", childStore);
+
+      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+
+      parentStore.unsetAttribute("child");
+
+      childStore.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.not.have.been.called();
+    });
+
+    it("setup with different classes", function () {
+      class Post extends Fluxo.ObjectStore {}
+
+      class Author extends Fluxo.ObjectStore {}
+
+      let post = new Post();
+      let author = new Author();
+      let setStoreAttributeCallback = chai.spy();
+
+      post.on(["change:author:name"], setStoreAttributeCallback);
+
+      post.setAttribute("author", author);
+
+      author.setAttribute("name", "Fluxo");
+
+      expect(setStoreAttributeCallback).to.have.been.called();
+    });
+  });
 });
