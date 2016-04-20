@@ -31,7 +31,7 @@ export default class CollectionStore extends ObjectStore {
   }
 
   firstComputation () {
-    for (var subsetName in this.subset) {
+    for (let subsetName in this.subset) {
       this.updateSubset(subsetName);
     }
 
@@ -60,8 +60,8 @@ export default class CollectionStore extends ObjectStore {
   }
 
   registerSubsets () {
-    for (var subsetName in this.subset) {
-      var toComputeEvents = ["add", "remove", ...this.subset[subsetName]];
+    for (let subsetName in this.subset) {
+      let toComputeEvents = ["add", "remove", ...this.subset[subsetName]];
       this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
     }
   }
@@ -82,8 +82,8 @@ export default class CollectionStore extends ObjectStore {
    * @returns {null}
    */
   createDelegateMethods () {
-    for (var i = 0, l = this.childrenDelegate.length; i < l; i++) {
-      var methodName = this.childrenDelegate[i];
+    for (let i = 0, l = this.childrenDelegate.length; i < l; i++) {
+      let methodName = this.childrenDelegate[i];
       this.createDelegateMethod(methodName);
     }
   }
@@ -113,8 +113,8 @@ export default class CollectionStore extends ObjectStore {
    * @returns {null}
    */
   addStores (stores) {
-    for (var i = 0, l = stores.length; i < l; i++) {
-      var store = stores[i];
+    for (let i = 0, l = stores.length; i < l; i++) {
+      let store = stores[i];
       this.addStore(store);
     }
   }
@@ -135,8 +135,8 @@ export default class CollectionStore extends ObjectStore {
   removeAll (options={}) {
     options = { releaseStores: true, ...options };
 
-    for (var i = (this.stores.length - 1), l = 0; i >= l; i--) {
-      var store = this.stores[i];
+    for (let i = (this.stores.length - 1), l = 0; i >= l; i--) {
+      let store = this.stores[i];
       this.remove(store, { silent: true, release: options.releaseStores });
     }
 
@@ -295,11 +295,11 @@ export default class CollectionStore extends ObjectStore {
 
     if (!criteria) { return []; }
 
-    for (var i = 0, l = this.stores.length; i < l; i++) {
-      var comparedStore = this.stores[i],
+    for (let i = 0, l = this.stores.length; i < l; i++) {
+      let comparedStore = this.stores[i],
           matchAllCriteria = true;
 
-      for (var key in criteria) {
+      for (let key in criteria) {
         if (comparedStore.data[key] !== criteria[key]) {
           matchAllCriteria = false;
           break;
@@ -357,7 +357,7 @@ export default class CollectionStore extends ObjectStore {
   }
 
   releaseSubsets () {
-    for (var subsetName in this.subsets) {
+    for (let subsetName in this.subsets) {
       this.subsets[subsetName].release({ releaseStores: false });
       delete this.subsets[subsetName];
     }
@@ -382,8 +382,8 @@ export default class CollectionStore extends ObjectStore {
   storesToJSON () {
     var collectionData = [];
 
-    for (var i = 0, l = this.stores.length; i < l; i++) {
-      var store = this.stores[i];
+    for (let i = 0, l = this.stores.length; i < l; i++) {
+      let store = this.stores[i];
       collectionData.push(store.toJSON());
     }
 
@@ -393,7 +393,7 @@ export default class CollectionStore extends ObjectStore {
   subsetsToJSON () {
     var subsetsData = {};
 
-    for (var subsetName in this.subsets) {
+    for (let subsetName in this.subsets) {
       subsetsData[subsetName] = this.subsets[subsetName].toJSON().stores;
     }
 

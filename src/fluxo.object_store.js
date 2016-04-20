@@ -40,13 +40,13 @@ class ObjectStore {
   setDefaults (options={ silentGlobalChange: false }) {
     let data = this.getDefaults();
 
-    for (var key in data) {
+    for (let key in data) {
       this.setAttribute(key, data[key], options);
     }
   }
 
   firstComputation () {
-    for (var attributeName in this.computed) {
+    for (let attributeName in this.computed) {
       this.computeValue(attributeName);
     }
   }
@@ -54,8 +54,8 @@ class ObjectStore {
   on (events, callback) {
     var cancelers = [];
 
-    for (var i = 0, l = events.length; i < l; i++) {
-      var eventName = events[i],
+    for (let i = 0, l = events.length; i < l; i++) {
+      let eventName = events[i],
           changeEventToken = `${this.cid}:${eventName}`,
           canceler = Radio.subscribe(changeEventToken, callback.bind(this));
 
@@ -63,8 +63,8 @@ class ObjectStore {
     }
 
     var aggregatedCanceler = function() {
-      for (var i = 0, l = cancelers.length; i < l; i++) {
-        var canceler = cancelers[i];
+      for (let i = 0, l = cancelers.length; i < l; i++) {
+        let canceler = cancelers[i];
         canceler.call();
       }
     };
@@ -75,8 +75,8 @@ class ObjectStore {
   }
 
   triggerEvents (eventsNames, ...args) {
-    for (var i = 0, l = eventsNames.length; i < l; i++) {
-      var eventName = eventsNames[i];
+    for (let i = 0, l = eventsNames.length; i < l; i++) {
+      let eventName = eventsNames[i];
       this.triggerEvent(eventName, ...args);
     }
   }
@@ -102,8 +102,8 @@ class ObjectStore {
   }
 
   registerComputed () {
-    for (var attributeName in this.computed) {
-      var toComputeEvents = this.computed[attributeName];
+    for (let attributeName in this.computed) {
+      let toComputeEvents = this.computed[attributeName];
       this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
     }
   }
@@ -194,7 +194,7 @@ class ObjectStore {
       throw new Error(`The "data" argument on store's "set" function must be an object.`);
     }
 
-    for (var key in data) {
+    for (let key in data) {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
 
@@ -202,8 +202,8 @@ class ObjectStore {
   }
 
   cancelSignedEvents () {
-    for (var i = 0, l = this.signedEventsCancelers.length; i < l; i++) {
-      var canceler = this.signedEventsCancelers[i];
+    for (let i = 0, l = this.signedEventsCancelers.length; i < l; i++) {
+      let canceler = this.signedEventsCancelers[i];
       canceler.call();
     }
   }
@@ -242,7 +242,7 @@ class ObjectStore {
   clear (options={}) {
     options = { silentGlobalChange: false, ...options };
 
-    for (var key in this.data) {
+    for (let key in this.data) {
       if (!this.computed.hasOwnProperty(key)) {
         this.unsetAttribute(key, { silentGlobalChange: true });
       }
