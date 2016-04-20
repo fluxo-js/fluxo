@@ -73,6 +73,7 @@ dependency amount on your application. These entities objects we call **store**.
 * [toJSON](#tojson)
 * [CID](#cid)
 * [Events](#events)
+  * [Nested Stores event bubbling](#nested-stores-event-bubbling)
   * [Collections and event bubbling](#collections-and-event-bubbling)
   * [Wildcard event](#wildcard-event)
 * [Computed properties](#computed-properties)
@@ -521,6 +522,21 @@ want trigger only one event you can use the `triggerEvent`.
 
 ```js
 myStore.triggerEvents(["myCustomEvent", "change"], "myCustomArgument");
+```
+
+###Nested Stores event bubbling
+Every nested Fluxo store bubbles its events to its parents, like the example below:
+
+```js
+var author = new Fluxo.ObjectStore({ name: "John" });
+var post = new Fluxo.ObjectStore({ content: "My post", author: author });
+
+post.data.author.setAttribute("name", "Ruth");
+
+// Triggered Events on "post" store:
+// * change:author:name
+// * change:author
+// * change
 ```
 
 ###Collections and event bubbling
