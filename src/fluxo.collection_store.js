@@ -11,6 +11,8 @@ export default class CollectionStore extends ObjectStore {
 
     this.stores = [];
 
+    this.index = {};
+
     this.storesOnChangeCancelers = {};
 
     this.subsets = {};
@@ -234,12 +236,31 @@ export default class CollectionStore extends ObjectStore {
       if (eventName === "change") {
         this.makeSort();
       }
+
+      if (eventName === "change:id") {
+        let changedStore = args[0],
+            previousId = args[1];
+
+        if (previousId) {
+          delete this.index[previousId];
+        }
+
+        if (changedStore.data.id) {
+          this.index[changedStore.data.id] = changedStore;
+        }
+      }
     };
 
     this.storesOnChangeCancelers[store.cid] =
       store.on(["*"], onStoreEvent.bind(this));
 
     this.makeSort();
+
+    this.index[store.cid] = store;
+
+    if (store.data.id) {
+      this.index[store.data.id] = store;
+    }
 
     this.triggerEvents(["add", "change"]);
 
@@ -251,24 +272,8 @@ export default class CollectionStore extends ObjectStore {
    * @returns {Object|undefined} - the found flux store or undefined
    * @instance
    */
-  find  (storeID) {
-    var foundStore;
-
-    if (storeID) {
-      foundStore = this.findWhere({ id: storeID });
-
-      if (!foundStore) {
-        this.stores.some(function(store) {
-          if (store.cid === storeID) {
-            foundStore = store;
-
-            return true;
-          }
-        });
-      }
-    }
-
-    return foundStore;
+  find (storeIDorCid) {
+    return this.index[storeIDorCid];
   }
 
   /**
@@ -339,6 +344,12 @@ export default class CollectionStore extends ObjectStore {
     }
 
     this.makeSort();
+
+    delete this.index[store.cid];
+
+    if (store.data.id) {
+      delete this.index[store.data.id];
+    }
 
     if (!options.silent) {
       this.triggerEvents(["remove", "change"]);
