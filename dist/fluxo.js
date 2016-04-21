@@ -461,7 +461,7 @@ var CollectionStore = (function (_ObjectStore) {
     value: function release() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-      _get(Object.getPrototypeOf(CollectionStore.prototype), "release", this).call(this);
+      _get(Object.getPrototypeOf(CollectionStore.prototype), "release", this).call(this, options);
 
       this.removeAll(options);
 
@@ -747,10 +747,17 @@ var ObjectStore = (function () {
       }
     }
   }, {
-    key: "stopListenStoreAttribute",
-    value: function stopListenStoreAttribute(attributeName) {
+    key: "takeDownStoreAttribute",
+    value: function takeDownStoreAttribute(attributeName) {
+      var release = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
       this.storeAttributesEventsCanceler[attributeName].call();
+
       delete this.storeAttributesEventsCanceler[attributeName];
+
+      if (release) {
+        this.data[attributeName].release();
+      }
     }
   }, {
     key: "listenStoreAttribute",
@@ -775,7 +782,11 @@ var ObjectStore = (function () {
     }
   }, {
     key: "setAttribute",
-    value: function setAttribute(attribute, value, options) {
+    value: function setAttribute(attribute, value) {
+      var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+      options = _extends({ releaseNested: true }, options);
+
       if (typeof attribute !== "string") {
         throw new Error("The \"attribute\" argument on store's \"setAttribute\" function must be a string.");
       }
@@ -783,8 +794,6 @@ var ObjectStore = (function () {
       if (this.released) {
         throw new Error("This store is already released and it can't be used.");
       }
-
-      options = options || {};
 
       if (this.data[attribute] === value) {
         return;
@@ -797,7 +806,7 @@ var ObjectStore = (function () {
       }
 
       if (this.data[attribute] instanceof ObjectStore) {
-        this.stopListenStoreAttribute(attribute);
+        this.takeDownStoreAttribute(attribute, options.releaseNested);
       }
 
       if (value instanceof ObjectStore) {
@@ -818,11 +827,13 @@ var ObjectStore = (function () {
     }
   }, {
     key: "unsetAttribute",
-    value: function unsetAttribute(attribute, options) {
-      options = options || {};
+    value: function unsetAttribute(attribute) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+      options = _extends({ releaseNested: true }, options);
 
       if (this.data[attribute] instanceof ObjectStore) {
-        this.stopListenStoreAttribute(attribute);
+        this.takeDownStoreAttribute(attribute, options.releaseNested);
       }
 
       delete this.data[attribute];
@@ -840,12 +851,14 @@ var ObjectStore = (function () {
   }, {
     key: "set",
     value: function set(data) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
       if (typeof data !== "object") {
         throw new Error("The \"data\" argument on store's \"set\" function must be an object.");
       }
 
       for (var key in data) {
-        this.setAttribute(key, data[key], { silentGlobalChange: true });
+        this.setAttribute(key, data[key], _extends({}, options, { silentGlobalChange: true }));
       }
 
       this.triggerEvent("change");
@@ -861,7 +874,18 @@ var ObjectStore = (function () {
   }, {
     key: "release",
     value: function release() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+      options = _extends({ releaseNested: true }, options);
+
       this.cancelSignedEvents();
+
+      for (var attributeName in this.data) {
+        if (attributeName instanceof ObjectStore) {
+          this.takeDownStoreAttribute(attributeName, options.releaseNested);
+        }
+      }
+
       this.released = true;
     }
   }, {
@@ -898,11 +922,9 @@ var ObjectStore = (function () {
     value: function clear() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-      options = _extends({ silentGlobalChange: false }, options);
-
       for (var key in this.data) {
         if (!this.computed.hasOwnProperty(key)) {
-          this.unsetAttribute(key, { silentGlobalChange: true });
+          this.unsetAttribute(key, _extends({}, options, { silentGlobalChange: false }));
         }
       }
 

@@ -108,9 +108,14 @@ class ObjectStore {
     }
   }
 
-  stopListenStoreAttribute (attributeName) {
+  takeDownStoreAttribute (attributeName, release=false) {
     this.storeAttributesEventsCanceler[attributeName].call();
+
     delete this.storeAttributesEventsCanceler[attributeName];
+
+    if (release) {
+      this.data[attributeName].release();
+    }
   }
 
   listenStoreAttribute (attribute, store) {
@@ -133,7 +138,9 @@ class ObjectStore {
       store.on(["*"], onStoreEvent.bind(this, attribute));
   }
 
-  setAttribute (attribute, value, options) {
+  setAttribute (attribute, value, options={}) {
+    options = { releaseNested: true, ...options };
+
     if (typeof attribute !== "string") {
       throw new Error(`The "attribute" argument on store's "setAttribute" function must be a string.`);
     }
@@ -141,8 +148,6 @@ class ObjectStore {
     if (this.released) {
       throw new Error(`This store is already released and it can't be used.`);
     }
-
-    options = options || {};
 
     if (this.data[attribute] === value) { return; }
 
@@ -153,7 +158,7 @@ class ObjectStore {
     }
 
     if (this.data[attribute] instanceof ObjectStore) {
-      this.stopListenStoreAttribute(attribute);
+      this.takeDownStoreAttribute(attribute, options.releaseNested);
     }
 
     if (value instanceof ObjectStore) {
@@ -171,11 +176,11 @@ class ObjectStore {
     this.triggerEvent("change");
   }
 
-  unsetAttribute  (attribute, options) {
-    options = options || {};
+  unsetAttribute  (attribute, options={}) {
+    options = { releaseNested: true, ...options };
 
     if (this.data[attribute] instanceof ObjectStore) {
-      this.stopListenStoreAttribute(attribute);
+      this.takeDownStoreAttribute(attribute, options.releaseNested);
     }
 
     delete this.data[attribute];
@@ -189,13 +194,13 @@ class ObjectStore {
     this.triggerEvent("change");
   }
 
-  set (data) {
+  set (data, options={}) {
     if (typeof data !== "object") {
       throw new Error(`The "data" argument on store's "set" function must be an object.`);
     }
 
     for (let key in data) {
-      this.setAttribute(key, data[key], { silentGlobalChange: true });
+      this.setAttribute(key, data[key], { ...options, silentGlobalChange: true });
     }
 
     this.triggerEvent("change");
@@ -208,8 +213,17 @@ class ObjectStore {
     }
   }
 
-  release () {
+  release (options={}) {
+    options = { releaseNested: true, ...options };
+
     this.cancelSignedEvents();
+
+    for (let attributeName in this.data) {
+      if (attributeName instanceof ObjectStore) {
+        this.takeDownStoreAttribute(attributeName, options.releaseNested);
+      }
+    }
+
     this.released = true;
   }
 
@@ -240,11 +254,9 @@ class ObjectStore {
   }
 
   clear (options={}) {
-    options = { silentGlobalChange: false, ...options };
-
     for (let key in this.data) {
       if (!this.computed.hasOwnProperty(key)) {
-        this.unsetAttribute(key, { silentGlobalChange: true });
+        this.unsetAttribute(key, { ...options, silentGlobalChange: false });
       }
     }
 

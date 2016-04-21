@@ -269,7 +269,7 @@ describe("Fluxo.ObjectStore", function () {
 
       parentStore.setAttribute("child", firstChildStore);
 
-      parentStore.setAttribute("child", otherChildStore);
+      parentStore.setAttribute("child", otherChildStore, { releaseNested: false });
 
       parentStore.on(["change:child:name"], setStoreAttributeCallback);
 
@@ -287,7 +287,7 @@ describe("Fluxo.ObjectStore", function () {
 
       parentStore.on(["change:child:name"], setStoreAttributeCallback);
 
-      parentStore.unsetAttribute("child");
+      parentStore.unsetAttribute("child", { releaseNested: false });
 
       childStore.setAttribute("name", "Fluxo");
 

@@ -364,7 +364,7 @@ export default class CollectionStore extends ObjectStore {
   }
 
   release (options={}) {
-    super.release();
+    super.release(options);
 
     this.removeAll(options);
 
