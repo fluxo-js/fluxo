@@ -435,6 +435,24 @@ jon.setAttribute("age", "30");
 jon.data.age //=> 30 (integer)
 ```
 
+You can also use the attribute parsers to easily transform objects into nested stores if you need this.
+
+```js
+class Author extends Fluxo.ObjectStore {};
+
+class Post extends Fluxo.ObjectStore {};
+
+Post.attributeParsers = {
+  author: function (value) {
+    return (value instanceof Author) ? value : new Author(value);
+  }
+};
+
+var post = new Post({ content: "My Post", author: { name: "John" } });
+
+post.data.author //=> <a instance of Author store>
+```
+
 ##toJSON
 Eventually you will pass the state that you are holding on your store to other
 parts to your app, like the view layer. You should avoid pass the `data` or `stores`
