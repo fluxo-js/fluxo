@@ -855,31 +855,7 @@ describe("Fluxo.ObjectStore", function () {
 },{}],3:[function(require,module,exports){
 "use strict";
 
-describe("Fluxo.Radio", function () {
-  it("works", function () {
-    var firstCallback = chai.spy(),
-        secondCallback = chai.spy();
-
-    Fluxo.Radio.subscribe("myEvent", firstCallback);
-
-    var canceler = Fluxo.Radio.subscribe("myEvent", secondCallback);
-
-    Fluxo.Radio.publish("myEvent");
-
-    canceler.call();
-
-    Fluxo.Radio.publish("myEvent");
-
-    expect(firstCallback).to.have.been.called.twice();
-    expect(secondCallback).to.have.been.called.once();
-  });
-});
-
-},{}],4:[function(require,module,exports){
-"use strict";
-
 require("./object_store_specs.js");
 require("./collection_specs.js");
-require("./radio_specs.js");
 
-},{"./collection_specs.js":1,"./object_store_specs.js":2,"./radio_specs.js":3}]},{},[4]);
+},{"./collection_specs.js":1,"./object_store_specs.js":2}]},{},[3]);

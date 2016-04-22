@@ -547,19 +547,14 @@ var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
 
 var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
-var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
-
-var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
-
 exports["default"] = {
   ObjectStore: _fluxoObject_storeJs2["default"],
   CollectionStore: _fluxoCollection_storeJs2["default"],
-  Radio: _fluxoRadioJs2["default"],
   extend: _fluxoExtendJs2["default"]
 };
 module.exports = exports["default"];
 
-},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(_dereq_,module,exports){
+},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4}],4:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -924,49 +919,5 @@ var ObjectStore = (function () {
 exports["default"] = ObjectStore;
 module.exports = exports["default"];
 
-},{"./fluxo.extend.js":2}],5:[function(_dereq_,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = {
-  callbackIds: 1,
-
-  events: {},
-
-  subscribe: function subscribe(eventName, callback) {
-    var subscriptionId = this.callbackIds++;
-
-    this.events[eventName] = this.events[eventName] || {};
-    this.events[eventName][subscriptionId] = callback;
-
-    return this.removeSubscription.bind(this, eventName, subscriptionId);
-  },
-
-  removeSubscription: function removeSubscription(eventName, subscriptionId) {
-    if (this.events[eventName]) {
-      delete this.events[eventName][subscriptionId];
-
-      if (!Object.getOwnPropertyNames(this.events[eventName]).length) {
-        delete this.events[eventName];
-      }
-    }
-  },
-
-  publish: function publish(eventName) {
-    var callbacks = this.events[eventName] || {};
-
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    for (var subscriptionId in callbacks) {
-      callbacks[subscriptionId].apply(null, args);
-    }
-  }
-};
-module.exports = exports["default"];
-
-},{}]},{},[3])(3)
+},{"./fluxo.extend.js":2}]},{},[3])(3)
 });
