@@ -51,10 +51,7 @@ export default class CollectionStore extends ObjectStore {
       this.subsets[subsetName] = new CollectionStore();
     }
 
-    this.subsets[subsetName].resetStores(
-      this.getSubset(subsetName),
-      { releaseStores: false }
-    );
+    this.subsets[subsetName].resetStores(this.getSubset(subsetName));
 
     this.triggerEvents(["change", `change:${subsetName}`]);
   }
@@ -132,12 +129,10 @@ export default class CollectionStore extends ObjectStore {
    * @returns {null}
    * @instance
    */
-  removeAll (options={}) {
-    options = { releaseStores: true, ...options };
-
+  removeAll () {
     for (let i = (this.stores.length - 1), l = 0; i >= l; i--) {
       let store = this.stores[i];
-      this.remove(store, { silent: true, release: options.releaseStores });
+      this.remove(store, { silent: true });
     }
 
     this.stores = [];
@@ -218,10 +213,6 @@ export default class CollectionStore extends ObjectStore {
   addStore (store) {
     if (!(store instanceof this.store)) {
       store = new this.store(store);
-    }
-
-    if (store instanceof this.store && store.released) {
-      throw new Error(`You can't add a released store on collection.`);
     }
 
     var alreadyAddedStore = this.find(store.cid || store.data.id);
@@ -333,15 +324,11 @@ export default class CollectionStore extends ObjectStore {
    * @instance
    */
   remove (store, options={}) {
-    options = { release: false, silent: false, ...options };
+    options = { silent: false, ...options };
 
     this.removeListenersOn(store);
 
     this.stores.splice(this.stores.indexOf(store), 1);
-
-    if (options.release) {
-      store.release();
-    }
 
     this.makeSort();
 
@@ -354,21 +341,6 @@ export default class CollectionStore extends ObjectStore {
     if (!options.silent) {
       this.triggerEvents(["remove", "change"]);
     }
-  }
-
-  releaseSubsets () {
-    for (let subsetName in this.subsets) {
-      this.subsets[subsetName].release({ releaseStores: false });
-      delete this.subsets[subsetName];
-    }
-  }
-
-  release (options={}) {
-    super.release();
-
-    this.removeAll(options);
-
-    this.releaseSubsets();
   }
 
   /**

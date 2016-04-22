@@ -429,43 +429,6 @@ describe("Fluxo.CollectionStore", function () {
     expect(collection.data.name).to.be.eql("Fluxo");
   });
 
-  it("release keeping the children stores unreleased", function () {
-    var store = new Fluxo.ObjectStore({ name: "Fluxo" }),
-        collection = new Fluxo.CollectionStore([store]),
-        storeCallback = chai.spy(),
-        collectionCallback = chai.spy();
-
-    store.on(["myEvent"], storeCallback);
-    collection.on(["myEvent"], collectionCallback);
-
-    collection.release({ releaseStores: false });
-
-    store.triggerEvent("myEvent");
-    collection.triggerEvent("myEvent");
-
-    expect(collectionCallback).to.not.have.been.called();
-    expect(storeCallback).to.have.been.called.once();
-    expect(collection.stores.length).to.be.eql(0);
-  });
-
-  it("release releasing children stores", function () {
-    var store = new Fluxo.ObjectStore({ name: "Fluxo" }),
-        collection = new Fluxo.CollectionStore([store]),
-        storeCallback = chai.spy(),
-        collectionCallback = chai.spy();
-
-    store.on(["myEvent"], storeCallback);
-    collection.on(["myEvent"], collectionCallback);
-
-    collection.release({ releaseStores: true });
-
-    store.triggerEvent("myEvent");
-    collection.triggerEvent("myEvent");
-
-    expect(collectionCallback).to.not.have.been.called();
-    expect(storeCallback).to.not.have.been.called();
-  });
-
   describe("#index", function () {
     it("keep the correct index", function () {
       var store1 = new Fluxo.ObjectStore({ id: 10, name: "Foo" });
@@ -748,23 +711,6 @@ describe("Fluxo.ObjectStore", function () {
     store.clear();
 
     expect(store.data).to.not.contain.key("name");
-  });
-
-  it("release", function () {
-    var store = new Fluxo.ObjectStore({ name: "Fluxo" }),
-        callback = chai.spy();
-
-    store.on(["myEvent"], callback);
-
-    store.release();
-
-    store.triggerEvent("myEvent");
-
-    expect(callback).to.not.have.been.called();
-
-    expect(function () {
-      store.setAttribute("name", "New Fluxo");
-    }).to["throw"](Error, "This store is already released and it can't be used.");
   });
 
   describe("default values", function () {
