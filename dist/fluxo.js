@@ -10,7 +10,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x9, _x10, _x11) { var _again = true; _function: while (_again) { var object = _x9, property = _x10, receiver = _x11; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x9 = parent; _x10 = property; _x11 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x7, _x8, _x9) { var _again = true; _function: while (_again) { var object = _x7, property = _x8, receiver = _x9; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x7 = parent; _x8 = property; _x9 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -93,7 +93,7 @@ var CollectionStore = (function (_ObjectStore) {
         this.subsets[subsetName] = new CollectionStore();
       }
 
-      this.subsets[subsetName].resetStores(this.getSubset(subsetName), { releaseStores: false });
+      this.subsets[subsetName].resetStores(this.getSubset(subsetName));
 
       this.triggerEvents(["change", "change:" + subsetName]);
     }
@@ -195,13 +195,9 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "removeAll",
     value: function removeAll() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-      options = _extends({ releaseStores: true }, options);
-
       for (var i = this.stores.length - 1, l = 0; i >= l; i--) {
         var store = this.stores[i];
-        this.remove(store, { silent: true, release: options.releaseStores });
+        this.remove(store, { silent: true });
       }
 
       this.stores = [];
@@ -292,10 +288,6 @@ var CollectionStore = (function (_ObjectStore) {
     value: function addStore(store) {
       if (!(store instanceof this.store)) {
         store = new this.store(store);
-      }
-
-      if (store instanceof this.store && store.released) {
-        throw new Error("You can't add a released store on collection.");
       }
 
       var alreadyAddedStore = this.find(store.cid || store.data.id);
@@ -426,15 +418,11 @@ var CollectionStore = (function (_ObjectStore) {
     value: function remove(store) {
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-      options = _extends({ release: false, silent: false }, options);
+      options = _extends({ silent: false }, options);
 
       this.removeListenersOn(store);
 
       this.stores.splice(this.stores.indexOf(store), 1);
-
-      if (options.release) {
-        store.release();
-      }
 
       this.makeSort();
 
@@ -447,25 +435,6 @@ var CollectionStore = (function (_ObjectStore) {
       if (!options.silent) {
         this.triggerEvents(["remove", "change"]);
       }
-    }
-  }, {
-    key: "releaseSubsets",
-    value: function releaseSubsets() {
-      for (var subsetName in this.subsets) {
-        this.subsets[subsetName].release({ releaseStores: false });
-        delete this.subsets[subsetName];
-      }
-    }
-  }, {
-    key: "release",
-    value: function release() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-      _get(Object.getPrototypeOf(CollectionStore.prototype), "release", this).call(this);
-
-      this.removeAll(options);
-
-      this.releaseSubsets();
     }
 
     /**
@@ -578,19 +547,14 @@ var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
 
 var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
-var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
-
-var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
-
 exports["default"] = {
   ObjectStore: _fluxoObject_storeJs2["default"],
   CollectionStore: _fluxoCollection_storeJs2["default"],
-  Radio: _fluxoRadioJs2["default"],
   extend: _fluxoExtendJs2["default"]
 };
 module.exports = exports["default"];
 
-},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(_dereq_,module,exports){
+},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4}],4:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -604,10 +568,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
-
-var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
 
 var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
 
@@ -630,8 +590,6 @@ var ObjectStore = (function () {
 
       this.cid = "FS:" + storesUUID++;
 
-      this.released = false;
-
       this.data = {};
 
       this.storeAttributesEventsCanceler = {};
@@ -641,6 +599,8 @@ var ObjectStore = (function () {
       this.attributeParsers = this.constructor.attributeParsers || {};
 
       this.signedEventsCancelers = [];
+
+      this.events = {};
 
       this.setDefaults();
 
@@ -676,14 +636,55 @@ var ObjectStore = (function () {
       }
     }
   }, {
+    key: "subscribe",
+    value: function subscribe(eventName, callback) {
+      if (typeof callback !== "function") {
+        throw new Error("Callback must be a function");
+      }
+
+      this.events[eventName] = this.events[eventName] || [];
+
+      this.events[eventName].push(callback);
+
+      return this.removeSubscription.bind(this, eventName, callback);
+    }
+  }, {
+    key: "removeSubscription",
+    value: function removeSubscription(eventName, callback) {
+      var index = this.events[eventName].indexOf(callback);
+
+      this.events[eventName].splice(index, 1);
+
+      if (!this.events[eventName]) {
+        delete this.events[eventName];
+      }
+    }
+  }, {
+    key: "publish",
+    value: function publish(eventName) {
+      var callbacks = this.events[eventName];
+
+      if (!callbacks) {
+        return;
+      }
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      for (var i = 0; i < callbacks.length; i++) {
+        callbacks[i].apply(null, args);
+      }
+    }
+  }, {
     key: "on",
     value: function on(events, callback) {
       var cancelers = [];
 
       for (var i = 0, l = events.length; i < l; i++) {
         var eventName = events[i],
-            changeEventToken = this.cid + ":" + eventName,
-            canceler = _fluxoRadioJs2["default"].subscribe(changeEventToken, callback.bind(this));
+            changeEventToken = eventName,
+            canceler = this.subscribe(changeEventToken, callback.bind(this));
 
         cancelers.push(canceler);
       }
@@ -702,8 +703,8 @@ var ObjectStore = (function () {
   }, {
     key: "triggerEvents",
     value: function triggerEvents(eventsNames) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
       }
 
       for (var i = 0, l = eventsNames.length; i < l; i++) {
@@ -714,15 +715,13 @@ var ObjectStore = (function () {
   }, {
     key: "triggerEvent",
     value: function triggerEvent(eventName) {
-      var changeChannel = this.cid + ":" + eventName;
-
-      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        args[_key3 - 1] = arguments[_key3];
       }
 
-      _fluxoRadioJs2["default"].publish.apply(_fluxoRadioJs2["default"], [changeChannel, this].concat(args));
+      this.publish.apply(this, [eventName, this].concat(args));
 
-      _fluxoRadioJs2["default"].publish.apply(_fluxoRadioJs2["default"], [this.cid + ":*", eventName, this].concat(args));
+      this.publish.apply(this, ["*", eventName, this].concat(args));
     }
   }, {
     key: "getComputed",
@@ -757,8 +756,8 @@ var ObjectStore = (function () {
     value: function listenStoreAttribute(attribute, store) {
       var onStoreEvent = function onStoreEvent(attributeName, eventName) {
         if (eventName !== "change") {
-          for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
-            args[_key3 - 2] = arguments[_key3];
+          for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+            args[_key4 - 2] = arguments[_key4];
           }
 
           this.triggerEvent.apply(this, ["change:" + attributeName + ":" + eventName.replace(/^change:/, '')].concat(args));
@@ -778,10 +777,6 @@ var ObjectStore = (function () {
     value: function setAttribute(attribute, value, options) {
       if (typeof attribute !== "string") {
         throw new Error("The \"attribute\" argument on store's \"setAttribute\" function must be a string.");
-      }
-
-      if (this.released) {
-        throw new Error("This store is already released and it can't be used.");
       }
 
       options = options || {};
@@ -859,12 +854,6 @@ var ObjectStore = (function () {
       }
     }
   }, {
-    key: "release",
-    value: function release() {
-      this.cancelSignedEvents();
-      this.released = true;
-    }
-  }, {
     key: "reset",
     value: function reset() {
       var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -930,49 +919,5 @@ var ObjectStore = (function () {
 exports["default"] = ObjectStore;
 module.exports = exports["default"];
 
-},{"./fluxo.extend.js":2,"./fluxo.radio.js":5}],5:[function(_dereq_,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = {
-  callbackIds: 1,
-
-  events: {},
-
-  subscribe: function subscribe(eventName, callback) {
-    var subscriptionId = this.callbackIds++;
-
-    this.events[eventName] = this.events[eventName] || {};
-    this.events[eventName][subscriptionId] = callback;
-
-    return this.removeSubscription.bind(this, eventName, subscriptionId);
-  },
-
-  removeSubscription: function removeSubscription(eventName, subscriptionId) {
-    if (this.events[eventName]) {
-      delete this.events[eventName][subscriptionId];
-
-      if (!Object.getOwnPropertyNames(this.events[eventName]).length) {
-        delete this.events[eventName];
-      }
-    }
-  },
-
-  publish: function publish(eventName) {
-    var callbacks = this.events[eventName] || {};
-
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    for (var subscriptionId in callbacks) {
-      callbacks[subscriptionId].apply(null, args);
-    }
-  }
-};
-module.exports = exports["default"];
-
-},{}]},{},[3])(3)
+},{"./fluxo.extend.js":2}]},{},[3])(3)
 });

@@ -1,4 +1,3 @@
-import Radio from "./fluxo.radio.js";
 import extend from "./fluxo.extend.js";
 
 var storesUUID = 1;
@@ -12,8 +11,6 @@ class ObjectStore {
   initialize (data={}) {
     this.cid = `FS:${storesUUID++}`;
 
-    this.released = false;
-
     this.data = {};
 
     this.storeAttributesEventsCanceler = {};
@@ -23,6 +20,8 @@ class ObjectStore {
     this.attributeParsers = (this.constructor.attributeParsers || {});
 
     this.signedEventsCancelers = [];
+
+    this.events = {};
 
     this.setDefaults();
 
@@ -51,13 +50,45 @@ class ObjectStore {
     }
   }
 
+  subscribe (eventName, callback) {
+    if (typeof callback !== "function") {
+      throw new Error("Callback must be a function");
+    }
+
+    this.events[eventName] = (this.events[eventName] || []);
+
+    this.events[eventName].push(callback);
+
+    return this.removeSubscription.bind(this, eventName, callback);
+  }
+
+  removeSubscription (eventName, callback) {
+    let index = this.events[eventName].indexOf(callback);
+
+    this.events[eventName].splice(index, 1);
+
+    if (!this.events[eventName]) {
+      delete this.events[eventName];
+    }
+  }
+
+  publish (eventName, ...args) {
+    var callbacks = this.events[eventName];
+
+    if (!callbacks) { return; }
+
+    for (let i = 0; i < callbacks.length; i++) {
+      callbacks[i].apply(null, args);
+    }
+  }
+
   on (events, callback) {
     var cancelers = [];
 
     for (let i = 0, l = events.length; i < l; i++) {
       let eventName = events[i],
-          changeEventToken = `${this.cid}:${eventName}`,
-          canceler = Radio.subscribe(changeEventToken, callback.bind(this));
+          changeEventToken = eventName,
+          canceler = this.subscribe(changeEventToken, callback.bind(this));
 
       cancelers.push(canceler);
     }
@@ -82,11 +113,9 @@ class ObjectStore {
   }
 
   triggerEvent (eventName, ...args) {
-    var changeChannel = `${this.cid}:${eventName}`;
+    this.publish(eventName, this, ...args);
 
-    Radio.publish(changeChannel, this, ...args);
-
-    Radio.publish(`${this.cid}:*`, eventName, this, ...args);
+    this.publish("*", eventName, this, ...args);
   }
 
   getComputed (attributeName) {
@@ -136,10 +165,6 @@ class ObjectStore {
   setAttribute (attribute, value, options) {
     if (typeof attribute !== "string") {
       throw new Error(`The "attribute" argument on store's "setAttribute" function must be a string.`);
-    }
-
-    if (this.released) {
-      throw new Error(`This store is already released and it can't be used.`);
     }
 
     options = options || {};
@@ -206,11 +231,6 @@ class ObjectStore {
       let canceler = this.signedEventsCancelers[i];
       canceler.call();
     }
-  }
-
-  release () {
-    this.cancelSignedEvents();
-    this.released = true;
   }
 
   reset (data={}) {
