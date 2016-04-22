@@ -1,5 +1,3 @@
-import extend from "./fluxo.extend.js";
-
 var storesUUID = 1;
 
 class ObjectStore {

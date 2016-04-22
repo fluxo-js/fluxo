@@ -498,35 +498,7 @@ var CollectionStore = (function (_ObjectStore) {
 exports["default"] = CollectionStore;
 module.exports = exports["default"];
 
-},{"./fluxo.object_store.js":4}],2:[function(_dereq_,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = function () {
-  var toExtend = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-  for (var _len = arguments.length, extensions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    extensions[_key - 1] = arguments[_key];
-  }
-
-  for (var i = 0, l = extensions.length; i < l; i++) {
-    var extension = extensions[i];
-
-    for (var extensionProperty in extension) {
-      toExtend[extensionProperty] = extension[extensionProperty];
-    }
-  }
-
-  return toExtend;
-};
-
-;
-module.exports = exports["default"];
-
-},{}],3:[function(_dereq_,module,exports){
+},{"./fluxo.object_store.js":3}],2:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -543,18 +515,13 @@ var _fluxoCollection_storeJs = _dereq_("./fluxo.collection_store.js");
 
 var _fluxoCollection_storeJs2 = _interopRequireDefault(_fluxoCollection_storeJs);
 
-var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
-
-var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
-
 exports["default"] = {
   ObjectStore: _fluxoObject_storeJs2["default"],
-  CollectionStore: _fluxoCollection_storeJs2["default"],
-  extend: _fluxoExtendJs2["default"]
+  CollectionStore: _fluxoCollection_storeJs2["default"]
 };
 module.exports = exports["default"];
 
-},{"./fluxo.collection_store.js":1,"./fluxo.extend.js":2,"./fluxo.object_store.js":4}],4:[function(_dereq_,module,exports){
+},{"./fluxo.collection_store.js":1,"./fluxo.object_store.js":3}],3:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -565,13 +532,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _fluxoExtendJs = _dereq_("./fluxo.extend.js");
-
-var _fluxoExtendJs2 = _interopRequireDefault(_fluxoExtendJs);
 
 var storesUUID = 1;
 
@@ -919,5 +880,5 @@ var ObjectStore = (function () {
 exports["default"] = ObjectStore;
 module.exports = exports["default"];
 
-},{"./fluxo.extend.js":2}]},{},[3])(3)
+},{}]},{},[2])(2)
 });
