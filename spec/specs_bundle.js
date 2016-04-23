@@ -390,11 +390,40 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(onChangeCallback).to.have.been.called.exactly(2);
     });
+
+    it("alert about computer function returning something different of an array", function () {
+      var Collection = (function (_Fluxo$CollectionStore8) {
+        _inherits(Collection, _Fluxo$CollectionStore8);
+
+        function Collection() {
+          _classCallCheck(this, Collection);
+
+          _get(Object.getPrototypeOf(Collection.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        _createClass(Collection, [{
+          key: "online",
+          value: function online() {
+            return;
+          }
+        }]);
+
+        return Collection;
+      })(Fluxo.CollectionStore);
+
+      Collection.subset = {
+        online: ["stores:change:online"]
+      };
+
+      expect(function () {
+        new Collection();
+      }).to["throw"](Error, "The subset \"online\" computer function returned a value that isn't an array.");
+    });
   });
 
   it("#setAttribute", function () {
-    var Collection = (function (_Fluxo$CollectionStore8) {
-      _inherits(Collection, _Fluxo$CollectionStore8);
+    var Collection = (function (_Fluxo$CollectionStore9) {
+      _inherits(Collection, _Fluxo$CollectionStore9);
 
       function Collection() {
         _classCallCheck(this, Collection);

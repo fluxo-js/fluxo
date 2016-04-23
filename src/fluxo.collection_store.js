@@ -43,7 +43,13 @@ export default class CollectionStore extends ObjectStore {
       throw new Error(`Subset compute function to "${subsetName}" subset is not defined.`);
     }
 
-    return this[subsetName].call(this);
+    let result = this[subsetName].call(this);
+
+    if (!result || result.constructor !== Array) {
+      throw new Error(`The subset "${subsetName}" computer function returned a value that isn't an array.`);
+    }
+
+    return result;
   }
 
   updateSubset (subsetName) {

@@ -267,6 +267,22 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(onChangeCallback).to.have.been.called.exactly(2);
     });
+
+    it("alert about computer function returning something different of an array", function () {
+      class Collection extends Fluxo.CollectionStore {
+        online () {
+          return;
+        }
+      }
+
+      Collection.subset = {
+        online: ["stores:change:online"]
+      }
+
+      expect(function () {
+        new Collection();
+      }).to.throw(Error, "The subset \"online\" computer function returned a value that isn't an array.");
+    });
   });
 
   it("#setAttribute", function () {
