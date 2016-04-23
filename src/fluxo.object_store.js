@@ -1,3 +1,5 @@
+import defaultAttributeContract from "./fluxo.default_attribute_contract.js";
+
 var storesUUID = 1;
 
 class ObjectStore {
@@ -33,9 +35,15 @@ class ObjectStore {
   }
 
   getDefaults () {
-    if (!this.constructor.defaults) { return; }
+    if (!this.constructor.attributes) { return; }
 
-    return JSON.parse(JSON.stringify(this.constructor.defaults));
+    var defaults = {};
+
+    for (let attributeName in this.constructor.attributes) {
+      defaults[attributeName] = this.contract(attributeName).defaultValue;
+    }
+
+    return JSON.parse(JSON.stringify(defaults));
   }
 
   setDefaults (options={ silentGlobalChange: false }) {
@@ -163,6 +171,22 @@ class ObjectStore {
       store.on(["*"], onStoreEvent.bind(this, attribute));
   }
 
+  contract (attributeName) {
+    if (this.constructor.attributes && this.constructor.attributes[attributeName]) {
+      return this.constructor.attributes[attributeName];
+    } else {
+      return {};
+    }
+  }
+
+  parser (attributeName) {
+    return this.contract(attributeName).parser || defaultAttributeContract.parser;
+  }
+
+  dump (attributeName) {
+    return this.contract(attributeName).dump || defaultAttributeContract.dump;
+  }
+
   setAttribute (attribute, value, options) {
     if (typeof attribute !== "string") {
       throw new Error(`The "attribute" argument on store's "setAttribute" function must be a string.`);
@@ -172,9 +196,9 @@ class ObjectStore {
 
     if (this.data[attribute] === value) { return; }
 
-    if (this.attributeParsers[attribute]) {
-      value = this.attributeParsers[attribute].call(this, value);
-    }
+    delete this.lastGeneratedJSON;
+
+    value = this.parser(attribute).call(this, value);
 
     if (this.data[attribute] instanceof ObjectStore) {
       this.stopListenStoreAttribute(attribute);
@@ -271,7 +295,14 @@ class ObjectStore {
   }
 
   attributesToJSON () {
-    return { ...JSON.parse(JSON.stringify(this.data)), cid: this.cid };
+    let data = {};
+
+    for (var attributeName in this.data) {
+      data[attributeName] =
+        this.dump(attributeName).call(this, this.data[attributeName]);
+    }
+
+    return { ...data, cid: this.cid };
   }
 
   toJSON () {
