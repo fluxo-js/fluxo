@@ -233,7 +233,7 @@ Same that `addStore` but accepts an array with objects to add at the same time.
 ```js
 people.addStores([{ name: "Neo" }, { name: "John" }]);
 people.stores[0].data.name //=> "Neo"
-people.stores[0].data.name //=> "John"
+people.stores[1].data.name //=> "John"
 ```
 :warning: **If you pass an already added store it will be ignored!**
 
