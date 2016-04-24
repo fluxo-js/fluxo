@@ -32,6 +32,38 @@ class ObjectStore {
     this.on(["change"], function () {
       delete this.lastGeneratedJSON;
     });
+
+    this.warnMissingAttributes();
+  }
+
+  warnMissingAttributes () {
+    if (!this.constructor.attributes) { return; }
+
+    for (let attributeName in this.constructor.attributes) {
+      this.warnMissingAttribute(attributeName, this.data[attributeName]);
+    }
+  }
+
+  warnMissingAttribute (attributeName, value) {
+    if (!this.contract(attributeName).required) { return; }
+
+    if (!(value === undefined || value === null)) { return; }
+
+    var identifier = "";
+
+    if (this.data.id) {
+      identifier = `id: ${this.data.id}`;
+    } else {
+      identifier = `cid: ${this.cid}`;
+    }
+
+    var message = `Warning: missing the required "${attributeName}" attribute on the "${this.constructor.name}" store (${identifier})`;
+
+    if (console.warn) {
+      console.warn(message);
+    } else {
+      console(message);
+    }
   }
 
   getDefaults () {
@@ -200,6 +232,8 @@ class ObjectStore {
 
     value = this.parser(attribute).call(this, value);
 
+    this.warnMissingAttribute(attribute, value);
+
     if (this.data[attribute] instanceof ObjectStore) {
       this.stopListenStoreAttribute(attribute);
     }
@@ -221,6 +255,8 @@ class ObjectStore {
 
   unsetAttribute  (attribute, options) {
     options = options || {};
+
+    this.warnMissingAttribute(attribute);
 
     if (this.data[attribute] instanceof ObjectStore) {
       this.stopListenStoreAttribute(attribute);

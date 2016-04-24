@@ -169,6 +169,7 @@ Attributes contracts allow you to define default values and custom parsing/dumpi
 * `defaultValue`: the default value used on the store initialization and the [#reset method](#reset).
 * `parse`: the function that receives the value on the argument and returns the value parsed.
 * `dump`: the function that receives the value on the argument and returns the result to [#toJSON method](#tojson). The default dump logic calls `toJSON` on the value.
+* `required` (boolean): warning on the console when an attribute is required and is missing on the initialization or [#unsetAttribute method](#unsetattribute).
 
 Take a look at the examples below:
 
