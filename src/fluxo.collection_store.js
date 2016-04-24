@@ -28,6 +28,10 @@ export default class CollectionStore extends ObjectStore {
     this.registerSubsets();
 
     this.createDelegateMethods();
+
+    this.on(["change:stores"], function () {
+      delete this.lastGeneratedJSON;
+    });
   }
 
   firstComputation () {
@@ -393,10 +397,14 @@ export default class CollectionStore extends ObjectStore {
    * @instance
    */
   toJSON () {
-    return {
-      ...super.toJSON(),
-      ...this.subsetsToJSON(),
-      stores: this.storesToJSON()
-    };
+    if (!this.lastGeneratedJSON) {
+      this.lastGeneratedJSON = {
+        ...this.attributesToJSON(),
+        ...this.subsetsToJSON(),
+        stores: this.storesToJSON()
+      };
+    }
+
+    return this.lastGeneratedJSON;
   }
 }

@@ -26,6 +26,10 @@ class ObjectStore {
     this.set(data);
 
     this.registerComputed();
+
+    this.on(["change"], function () {
+      delete this.lastGeneratedJSON;
+    });
   }
 
   getDefaults () {
@@ -152,7 +156,6 @@ class ObjectStore {
       if (eventName === "change" || eventName === "stores:change") {
         this.triggerEvent(`change:${attributeName}`);
         this.triggerEvent(`change`);
-        delete this.lastGeneratedJSON;
       }
     };
 
@@ -168,8 +171,6 @@ class ObjectStore {
     options = options || {};
 
     if (this.data[attribute] === value) { return; }
-
-    delete this.lastGeneratedJSON;
 
     if (this.attributeParsers[attribute]) {
       value = this.attributeParsers[attribute].call(this, value);
@@ -202,8 +203,6 @@ class ObjectStore {
     }
 
     delete this.data[attribute];
-
-    delete this.lastGeneratedJSON;
 
     this.triggerEvent(`change:${attribute}`);
 
@@ -271,10 +270,13 @@ class ObjectStore {
     }
   }
 
+  attributesToJSON () {
+    return { ...JSON.parse(JSON.stringify(this.data)), cid: this.cid };
+  }
+
   toJSON () {
     if (!this.lastGeneratedJSON) {
-      this.lastGeneratedJSON = JSON.parse(JSON.stringify(this.data));
-      this.lastGeneratedJSON.cid = this.cid;
+      this.lastGeneratedJSON = this.attributesToJSON();
     }
 
     return this.lastGeneratedJSON;

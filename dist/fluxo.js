@@ -67,6 +67,10 @@ var CollectionStore = (function (_ObjectStore) {
       this.registerSubsets();
 
       this.createDelegateMethods();
+
+      this.on(["change:stores"], function () {
+        delete this.lastGeneratedJSON;
+      });
     }
   }, {
     key: "firstComputation",
@@ -492,9 +496,13 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "toJSON",
     value: function toJSON() {
-      return _extends({}, _get(Object.getPrototypeOf(CollectionStore.prototype), "toJSON", this).call(this), this.subsetsToJSON(), {
-        stores: this.storesToJSON()
-      });
+      if (!this.lastGeneratedJSON) {
+        this.lastGeneratedJSON = _extends({}, this.attributesToJSON(), this.subsetsToJSON(), {
+          stores: this.storesToJSON()
+        });
+      }
+
+      return this.lastGeneratedJSON;
     }
   }]);
 
@@ -574,6 +582,10 @@ var ObjectStore = (function () {
       this.set(data);
 
       this.registerComputed();
+
+      this.on(["change"], function () {
+        delete this.lastGeneratedJSON;
+      });
     }
   }, {
     key: "getDefaults",
@@ -733,7 +745,6 @@ var ObjectStore = (function () {
         if (eventName === "change" || eventName === "stores:change") {
           this.triggerEvent("change:" + attributeName);
           this.triggerEvent("change");
-          delete this.lastGeneratedJSON;
         }
       };
 
@@ -751,8 +762,6 @@ var ObjectStore = (function () {
       if (this.data[attribute] === value) {
         return;
       }
-
-      delete this.lastGeneratedJSON;
 
       if (this.attributeParsers[attribute]) {
         value = this.attributeParsers[attribute].call(this, value);
@@ -788,8 +797,6 @@ var ObjectStore = (function () {
       }
 
       delete this.data[attribute];
-
-      delete this.lastGeneratedJSON;
 
       this.triggerEvent("change:" + attribute);
 
@@ -867,11 +874,15 @@ var ObjectStore = (function () {
       }
     }
   }, {
+    key: "attributesToJSON",
+    value: function attributesToJSON() {
+      return _extends({}, JSON.parse(JSON.stringify(this.data)), { cid: this.cid });
+    }
+  }, {
     key: "toJSON",
     value: function toJSON() {
       if (!this.lastGeneratedJSON) {
-        this.lastGeneratedJSON = JSON.parse(JSON.stringify(this.data));
-        this.lastGeneratedJSON.cid = this.cid;
+        this.lastGeneratedJSON = this.attributesToJSON();
       }
 
       return this.lastGeneratedJSON;

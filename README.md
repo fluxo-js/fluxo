@@ -486,8 +486,8 @@ stores (it will call `toJSON` on its children) and the **[subsets](#collection-s
 }
 ```
 
-:warning: On the object store `toJSON` returns a new JSON copy everytime that
-your store changes, if not, the same copy is returned.
+:warning: **The `#toJSON` method returns a new JSON copy everytime that your store changes, if not,
+  the same copy is returned. It can be very useful for things like [React's PureRenderMixin](https://facebook.github.io/react/docs/pure-render-mixin.html)**
 
 ##CID
 
