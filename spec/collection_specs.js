@@ -207,8 +207,8 @@ describe("Fluxo.CollectionStore", function () {
     it("initialise with default values", function () {
       class Collection extends Fluxo.CollectionStore {}
 
-      Collection.defaults = {
-        name: "Fluxo"
+      Collection.attributes = {
+        name: { defaultValue: "Fluxo" }
       };
 
       var store = new Collection();

@@ -310,8 +310,8 @@ describe("Fluxo.CollectionStore", function () {
         return Collection;
       })(Fluxo.CollectionStore);
 
-      Collection.defaults = {
-        name: "Fluxo"
+      Collection.attributes = {
+        name: { defaultValue: "Fluxo" }
       };
 
       var store = new Collection();
@@ -625,7 +625,9 @@ describe("Fluxo.ObjectStore", function () {
         return Store;
       })(Fluxo.ObjectStore);
 
-      Store.defaults = { emails: [] };
+      Store.attributes = {
+        emails: { defaultValue: [] }
+      };
 
       Store.computed = {
         isJohn: ["change:name"],
@@ -667,9 +669,11 @@ describe("Fluxo.ObjectStore", function () {
 
     ;
 
-    Store.attributeParsers = {
-      count: function count(value) {
-        return parseInt(value, 10);
+    Store.attributes = {
+      count: {
+        parser: function parser(value) {
+          return parseInt(value, 10);
+        }
       }
     };
 
@@ -715,8 +719,8 @@ describe("Fluxo.ObjectStore", function () {
       return Store;
     })(Fluxo.ObjectStore);
 
-    Store.defaults = {
-      type: "myStore"
+    Store.attributes = {
+      type: { defaultValue: "myStore" }
     };
 
     var store = new Store({ name: "Fluxo" });
@@ -756,8 +760,8 @@ describe("Fluxo.ObjectStore", function () {
         return Store;
       })(Fluxo.ObjectStore);
 
-      Store.defaults = {
-        name: "Fluxo"
+      Store.attributes = {
+        name: { defaultValue: "Fluxo" }
       };
 
       var store = new Store();
@@ -778,14 +782,38 @@ describe("Fluxo.ObjectStore", function () {
         return Store;
       })(Fluxo.ObjectStore);
 
-      Store.defaults = {
-        name: "Redux"
+      Store.attributes = {
+        name: { defaultValue: "Redux" }
       };
 
       var store = new Store({ name: "Fluxo" });
 
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
+  });
+
+  it("custom dump generates the specified value", function () {
+    var Store = (function (_Fluxo$ObjectStore7) {
+      _inherits(Store, _Fluxo$ObjectStore7);
+
+      function Store() {
+        _classCallCheck(this, Store);
+
+        _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+      }
+
+      return Store;
+    })(Fluxo.ObjectStore);
+
+    Store.attributes = {
+      name: { dump: function dump(value) {
+          return value[0];
+        } }
+    };
+
+    var store = new Store({ name: "Fluxo" });
+
+    expect(store.toJSON()["name"]).to.be.eql("F");
   });
 
   describe("children events bubbling", function () {
@@ -842,8 +870,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("setup with different classes", function () {
-      var Post = (function (_Fluxo$ObjectStore7) {
-        _inherits(Post, _Fluxo$ObjectStore7);
+      var Post = (function (_Fluxo$ObjectStore8) {
+        _inherits(Post, _Fluxo$ObjectStore8);
 
         function Post() {
           _classCallCheck(this, Post);
@@ -854,8 +882,8 @@ describe("Fluxo.ObjectStore", function () {
         return Post;
       })(Fluxo.ObjectStore);
 
-      var Author = (function (_Fluxo$ObjectStore8) {
-        _inherits(Author, _Fluxo$ObjectStore8);
+      var Author = (function (_Fluxo$ObjectStore9) {
+        _inherits(Author, _Fluxo$ObjectStore9);
 
         function Author() {
           _classCallCheck(this, Author);

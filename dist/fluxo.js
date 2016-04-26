@@ -512,7 +512,23 @@ var CollectionStore = (function (_ObjectStore) {
 exports["default"] = CollectionStore;
 module.exports = exports["default"];
 
-},{"./fluxo.object_store.js":3}],2:[function(_dereq_,module,exports){
+},{"./fluxo.object_store.js":4}],2:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = {
+  parser: function parser(value) {
+    return value;
+  },
+  dump: function dump(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+};
+module.exports = exports["default"];
+
+},{}],3:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -535,7 +551,7 @@ exports["default"] = {
 };
 module.exports = exports["default"];
 
-},{"./fluxo.collection_store.js":1,"./fluxo.object_store.js":3}],3:[function(_dereq_,module,exports){
+},{"./fluxo.collection_store.js":1,"./fluxo.object_store.js":4}],4:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -546,7 +562,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _fluxoDefault_attribute_contractJs = _dereq_("./fluxo.default_attribute_contract.js");
+
+var _fluxoDefault_attribute_contractJs2 = _interopRequireDefault(_fluxoDefault_attribute_contractJs);
 
 var storesUUID = 1;
 
@@ -586,15 +608,61 @@ var ObjectStore = (function () {
       this.on(["change"], function () {
         delete this.lastGeneratedJSON;
       });
+
+      this.warnMissingAttributes();
+    }
+  }, {
+    key: "warnMissingAttributes",
+    value: function warnMissingAttributes() {
+      if (!this.constructor.attributes) {
+        return;
+      }
+
+      for (var attributeName in this.constructor.attributes) {
+        this.warnMissingAttribute(attributeName, this.data[attributeName]);
+      }
+    }
+  }, {
+    key: "warnMissingAttribute",
+    value: function warnMissingAttribute(attributeName, value) {
+      if (!this.contract(attributeName).required) {
+        return;
+      }
+
+      if (!(value === undefined || value === null)) {
+        return;
+      }
+
+      var identifier = "";
+
+      if (this.data.id) {
+        identifier = "id: " + this.data.id;
+      } else {
+        identifier = "cid: " + this.cid;
+      }
+
+      var message = "Warning: missing the required \"" + attributeName + "\" attribute on the \"" + this.constructor.name + "\" store (" + identifier + ")";
+
+      if (console.warn) {
+        console.warn(message);
+      } else {
+        console(message);
+      }
     }
   }, {
     key: "getDefaults",
     value: function getDefaults() {
-      if (!this.constructor.defaults) {
+      if (!this.constructor.attributes) {
         return;
       }
 
-      return JSON.parse(JSON.stringify(this.constructor.defaults));
+      var defaults = {};
+
+      for (var attributeName in this.constructor.attributes) {
+        defaults[attributeName] = this.contract(attributeName).defaultValue;
+      }
+
+      return JSON.parse(JSON.stringify(defaults));
     }
   }, {
     key: "setDefaults",
@@ -751,6 +819,25 @@ var ObjectStore = (function () {
       this.storeAttributesEventsCanceler[attribute] = store.on(["*"], onStoreEvent.bind(this, attribute));
     }
   }, {
+    key: "contract",
+    value: function contract(attributeName) {
+      if (this.constructor.attributes && this.constructor.attributes[attributeName]) {
+        return this.constructor.attributes[attributeName];
+      } else {
+        return {};
+      }
+    }
+  }, {
+    key: "parser",
+    value: function parser(attributeName) {
+      return this.contract(attributeName).parser || _fluxoDefault_attribute_contractJs2["default"].parser;
+    }
+  }, {
+    key: "dump",
+    value: function dump(attributeName) {
+      return this.contract(attributeName).dump || _fluxoDefault_attribute_contractJs2["default"].dump;
+    }
+  }, {
     key: "setAttribute",
     value: function setAttribute(attribute, value, options) {
       if (typeof attribute !== "string") {
@@ -763,9 +850,11 @@ var ObjectStore = (function () {
         return;
       }
 
-      if (this.attributeParsers[attribute]) {
-        value = this.attributeParsers[attribute].call(this, value);
-      }
+      delete this.lastGeneratedJSON;
+
+      value = this.parser(attribute).call(this, value);
+
+      this.warnMissingAttribute(attribute, value);
 
       if (this.data[attribute] instanceof ObjectStore) {
         this.stopListenStoreAttribute(attribute);
@@ -791,6 +880,8 @@ var ObjectStore = (function () {
     key: "unsetAttribute",
     value: function unsetAttribute(attribute, options) {
       options = options || {};
+
+      this.warnMissingAttribute(attribute);
 
       if (this.data[attribute] instanceof ObjectStore) {
         this.stopListenStoreAttribute(attribute);
@@ -876,7 +967,13 @@ var ObjectStore = (function () {
   }, {
     key: "attributesToJSON",
     value: function attributesToJSON() {
-      return _extends({}, JSON.parse(JSON.stringify(this.data)), { cid: this.cid });
+      var data = {};
+
+      for (var attributeName in this.data) {
+        data[attributeName] = this.dump(attributeName).call(this, this.data[attributeName]);
+      }
+
+      return _extends({}, data, { cid: this.cid });
     }
   }, {
     key: "toJSON",
@@ -897,5 +994,5 @@ var ObjectStore = (function () {
 exports["default"] = ObjectStore;
 module.exports = exports["default"];
 
-},{}]},{},[2])(2)
+},{"./fluxo.default_attribute_contract.js":2}]},{},[3])(3)
 });

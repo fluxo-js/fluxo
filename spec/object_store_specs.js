@@ -103,7 +103,9 @@ describe("Fluxo.ObjectStore", function () {
         }
       }
 
-      Store.defaults = { emails: [] };
+      Store.attributes = {
+        emails: { defaultValue: [] }
+      };
 
       Store.computed = {
         isJohn: ["change:name"],
@@ -133,9 +135,9 @@ describe("Fluxo.ObjectStore", function () {
   it("attributes parser", function() {
     class Store extends Fluxo.ObjectStore {};
 
-    Store.attributeParsers ={
-      count: function(value) {
-        return parseInt(value, 10);
+    Store.attributes ={
+      count: {
+        parser: function (value) { return parseInt(value, 10); }
       }
     };
 
@@ -171,8 +173,8 @@ describe("Fluxo.ObjectStore", function () {
   it("reset", function () {
     class Store extends Fluxo.ObjectStore {}
 
-    Store.defaults = {
-      type: "myStore"
+    Store.attributes = {
+      type: { defaultValue: "myStore" }
     };
 
     let store = new Store({ name: "Fluxo" });
@@ -202,8 +204,8 @@ describe("Fluxo.ObjectStore", function () {
     it("initialise with default values", function () {
       class Store extends Fluxo.ObjectStore {}
 
-      Store.defaults = {
-        name: "Fluxo"
+      Store.attributes = {
+        name: { defaultValue: "Fluxo" }
       };
 
       var store = new Store();
@@ -214,14 +216,26 @@ describe("Fluxo.ObjectStore", function () {
     it("allow to override the default values", function () {
       class Store extends Fluxo.ObjectStore {}
 
-      Store.defaults = {
-        name: "Redux"
+      Store.attributes = {
+        name: { defaultValue: "Redux" }
       };
 
       var store = new Store({ name: "Fluxo" });
 
       expect(store.data).to.be.eql({ name: "Fluxo" });
     });
+  });
+
+  it("custom dump generates the specified value", function () {
+    class Store extends Fluxo.ObjectStore {}
+
+    Store.attributes = {
+      name: { dump: function (value) { return value[0]; } }
+    };
+
+    var store = new Store({ name: "Fluxo" });
+
+    expect(store.toJSON()["name"]).to.be.eql("F");
   });
 
   describe("children events bubbling", function () {

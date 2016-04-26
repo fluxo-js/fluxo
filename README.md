@@ -52,7 +52,7 @@ dependency amount on your application. These entities objects we call **store**.
     * [clear](#clear)
     * [unsetAttribute](#unsetattribute)
   * [Extending a Store](#extending-a-store)
-  * [Default attributes values](#default-attributes-values)
+  * [Attributes Contracts](#attributes-contracts)
 * [Fluxo.CollectionStore](#fluxocollectionstore)
     * [Updating your collection](#updating-your-collection)
       * [addStore](#addstore)
@@ -163,20 +163,78 @@ class Person extends Fluxo.ObjectStore {
 };
 ```
 
-##Default attributes values
-You can provide default values to the store which may be overriden:
+##Attributes Contracts
+Attributes contracts allow you to define default values and custom parsing/dumping logics to your store's attributes. To use them you need to specify the contracts on the class property `attributes` with the following properties:
+
+* `defaultValue`: the default value used on the store initialization and the [#reset method](#reset).
+* `parse`: the function that receives the value on the argument and returns the value parsed.
+* `dump`: the function that receives the value on the argument and returns the result to [#toJSON method](#tojson). The default dump logic calls `toJSON` on the value.
+* `required` (boolean): warning on the console when an attribute is required and is missing on the initialization or [#unsetAttribute method](#unsetattribute).
+
+Take a look at the examples below:
 
 ```js
 class Comment extends Fluxo.ObjectStore {}
 
-Comment.defaults = {
-  title: "This is my title",
-  content: "This is my default comment"
+Comment.attributes = {
+  title: { defaultValue: "This is my title" },
+  content: { defaultValue: "This is my default comment" }
 };
 
 var comment = new Comment({ content: "This is my comment" });
 
 comment.data // => { title: "This is my title", content: "This is my comment" }
+```
+
+Using the parsers:
+
+```js
+class Person extends Fluxo.ObjectStore {};
+
+Person.attributes = {
+  age: { parse: function (value) { return parseInt(value); } }
+};
+
+var jon = new Person();
+
+jon.setAttribute("age", "30");
+
+jon.data.age //=> 30 (integer)
+```
+
+You can also use the attribute parsers to easily transform objects into nested stores if you need this.
+
+```js
+class Author extends Fluxo.ObjectStore {};
+
+class Post extends Fluxo.ObjectStore {};
+
+Post.attributes = {
+  author: {
+    defaultValue: {},
+    parse: function (value) {
+      return (value instanceof Author) ? value : new Author(value);
+    }
+  }
+};
+
+var post = new Post({ content: "My Post", author: { name: "John" } });
+
+post.data.author //=> <a instance of Author store>
+```
+
+You can specify how the attribute should be generated to [#toJSON method](#tojson).
+
+```js
+class Post extends Fluxo.ObjectStore {};
+
+Post.attributes = {
+  date: {
+    dump: function (value) {
+      return value.customToJSONMethod();
+    }
+  }
+};
 ```
 
 ##Fluxo.CollectionStore
@@ -419,39 +477,7 @@ todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 Fluxo object stores and collections can enforce casting or parsing on some store's
 attributes, like the example below:
 
-```js
-class Person extends Fluxo.ObjectStore {};
 
-Person.attributeParsers = {
-  age: function (age) {
-    return parseInt(age);
-  }
-};
-
-var jon = new Person();
-
-jon.setAttribute("age", "30");
-
-jon.data.age //=> 30 (integer)
-```
-
-You can also use the attribute parsers to easily transform objects into nested stores if you need this.
-
-```js
-class Author extends Fluxo.ObjectStore {};
-
-class Post extends Fluxo.ObjectStore {};
-
-Post.attributeParsers = {
-  author: function (value) {
-    return (value instanceof Author) ? value : new Author(value);
-  }
-};
-
-var post = new Post({ content: "My Post", author: { name: "John" } });
-
-post.data.author //=> <a instance of Author store>
-```
 
 ##toJSON
 Eventually you will pass the state that you are holding on your store to other
