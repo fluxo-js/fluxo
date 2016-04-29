@@ -68,7 +68,6 @@ dependency amount on your application. These entities objects we call **store**.
     * [Ordering](#ordering)
     * [Collection children delegations](#collection-children-delegations)
     * [Collection Subsets](#collection-subsets)
-* [Attributes parsers](#attributes-parsers)
 * [toJSON](#tojson)
 * [CID](#cid)
 * [Events](#events)
@@ -92,7 +91,7 @@ var jon = new Fluxo.ObjectStore({ name: "John Doe" });
 
 To read your store's data you need access the `data` property. To update your
 data you should avoid change the `data` property directly because Fluxo will
-run some important tasks, like **[emits the change events](#events)** and **[parse values](#attributes-parsers)**.
+run some important tasks, like **[emits the change events](#events)** and **[parse values](#attributes-contracts)**.
 
 ####\#setAttribute
 `setAttribute(attributeName, newValue)`
@@ -471,13 +470,6 @@ todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 ```
 
 :warning: You don't need specify the `add` and `remove` events to recompute your subset. This events are always declared under the hood as dependencies to all subsets.
-
-##Attributes parsers
-
-Fluxo object stores and collections can enforce casting or parsing on some store's
-attributes, like the example below:
-
-
 
 ##toJSON
 Eventually you will pass the state that you are holding on your store to other
