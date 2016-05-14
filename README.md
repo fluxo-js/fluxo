@@ -1,4 +1,8 @@
-#Fluxo [![Build Status](https://travis-ci.org/samuelsimoes/fluxo.svg?branch=master)](https://travis-ci.org/samuelsimoes/fluxo)
+<p align="center">
+  <img alt="Fluxo" src="https://s3.amazonaws.com/samuel-misc/banner.png" >
+</p>
+
+[![Build Status](https://travis-ci.org/samuelsimoes/fluxo.svg?branch=master)](https://travis-ci.org/samuelsimoes/fluxo)
 
 Fluxo is a simple, lightweight (~300LOC) and dependency free entity foundation to your
 javascript app. It's inspired on [Backbone.js](http://backbonejs.org) models/collections
