@@ -19,6 +19,7 @@
     "src",
     "Gruntfile.js",
     "package.json",
-    "README.md"
+    "README.md",
+    "assets/*"
   ]
 }
