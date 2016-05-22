@@ -19,6 +19,8 @@ export default class CollectionStore extends ObjectStore {
 
     this.subset = (this.constructor.subset || {});
 
+    this.orphanSubsets = [];
+
     this.childrenDelegate = (this.constructor.childrenDelegate || []);
 
     super.initialize(data);
@@ -68,8 +70,17 @@ export default class CollectionStore extends ObjectStore {
 
   registerSubsets () {
     for (let subsetName in this.subset) {
-      let toComputeEvents = ["add", "remove", ...this.subset[subsetName]];
-      this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
+      let toComputeEvents = this.subset[subsetName];
+
+      if (toComputeEvents.indexOf("change") !== -1) {
+        throw new Error(`You can't register a SUBSET (${this.constructor.name}#${subsetName}) uppon the "change" event. If you want always compute the subset on every change you should leave the dependent events array empty.`)
+      }
+
+      if (!toComputeEvents.length) {
+        this.orphanSubsets.push(subsetName);
+      } else {
+        this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
+      }
     }
   }
 
@@ -366,6 +377,20 @@ export default class CollectionStore extends ObjectStore {
 
     if (!options.silentGlobalChange) {
       this.triggerEvent("change");
+    }
+  }
+
+  computeOrphansSubsets () {
+    for (let i = 0, l = this.orphanSubsets.length; i < l; i++) {
+      this.updateSubset(this.orphanSubsets[i]);
+    }
+  }
+
+  beforeTriggerEvent (eventName) {
+    super.beforeTriggerEvent(eventName);
+
+    if (eventName === "change") {
+      this.computeOrphansSubsets();
     }
   }
 

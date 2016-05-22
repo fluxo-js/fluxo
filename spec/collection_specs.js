@@ -238,7 +238,7 @@ describe("Fluxo.CollectionStore", function () {
       }
 
       Collection.subset = {
-        online: ["stores:change:online"]
+        online: ["add", "remove", "stores:change:online"]
       }
 
       var onChangeCallback = chai.spy()

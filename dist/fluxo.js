@@ -14,8 +14,6 @@ var _get = function get(_x9, _x10, _x11) { var _again = true; _function: while (
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -57,6 +55,8 @@ var CollectionStore = (function (_ObjectStore) {
       this.subsets = {};
 
       this.subset = this.constructor.subset || {};
+
+      this.orphanSubsets = [];
 
       this.childrenDelegate = this.constructor.childrenDelegate || [];
 
@@ -111,8 +111,17 @@ var CollectionStore = (function (_ObjectStore) {
     key: "registerSubsets",
     value: function registerSubsets() {
       for (var subsetName in this.subset) {
-        var toComputeEvents = ["add", "remove"].concat(_toConsumableArray(this.subset[subsetName]));
-        this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
+        var toComputeEvents = this.subset[subsetName];
+
+        if (toComputeEvents.indexOf("change") !== -1) {
+          throw new Error("You can't register a SUBSET (" + this.constructor.name + "#" + subsetName + ") uppon the \"change\" event. If you want always compute the subset on every change you should leave the dependent events array empty.");
+        }
+
+        if (!toComputeEvents.length) {
+          this.orphanSubsets.push(subsetName);
+        } else {
+          this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
+        }
       }
     }
   }, {
@@ -467,6 +476,22 @@ var CollectionStore = (function (_ObjectStore) {
         this.triggerEvent("change");
       }
     }
+  }, {
+    key: "computeOrphansSubsets",
+    value: function computeOrphansSubsets() {
+      for (var i = 0, l = this.orphanSubsets.length; i < l; i++) {
+        this.updateSubset(this.orphanSubsets[i]);
+      }
+    }
+  }, {
+    key: "beforeTriggerEvent",
+    value: function beforeTriggerEvent(eventName) {
+      _get(Object.getPrototypeOf(CollectionStore.prototype), "beforeTriggerEvent", this).call(this, eventName);
+
+      if (eventName === "change") {
+        this.computeOrphansSubsets();
+      }
+    }
 
     /**
      * It returns an array with the result of toJSON method invoked
@@ -613,6 +638,8 @@ var ObjectStore = (function () {
       this.storeAttributesEventsCanceler = {};
 
       this.computed = this.constructor.computed || {};
+
+      this.orphanComputeds = [];
 
       this.attributeParsers = this.constructor.attributeParsers || {};
 
@@ -781,8 +808,24 @@ var ObjectStore = (function () {
       }
     }
   }, {
+    key: "computeOrphansComputed",
+    value: function computeOrphansComputed() {
+      for (var i = 0, l = this.orphanComputeds.length; i < l; i++) {
+        this.computeValue(this.orphanComputeds[i]);
+      }
+    }
+  }, {
+    key: "beforeTriggerEvent",
+    value: function beforeTriggerEvent(eventName) {
+      if (eventName === "change") {
+        this.computeOrphansComputed();
+      }
+    }
+  }, {
     key: "triggerEvent",
     value: function triggerEvent(eventName) {
+      this.beforeTriggerEvent(eventName);
+
       for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
         args[_key3 - 1] = arguments[_key3];
       }
@@ -810,7 +853,16 @@ var ObjectStore = (function () {
     value: function registerComputed() {
       for (var attributeName in this.computed) {
         var toComputeEvents = this.computed[attributeName];
-        this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
+
+        if (toComputeEvents.indexOf("change") !== -1) {
+          throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") uppon the \"change\" event. If you want always compute the property on every change you should leave the dependent events array empty.");
+        }
+
+        if (!toComputeEvents.length) {
+          this.orphanComputeds.push(attributeName);
+        } else {
+          this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
+        }
       }
     }
   }, {
