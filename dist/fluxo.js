@@ -105,7 +105,7 @@ var CollectionStore = (function (_ObjectStore) {
 
       this.subsets[subsetName].resetStores(this.getSubset(subsetName));
 
-      this.triggerEvents(["change", "change:" + subsetName]);
+      this.triggerEvent("change:" + subsetName);
     }
   }, {
     key: "registerSubsets",
@@ -317,6 +317,7 @@ var CollectionStore = (function (_ObjectStore) {
 
         if (eventName === "change") {
           this.makeSort();
+          this.triggerEvent("change");
         }
 
         if (eventName === "change:id") {
@@ -782,7 +783,7 @@ var ObjectStore = (function () {
   }, {
     key: "computeValue",
     value: function computeValue(attributeName) {
-      this.setAttribute(attributeName, this.getComputed(attributeName));
+      this.setAttribute(attributeName, this.getComputed(attributeName), { silentGlobalChange: true });
     }
   }, {
     key: "registerComputed",

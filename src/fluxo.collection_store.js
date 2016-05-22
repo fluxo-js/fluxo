@@ -63,7 +63,7 @@ export default class CollectionStore extends ObjectStore {
 
     this.subsets[subsetName].resetStores(this.getSubset(subsetName));
 
-    this.triggerEvents(["change", `change:${subsetName}`]);
+    this.triggerEvent(`change:${subsetName}`);
   }
 
   registerSubsets () {
@@ -236,6 +236,7 @@ export default class CollectionStore extends ObjectStore {
 
       if (eventName === "change") {
         this.makeSort();
+        this.triggerEvent("change");
       }
 
       if (eventName === "change:id") {

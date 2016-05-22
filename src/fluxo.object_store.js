@@ -169,7 +169,11 @@ class ObjectStore {
   }
 
   computeValue (attributeName) {
-    this.setAttribute(attributeName, this.getComputed(attributeName));
+    this.setAttribute(
+      attributeName,
+      this.getComputed(attributeName),
+      { silentGlobalChange: true }
+    );
   }
 
   registerComputed () {
