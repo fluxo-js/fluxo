@@ -37,7 +37,7 @@ describe("Fluxo.CollectionStore", function () {
       cid: collection.cid,
       stores: [{ cid: store.cid, name: "Samuel" }]
     });
-    expect(onChangeCallback).to.have.been.called();
+    expect(onChangeCallback).to.have.been.called.once();
   });
 
   it("calls onChangeCallback when a child store changes", function() {
@@ -45,12 +45,12 @@ describe("Fluxo.CollectionStore", function () {
         onChangeCallback = chai.spy(),
         onStoreNameChangeCallback = chai.spy();
 
-    collection.on(["stores:change"], onChangeCallback);
+    collection.on(["change", "stores:change"], onChangeCallback);
     collection.on(["stores:change:name"], onStoreNameChangeCallback);
 
     collection.stores[0].setAttribute("name", "Samuel S");
-    expect(onChangeCallback).to.have.been.called();
-    expect(onStoreNameChangeCallback).to.have.been.called();
+    expect(onChangeCallback).to.have.been.called().exactly(2);
+    expect(onStoreNameChangeCallback).to.have.been.called.once();
   });
 
   it("#remove", function() {
@@ -67,7 +67,7 @@ describe("Fluxo.CollectionStore", function () {
     store.setAttribute("name", "a diferent name");
 
     expect(collection.stores).to.be.eql([]);
-    expect(onChangeCallback).to.not.have.been.called();
+    expect(onChangeCallback).to.not.have.been.called.exactly(3);
   });
 
   it("#removeAll", function() {

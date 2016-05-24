@@ -10,7 +10,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x7, _x8, _x9) { var _again = true; _function: while (_again) { var object = _x7, property = _x8, receiver = _x9; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x7 = parent; _x8 = property; _x9 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x9, _x10, _x11) { var _again = true; _function: while (_again) { var object = _x9, property = _x10, receiver = _x11; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x9 = parent; _x10 = property; _x11 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -178,9 +178,15 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "addStores",
     value: function addStores(stores) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? { silentGlobalChange: false } : arguments[1];
+
       for (var i = 0, l = stores.length; i < l; i++) {
         var store = stores[i];
-        this.addStore(store);
+        this.addStore(store, { silentGlobalChange: true });
+      }
+
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
       }
     }
 
@@ -192,10 +198,10 @@ var CollectionStore = (function (_ObjectStore) {
     key: "resetStores",
     value: function resetStores() {
       var stores = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-      this.removeAll(options);
-      this.addStores(stores);
+      this.removeAll({ silentGlobalChange: true });
+      this.addStores(stores, { silentGlobalChange: true });
+      this.triggerEvent("change");
     }
 
     /**
@@ -205,14 +211,18 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "removeAll",
     value: function removeAll() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? { silentGlobalChange: false } : arguments[0];
+
       for (var i = this.stores.length - 1, l = 0; i >= l; i--) {
         var store = this.stores[i];
-        this.remove(store, { silent: true });
+        this.remove(store, { silentGlobalChange: true });
       }
 
       this.stores = [];
 
-      this.triggerEvents(["remove", "change"]);
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
+      }
     }
 
     /**
@@ -251,18 +261,20 @@ var CollectionStore = (function (_ObjectStore) {
         }
 
         if (found && !store.cid) {
-          found.set(store);
+          found.set(store, { silentGlobalChange: true });
         } else {
-          this.addStore(store);
+          this.addStore(store, { silentGlobalChange: true });
         }
       }
 
       if (options.removeMissing) {
         for (var identifier in storeMap) {
           var store = storeMap[identifier];
-          this.remove(store, options);
+          this.remove(store, { silentGlobalChange: true });
         }
       }
+
+      this.triggerEvent("change");
     }
   }, {
     key: "setStore",
@@ -296,6 +308,8 @@ var CollectionStore = (function (_ObjectStore) {
   }, {
     key: "addStore",
     value: function addStore(store) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? { silentGlobalChange: false } : arguments[1];
+
       if (!(store instanceof this.store)) {
         store = new this.store(store);
       }
@@ -344,7 +358,11 @@ var CollectionStore = (function (_ObjectStore) {
         this.index[store.data.id] = store;
       }
 
-      this.triggerEvents(["add", "change"]);
+      this.triggerEvent("add");
+
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
+      }
 
       return store;
     }
@@ -429,7 +447,7 @@ var CollectionStore = (function (_ObjectStore) {
     value: function remove(store) {
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-      options = _extends({ silent: false }, options);
+      options = _extends({ silentGlobalChange: false }, options);
 
       this.removeListenersOn(store);
 
@@ -443,8 +461,10 @@ var CollectionStore = (function (_ObjectStore) {
         delete this.index[store.data.id];
       }
 
-      if (!options.silent) {
-        this.triggerEvents(["remove", "change"]);
+      this.triggerEvent("remove");
+
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
       }
     }
 
@@ -901,6 +921,8 @@ var ObjectStore = (function () {
   }, {
     key: "set",
     value: function set(data) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? { silentGlobalChange: false } : arguments[1];
+
       if (typeof data !== "object") {
         throw new Error("The \"data\" argument on store's \"set\" function must be an object.");
       }
@@ -909,7 +931,9 @@ var ObjectStore = (function () {
         this.setAttribute(key, data[key], { silentGlobalChange: true });
       }
 
-      this.triggerEvent("change");
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
+      }
     }
   }, {
     key: "cancelSignedEvents",

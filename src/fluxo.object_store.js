@@ -275,7 +275,7 @@ class ObjectStore {
     this.triggerEvent("change");
   }
 
-  set (data) {
+  set (data, options={ silentGlobalChange: false }) {
     if (typeof data !== "object") {
       throw new Error(`The "data" argument on store's "set" function must be an object.`);
     }
@@ -284,7 +284,9 @@ class ObjectStore {
       this.setAttribute(key, data[key], { silentGlobalChange: true });
     }
 
-    this.triggerEvent("change");
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
+    }
   }
 
   cancelSignedEvents () {
