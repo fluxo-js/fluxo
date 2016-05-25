@@ -460,7 +460,7 @@ class Todos extends Fluxo.CollectionStore {
   }
 }
 
-Todos.subset = { pending: ["stores:change:done"] };
+Todos.subset = { pending: ["add", "remove", "stores:change:done"] };
 
 var todo1 = new Fluxo.ObjectStore({ done: true }),
     todo2 = new Fluxo.ObjectStore({ done: true }),
@@ -473,7 +473,7 @@ todo1.setAttribute("done", false);
 todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 ```
 
-:warning: You don't need specify the `add` and `remove` events to recompute your subset. This events are always declared under the hood as dependencies to all subsets.
+:bulb: If you leave the dependent events array empty Fluxo will recompute your subset property when your store change.
 
 ##toJSON
 Eventually you will pass the state that you are holding on your store to other
@@ -602,8 +602,8 @@ Fluxo object store and collection stores can have computed properties like
 Ember.js computed properties, this feature allows you declare attributes that are
 computed on some **[events of your store](#events)**.
 
-Computed properties are very great to normalize the access of store's information,
-(you don't want deal with `store.fullName()` and `store.data.firstName`, right?)
+Computed properties are very great to normalize the access of store's information 
+(you don't want deal with `store.fullName()`, right?)
 and "caching" the computed results helping to avoid possible not necessary expensive
 recomputations.
 
@@ -655,6 +655,8 @@ todos.data.doneCount; // => 2
 
 :warning: Don't create computed properties that hold collection subsets, use the specific
 **[subset feature](#collection-subsets)** to this.
+
+:bulb: If you leave the dependent events array empty Fluxo will recompute your computed property when your store change.
 
 ##Using with React.js
 

@@ -17,6 +17,8 @@ class ObjectStore {
 
     this.computed = (this.constructor.computed || {});
 
+    this.orphanComputeds = [];
+
     this.attributeParsers = (this.constructor.attributeParsers || {});
 
     this.signedEventsCancelers = [];
@@ -154,7 +156,21 @@ class ObjectStore {
     }
   }
 
+  computeOrphansComputed () {
+    for (let i = 0, l = this.orphanComputeds.length; i < l; i++) {
+      this.computeValue(this.orphanComputeds[i]);
+    }
+  }
+
+  beforeTriggerEvent (eventName) {
+    if (eventName === "change") {
+      this.computeOrphansComputed();
+    }
+  }
+
   triggerEvent (eventName, ...args) {
+    this.beforeTriggerEvent(eventName);
+
     this.publish(eventName, this, ...args);
 
     this.publish("*", eventName, this, ...args);
@@ -179,7 +195,16 @@ class ObjectStore {
   registerComputed () {
     for (let attributeName in this.computed) {
       let toComputeEvents = this.computed[attributeName];
-      this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
+
+      if (toComputeEvents.indexOf("change") !== -1) {
+        throw new Error(`You can't register a COMPUTED PROPERTY (${this.constructor.name}#${attributeName}) uppon the "change" event. If you want always compute the property on every change you should leave the dependent events array empty.`)
+      }
+
+      if (!toComputeEvents.length) {
+        this.orphanComputeds.push(attributeName);
+      } else {
+        this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
+      }
     }
   }
 
