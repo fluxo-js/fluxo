@@ -63,7 +63,7 @@ export default class CollectionStore extends ObjectStore {
 
     this.subsets[subsetName].resetStores(this.getSubset(subsetName));
 
-    this.triggerEvents(["change", `change:${subsetName}`]);
+    this.triggerEvent(`change:${subsetName}`);
   }
 
   registerSubsets () {
@@ -119,10 +119,14 @@ export default class CollectionStore extends ObjectStore {
    * @param {Object[]} stores data
    * @returns {null}
    */
-  addStores (stores) {
+  addStores (stores, options={ silentGlobalChange: false }) {
     for (let i = 0, l = stores.length; i < l; i++) {
       let store = stores[i];
-      this.addStore(store);
+      this.addStore(store, { silentGlobalChange: true });
+    }
+
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
     }
   }
 
@@ -130,24 +134,27 @@ export default class CollectionStore extends ObjectStore {
    * @param {Object[]} stores data
    * @returns {null}
    */
-  resetStores (stores=[], options={}) {
-    this.removeAll(options);
-    this.addStores(stores);
+  resetStores (stores=[]) {
+    this.removeAll({ silentGlobalChange: true });
+    this.addStores(stores, { silentGlobalChange: true });
+    this.triggerEvent("change");
   }
 
   /**
    * @returns {null}
    * @instance
    */
-  removeAll () {
+  removeAll (options={ silentGlobalChange: false }) {
     for (let i = (this.stores.length - 1), l = 0; i >= l; i--) {
       let store = this.stores[i];
-      this.remove(store, { silent: true });
+      this.remove(store, { silentGlobalChange: true });
     }
 
     this.stores = [];
 
-    this.triggerEvents(["remove", "change"]);
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
+    }
   }
 
   /**
@@ -182,18 +189,20 @@ export default class CollectionStore extends ObjectStore {
       }
 
       if (found && !store.cid) {
-        found.set(store);
+        found.set(store, { silentGlobalChange: true });
       } else {
-        this.addStore(store);
+        this.addStore(store, { silentGlobalChange: true });
       }
     }
 
     if (options.removeMissing) {
       for (let identifier in storeMap) {
         let store = storeMap[identifier];
-        this.remove(store, options);
+        this.remove(store, { silentGlobalChange: true });
       }
     }
+
+    this.triggerEvent("change");
   }
 
   setStore (data) {
@@ -220,7 +229,7 @@ export default class CollectionStore extends ObjectStore {
    * @returns {Object}
    * @instance
    */
-  addStore (store) {
+  addStore (store, options={ silentGlobalChange: false }) {
     if (!(store instanceof this.store)) {
       store = new this.store(store);
     }
@@ -236,6 +245,7 @@ export default class CollectionStore extends ObjectStore {
 
       if (eventName === "change") {
         this.makeSort();
+        this.triggerEvent("change");
       }
 
       if (eventName === "change:id") {
@@ -263,7 +273,11 @@ export default class CollectionStore extends ObjectStore {
       this.index[store.data.id] = store;
     }
 
-    this.triggerEvents(["add", "change"]);
+    this.triggerEvent("add");
+
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
+    }
 
     return store;
   }
@@ -334,7 +348,7 @@ export default class CollectionStore extends ObjectStore {
    * @instance
    */
   remove (store, options={}) {
-    options = { silent: false, ...options };
+    options = { silentGlobalChange: false, ...options };
 
     this.removeListenersOn(store);
 
@@ -348,8 +362,10 @@ export default class CollectionStore extends ObjectStore {
       delete this.index[store.data.id];
     }
 
-    if (!options.silent) {
-      this.triggerEvents(["remove", "change"]);
+    this.triggerEvent("remove");
+
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
     }
   }
 
