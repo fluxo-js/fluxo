@@ -17,7 +17,7 @@ class ObjectStore {
 
     this.computed = (this.constructor.computed || {});
 
-    this.orphanComputeds = [];
+    this.onChangeComputedProperties = [];
 
     this.attributeParsers = (this.constructor.attributeParsers || {});
 
@@ -156,15 +156,15 @@ class ObjectStore {
     }
   }
 
-  computeOrphansComputed () {
-    for (let i = 0, l = this.orphanComputeds.length; i < l; i++) {
-      this.computeValue(this.orphanComputeds[i]);
+  computeOnChangeComputedProperties () {
+    for (let i = 0, l = this.onChangeComputedProperties.length; i < l; i++) {
+      this.computeValue(this.onChangeComputedProperties[i]);
     }
   }
 
   beforeTriggerEvent (eventName) {
     if (eventName === "change") {
-      this.computeOrphansComputed();
+      this.computeOnChangeComputedProperties();
     }
   }
 
@@ -201,7 +201,7 @@ class ObjectStore {
       }
 
       if (toComputeEvents.indexOf("change") === 1) {
-        this.orphanComputeds.push(attributeName);
+        this.onChangeComputedProperties.push(attributeName);
       } else {
         this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
       }

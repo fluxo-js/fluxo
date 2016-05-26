@@ -56,7 +56,7 @@ var CollectionStore = (function (_ObjectStore) {
 
       this.subset = this.constructor.subset || {};
 
-      this.orphanSubsets = [];
+      this.onChangeSubsets = [];
 
       this.childrenDelegate = this.constructor.childrenDelegate || [];
 
@@ -118,7 +118,7 @@ var CollectionStore = (function (_ObjectStore) {
         }
 
         if (toComputeEvents.indexOf("change") === 1) {
-          this.orphanSubsets.push(subsetName);
+          this.onChangeSubsets.push(subsetName);
         } else {
           this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
         }
@@ -477,10 +477,10 @@ var CollectionStore = (function (_ObjectStore) {
       }
     }
   }, {
-    key: "computeOrphansSubsets",
-    value: function computeOrphansSubsets() {
-      for (var i = 0, l = this.orphanSubsets.length; i < l; i++) {
-        this.updateSubset(this.orphanSubsets[i]);
+    key: "computeOnChangeSubsets",
+    value: function computeOnChangeSubsets() {
+      for (var i = 0, l = this.onChangeSubsets.length; i < l; i++) {
+        this.updateSubset(this.onChangeSubsets[i]);
       }
     }
   }, {
@@ -489,7 +489,7 @@ var CollectionStore = (function (_ObjectStore) {
       _get(Object.getPrototypeOf(CollectionStore.prototype), "beforeTriggerEvent", this).call(this, eventName);
 
       if (eventName === "change") {
-        this.computeOrphansSubsets();
+        this.computeOnChangeSubsets();
       }
     }
 
@@ -639,7 +639,7 @@ var ObjectStore = (function () {
 
       this.computed = this.constructor.computed || {};
 
-      this.orphanComputeds = [];
+      this.onChangeComputedProperties = [];
 
       this.attributeParsers = this.constructor.attributeParsers || {};
 
@@ -808,17 +808,17 @@ var ObjectStore = (function () {
       }
     }
   }, {
-    key: "computeOrphansComputed",
-    value: function computeOrphansComputed() {
-      for (var i = 0, l = this.orphanComputeds.length; i < l; i++) {
-        this.computeValue(this.orphanComputeds[i]);
+    key: "computeOnChangeComputedProperties",
+    value: function computeOnChangeComputedProperties() {
+      for (var i = 0, l = this.onChangeComputedProperties.length; i < l; i++) {
+        this.computeValue(this.onChangeComputedProperties[i]);
       }
     }
   }, {
     key: "beforeTriggerEvent",
     value: function beforeTriggerEvent(eventName) {
       if (eventName === "change") {
-        this.computeOrphansComputed();
+        this.computeOnChangeComputedProperties();
       }
     }
   }, {
@@ -859,7 +859,7 @@ var ObjectStore = (function () {
         }
 
         if (toComputeEvents.indexOf("change") === 1) {
-          this.orphanComputeds.push(attributeName);
+          this.onChangeComputedProperties.push(attributeName);
         } else {
           this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
         }

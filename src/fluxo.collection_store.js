@@ -19,7 +19,7 @@ export default class CollectionStore extends ObjectStore {
 
     this.subset = (this.constructor.subset || {});
 
-    this.orphanSubsets = [];
+    this.onChangeSubsets = [];
 
     this.childrenDelegate = (this.constructor.childrenDelegate || []);
 
@@ -77,7 +77,7 @@ export default class CollectionStore extends ObjectStore {
       }
 
       if (toComputeEvents.indexOf("change") === 1) {
-        this.orphanSubsets.push(subsetName);
+        this.onChangeSubsets.push(subsetName);
       } else {
         this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
       }
@@ -380,9 +380,9 @@ export default class CollectionStore extends ObjectStore {
     }
   }
 
-  computeOrphansSubsets () {
-    for (let i = 0, l = this.orphanSubsets.length; i < l; i++) {
-      this.updateSubset(this.orphanSubsets[i]);
+  computeOnChangeSubsets () {
+    for (let i = 0, l = this.onChangeSubsets.length; i < l; i++) {
+      this.updateSubset(this.onChangeSubsets[i]);
     }
   }
 
@@ -390,7 +390,7 @@ export default class CollectionStore extends ObjectStore {
     super.beforeTriggerEvent(eventName);
 
     if (eventName === "change") {
-      this.computeOrphansSubsets();
+      this.computeOnChangeSubsets();
     }
   }
 
