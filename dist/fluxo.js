@@ -62,15 +62,18 @@ var CollectionStore = (function (_ObjectStore) {
 
       _get(Object.getPrototypeOf(CollectionStore.prototype), "initialize", this).call(this, data);
 
-      this.setStores(stores);
+      this.setStores(stores, { silentGlobalChange: true });
+
+      if (this.firstEvents.indexOf("add") === -1) {
+        this.firstEvents.push("add");
+      }
+      if (this.firstEvents.indexOf("remove") === -1) {
+        this.firstEvents.push("remove");
+      }
 
       this.registerSubsets();
 
       this.createDelegateMethods();
-
-      this.on(["change:stores"], function () {
-        delete this.lastGeneratedJSON;
-      });
     }
   }, {
     key: "firstComputation",
@@ -283,7 +286,9 @@ var CollectionStore = (function (_ObjectStore) {
         }
       }
 
-      this.triggerEvent("change");
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
+      }
     }
   }, {
     key: "setStore",
@@ -610,6 +615,8 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _fluxoDefault_attribute_contractJs = _dereq_("./fluxo.default_attribute_contract.js");
@@ -620,10 +627,48 @@ var storesUUID = 1;
 
 var ObjectStore = (function () {
   function ObjectStore() {
+    var _this = this;
+
     _classCallCheck(this, ObjectStore);
 
+    this.cid = "FS:" + storesUUID++;
+
+    this.data = {};
+
+    this.storeAttributesEventsCanceler = {};
+
+    this.computed = this.constructor.computed || {};
+
+    this.orphanComputeds = [];
+
+    this.attributeParsers = this.constructor.attributeParsers || {};
+
+    this.signedEventsCancelers = [];
+
+    this.events = {};
+
+    this.firstEvents = [];
+
+    this.on(["change"], function () {
+      delete this.lastGeneratedJSON;
+    });
+
+    var firstEventsInterceptorCanceler = this.on(["*"], function (eventName) {
+      if (_this.firstEvents.indexOf(eventName) !== -1) {
+        return;
+      }
+      _this.firstEvents.push(eventName);
+    });
+
     this.initialize.apply(this, arguments);
-    this.firstComputation();
+
+    firstEventsInterceptorCanceler.call();
+
+    this.triggerEvents([].concat(_toConsumableArray(this.firstEvents), ["change"]));
+
+    delete this.firstEvents;
+
+    this.warnMissingAttributes();
   }
 
   _createClass(ObjectStore, [{
@@ -631,33 +676,9 @@ var ObjectStore = (function () {
     value: function initialize() {
       var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-      this.cid = "FS:" + storesUUID++;
-
-      this.data = {};
-
-      this.storeAttributesEventsCanceler = {};
-
-      this.computed = this.constructor.computed || {};
-
-      this.orphanComputeds = [];
-
-      this.attributeParsers = this.constructor.attributeParsers || {};
-
-      this.signedEventsCancelers = [];
-
-      this.events = {};
-
-      this.setDefaults();
-
-      this.set(data);
+      this.set(_extends({}, this.getDefaults(), data), { silentGlobalChange: true });
 
       this.registerComputed();
-
-      this.on(["change"], function () {
-        delete this.lastGeneratedJSON;
-      });
-
-      this.warnMissingAttributes();
     }
   }, {
     key: "warnMissingAttributes",
@@ -711,17 +732,6 @@ var ObjectStore = (function () {
       }
 
       return JSON.parse(JSON.stringify(defaults));
-    }
-  }, {
-    key: "setDefaults",
-    value: function setDefaults() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? { silentGlobalChange: false } : arguments[0];
-
-      var data = this.getDefaults();
-
-      for (var key in data) {
-        this.setAttribute(key, data[key], options);
-      }
     }
   }, {
     key: "firstComputation",

@@ -4,11 +4,6 @@ var storesUUID = 1;
 
 class ObjectStore {
   constructor () {
-    this.initialize(...arguments);
-    this.firstComputation();
-  }
-
-  initialize (data={}) {
     this.cid = `FS:${storesUUID++}`;
 
     this.data = {};
@@ -25,17 +20,32 @@ class ObjectStore {
 
     this.events = {};
 
-    this.setDefaults();
-
-    this.set(data);
-
-    this.registerComputed();
+    this.firstEvents = [];
 
     this.on(["change"], function () {
       delete this.lastGeneratedJSON;
     });
 
+    let firstEventsInterceptorCanceler = this.on(["*"], eventName => {
+      if (this.firstEvents.indexOf(eventName) !== -1) { return; }
+      this.firstEvents.push(eventName);
+    });
+
+    this.initialize(...arguments);
+
+    firstEventsInterceptorCanceler.call();
+
+    this.triggerEvents([...this.firstEvents, "change"]);
+
+    delete this.firstEvents;
+
     this.warnMissingAttributes();
+  }
+
+  initialize (data={}) {
+    this.set({ ...this.getDefaults(), ...data }, { silentGlobalChange: true });
+
+    this.registerComputed();
   }
 
   warnMissingAttributes () {
@@ -78,14 +88,6 @@ class ObjectStore {
     }
 
     return JSON.parse(JSON.stringify(defaults));
-  }
-
-  setDefaults (options={ silentGlobalChange: false }) {
-    let data = this.getDefaults();
-
-    for (let key in data) {
-      this.setAttribute(key, data[key], options);
-    }
   }
 
   firstComputation () {

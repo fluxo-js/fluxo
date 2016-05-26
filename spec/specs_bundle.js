@@ -412,7 +412,7 @@ describe("Fluxo.CollectionStore", function () {
       })(Fluxo.CollectionStore);
 
       Collection.subset = {
-        online: ["stores:change:online"]
+        online: []
       };
 
       expect(function () {

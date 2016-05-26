@@ -25,15 +25,14 @@ export default class CollectionStore extends ObjectStore {
 
     super.initialize(data);
 
-    this.setStores(stores);
+    this.setStores(stores, { silentGlobalChange: true });
+
+    if (this.firstEvents.indexOf("add") === -1) { this.firstEvents.push("add"); }
+    if (this.firstEvents.indexOf("remove") === -1) { this.firstEvents.push("remove"); }
 
     this.registerSubsets();
 
     this.createDelegateMethods();
-
-    this.on(["change:stores"], function () {
-      delete this.lastGeneratedJSON;
-    });
   }
 
   firstComputation () {
@@ -213,7 +212,9 @@ export default class CollectionStore extends ObjectStore {
       }
     }
 
-    this.triggerEvent("change");
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
+    }
   }
 
   setStore (data) {
