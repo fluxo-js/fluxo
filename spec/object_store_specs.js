@@ -68,6 +68,40 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   describe("computed attributes", function() {
+    it("warning about change with other dependent events", function () {
+      class Store extends Fluxo.ObjectStore {
+        fullName () { return; }
+      }
+
+      Store.computed = {
+        fullName: ["change:name", "change"]
+      };
+
+      expect(function () {
+        new Store();
+      }).to.throw(Error, `You can't register a COMPUTED PROPERTY (Store#fullName) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
+    });
+
+    it("recomputes on the change event", function() {
+      class Store extends Fluxo.ObjectStore {
+        fullName () {
+          return (this.data.first_name + " " + this.data.last_name);
+        }
+      }
+
+      Store.computed = {
+        fullName: ["change"]
+      };
+
+      var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
+
+      expect(store.data.fullName).to.be.eql("Samuel Simoes");
+
+      store.setAttribute("first_name", "Neo");
+
+      expect(store.data.fullName).to.be.eql("Neo Simoes");
+    });
+
     it("recomputes when the specified event got triggered", function() {
       class Store extends Fluxo.ObjectStore {
         fullName () {

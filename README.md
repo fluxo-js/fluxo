@@ -473,8 +473,6 @@ todo1.setAttribute("done", false);
 todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 ```
 
-:bulb: If you leave the dependent events array empty Fluxo will recompute your subset property when your store change.
-
 ##toJSON
 Eventually you will pass the state that you are holding on your store to other
 parts to your app, like the view layer. You should avoid pass the `data` or `stores`
@@ -602,7 +600,7 @@ Fluxo object store and collection stores can have computed properties like
 Ember.js computed properties, this feature allows you declare attributes that are
 computed on some **[events of your store](#events)**.
 
-Computed properties are very great to normalize the access of store's information 
+Computed properties are very great to normalize the access of store's information
 (you don't want deal with `store.fullName()`, right?)
 and "caching" the computed results helping to avoid possible not necessary expensive
 recomputations.
@@ -655,8 +653,6 @@ todos.data.doneCount; // => 2
 
 :warning: Don't create computed properties that hold collection subsets, use the specific
 **[subset feature](#collection-subsets)** to this.
-
-:bulb: If you leave the dependent events array empty Fluxo will recompute your computed property when your store change.
 
 ##Using with React.js
 

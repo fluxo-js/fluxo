@@ -113,11 +113,11 @@ var CollectionStore = (function (_ObjectStore) {
       for (var subsetName in this.subset) {
         var toComputeEvents = this.subset[subsetName];
 
-        if (toComputeEvents.indexOf("change") !== -1) {
-          throw new Error("You can't register a SUBSET (" + this.constructor.name + "#" + subsetName + ") uppon the \"change\" event. If you want always compute the subset on every change you should leave the dependent events array empty.");
+        if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
+          throw new Error("You can't register a SUBSET (" + this.constructor.name + "#" + subsetName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
         }
 
-        if (!toComputeEvents.length) {
+        if (toComputeEvents.indexOf("change") === 1) {
           this.orphanSubsets.push(subsetName);
         } else {
           this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
@@ -854,11 +854,11 @@ var ObjectStore = (function () {
       for (var attributeName in this.computed) {
         var toComputeEvents = this.computed[attributeName];
 
-        if (toComputeEvents.indexOf("change") !== -1) {
-          throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") uppon the \"change\" event. If you want always compute the property on every change you should leave the dependent events array empty.");
+        if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
+          throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
         }
 
-        if (!toComputeEvents.length) {
+        if (toComputeEvents.indexOf("change") === 1) {
           this.orphanComputeds.push(attributeName);
         } else {
           this.on(toComputeEvents, this.computeValue.bind(this, attributeName));

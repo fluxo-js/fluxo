@@ -72,11 +72,11 @@ export default class CollectionStore extends ObjectStore {
     for (let subsetName in this.subset) {
       let toComputeEvents = this.subset[subsetName];
 
-      if (toComputeEvents.indexOf("change") !== -1) {
-        throw new Error(`You can't register a SUBSET (${this.constructor.name}#${subsetName}) uppon the "change" event. If you want always compute the subset on every change you should leave the dependent events array empty.`)
+      if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
+        throw new Error(`You can't register a SUBSET (${this.constructor.name}#${subsetName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
       }
 
-      if (!toComputeEvents.length) {
+      if (toComputeEvents.indexOf("change") === 1) {
         this.orphanSubsets.push(subsetName);
       } else {
         this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));

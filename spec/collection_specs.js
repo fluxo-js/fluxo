@@ -230,6 +230,20 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   describe("subset", function () {
+    it("warning about change with other dependent events", function () {
+      class Collection extends Fluxo.CollectionStore {
+        online () { return []; }
+      }
+
+      Collection.subset = {
+        online: ["add", "remove", "change"]
+      };
+
+      expect(function () {
+        new Collection();
+      }).to.throw(Error, `You can't register a SUBSET (Collection#online) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
+    });
+
     it("subset computing", function () {
       class Collection extends Fluxo.CollectionStore {
         online () {

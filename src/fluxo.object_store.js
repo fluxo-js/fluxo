@@ -196,11 +196,11 @@ class ObjectStore {
     for (let attributeName in this.computed) {
       let toComputeEvents = this.computed[attributeName];
 
-      if (toComputeEvents.indexOf("change") !== -1) {
-        throw new Error(`You can't register a COMPUTED PROPERTY (${this.constructor.name}#${attributeName}) uppon the "change" event. If you want always compute the property on every change you should leave the dependent events array empty.`)
+      if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
+        throw new Error(`You can't register a COMPUTED PROPERTY (${this.constructor.name}#${attributeName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
       }
 
-      if (!toComputeEvents.length) {
+      if (toComputeEvents.indexOf("change") === 1) {
         this.orphanComputeds.push(attributeName);
       } else {
         this.on(toComputeEvents, this.computeValue.bind(this, attributeName));

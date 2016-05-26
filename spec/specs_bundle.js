@@ -343,9 +343,38 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   describe("subset", function () {
-    it("subset computing", function () {
+    it("warning about change with other dependent events", function () {
       var Collection = (function (_Fluxo$CollectionStore7) {
         _inherits(Collection, _Fluxo$CollectionStore7);
+
+        function Collection() {
+          _classCallCheck(this, Collection);
+
+          _get(Object.getPrototypeOf(Collection.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        _createClass(Collection, [{
+          key: "online",
+          value: function online() {
+            return [];
+          }
+        }]);
+
+        return Collection;
+      })(Fluxo.CollectionStore);
+
+      Collection.subset = {
+        online: ["add", "remove", "change"]
+      };
+
+      expect(function () {
+        new Collection();
+      }).to["throw"](Error, "You can't register a SUBSET (Collection#online) with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
+    });
+
+    it("subset computing", function () {
+      var Collection = (function (_Fluxo$CollectionStore8) {
+        _inherits(Collection, _Fluxo$CollectionStore8);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -392,8 +421,8 @@ describe("Fluxo.CollectionStore", function () {
     });
 
     it("alert about computer function returning something different of an array", function () {
-      var Collection = (function (_Fluxo$CollectionStore8) {
-        _inherits(Collection, _Fluxo$CollectionStore8);
+      var Collection = (function (_Fluxo$CollectionStore9) {
+        _inherits(Collection, _Fluxo$CollectionStore9);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -422,8 +451,8 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#setAttribute", function () {
-    var Collection = (function (_Fluxo$CollectionStore9) {
-      _inherits(Collection, _Fluxo$CollectionStore9);
+    var Collection = (function (_Fluxo$CollectionStore10) {
+      _inherits(Collection, _Fluxo$CollectionStore10);
 
       function Collection() {
         _classCallCheck(this, Collection);
@@ -562,9 +591,71 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   describe("computed attributes", function () {
-    it("recomputes when the specified event got triggered", function () {
+    it("warning about change with other dependent events", function () {
       var Store = (function (_Fluxo$ObjectStore) {
         _inherits(Store, _Fluxo$ObjectStore);
+
+        function Store() {
+          _classCallCheck(this, Store);
+
+          _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        _createClass(Store, [{
+          key: "fullName",
+          value: function fullName() {
+            return;
+          }
+        }]);
+
+        return Store;
+      })(Fluxo.ObjectStore);
+
+      Store.computed = {
+        fullName: ["change:name", "change"]
+      };
+
+      expect(function () {
+        new Store();
+      }).to["throw"](Error, "You can't register a COMPUTED PROPERTY (Store#fullName) with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
+    });
+
+    it("recomputes on the change event", function () {
+      var Store = (function (_Fluxo$ObjectStore2) {
+        _inherits(Store, _Fluxo$ObjectStore2);
+
+        function Store() {
+          _classCallCheck(this, Store);
+
+          _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        _createClass(Store, [{
+          key: "fullName",
+          value: function fullName() {
+            return this.data.first_name + " " + this.data.last_name;
+          }
+        }]);
+
+        return Store;
+      })(Fluxo.ObjectStore);
+
+      Store.computed = {
+        fullName: ["change"]
+      };
+
+      var store = new Store({ first_name: "Samuel", last_name: "Simoes" });
+
+      expect(store.data.fullName).to.be.eql("Samuel Simoes");
+
+      store.setAttribute("first_name", "Neo");
+
+      expect(store.data.fullName).to.be.eql("Neo Simoes");
+    });
+
+    it("recomputes when the specified event got triggered", function () {
+      var Store = (function (_Fluxo$ObjectStore3) {
+        _inherits(Store, _Fluxo$ObjectStore3);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -596,8 +687,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("recomputes everything when reset is called", function () {
-      var Store = (function (_Fluxo$ObjectStore2) {
-        _inherits(Store, _Fluxo$ObjectStore2);
+      var Store = (function (_Fluxo$ObjectStore4) {
+        _inherits(Store, _Fluxo$ObjectStore4);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -655,8 +746,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("attributes parser", function () {
-    var Store = (function (_Fluxo$ObjectStore3) {
-      _inherits(Store, _Fluxo$ObjectStore3);
+    var Store = (function (_Fluxo$ObjectStore5) {
+      _inherits(Store, _Fluxo$ObjectStore5);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -707,8 +798,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("reset", function () {
-    var Store = (function (_Fluxo$ObjectStore4) {
-      _inherits(Store, _Fluxo$ObjectStore4);
+    var Store = (function (_Fluxo$ObjectStore6) {
+      _inherits(Store, _Fluxo$ObjectStore6);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -748,8 +839,8 @@ describe("Fluxo.ObjectStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var Store = (function (_Fluxo$ObjectStore5) {
-        _inherits(Store, _Fluxo$ObjectStore5);
+      var Store = (function (_Fluxo$ObjectStore7) {
+        _inherits(Store, _Fluxo$ObjectStore7);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -770,8 +861,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("allow to override the default values", function () {
-      var Store = (function (_Fluxo$ObjectStore6) {
-        _inherits(Store, _Fluxo$ObjectStore6);
+      var Store = (function (_Fluxo$ObjectStore8) {
+        _inherits(Store, _Fluxo$ObjectStore8);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -793,8 +884,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("custom dump generates the specified value", function () {
-    var Store = (function (_Fluxo$ObjectStore7) {
-      _inherits(Store, _Fluxo$ObjectStore7);
+    var Store = (function (_Fluxo$ObjectStore9) {
+      _inherits(Store, _Fluxo$ObjectStore9);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -870,8 +961,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("setup with different classes", function () {
-      var Post = (function (_Fluxo$ObjectStore8) {
-        _inherits(Post, _Fluxo$ObjectStore8);
+      var Post = (function (_Fluxo$ObjectStore10) {
+        _inherits(Post, _Fluxo$ObjectStore10);
 
         function Post() {
           _classCallCheck(this, Post);
@@ -882,8 +973,8 @@ describe("Fluxo.ObjectStore", function () {
         return Post;
       })(Fluxo.ObjectStore);
 
-      var Author = (function (_Fluxo$ObjectStore9) {
-        _inherits(Author, _Fluxo$ObjectStore9);
+      var Author = (function (_Fluxo$ObjectStore11) {
+        _inherits(Author, _Fluxo$ObjectStore11);
 
         function Author() {
           _classCallCheck(this, Author);
