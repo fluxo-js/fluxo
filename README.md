@@ -569,9 +569,6 @@ The Fluxo collections propagates all the children store event's with the prefix
 `stores:`, so, if you trigger an event like "sayHello" on a store of a collection,
 your collection will trigger the `stores:sayHello` event.
 
-:warning: The `change` event on the collection **isn't triggered** when it's children
-stores change, this kind of event is triggered upon the `stores:change` name.
-
 ###Wildcard event
 
 Every triggered event emits a wildcard event.
