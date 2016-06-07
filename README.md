@@ -170,7 +170,7 @@ class Person extends Fluxo.ObjectStore {
 Attributes contracts allow you to define default values and custom parsing/dumping logics to your store's attributes. To use them you need to specify the contracts on the class property `attributes` with the following properties:
 
 * `defaultValue`: the default value used on the store initialization and the [#reset method](#reset).
-* `parse`: the function that receives the value on the argument and returns the value parsed.
+* `parser`: the function that receives the value on the argument and returns the value parsed.
 * `dump`: the function that receives the value on the argument and returns the result to [#toJSON method](#tojson). The default dump logic calls `toJSON` on the value.
 * `required` (boolean): warning on the console when an attribute is required and is missing on the initialization or [#unsetAttribute method](#unsetattribute).
 
@@ -195,7 +195,7 @@ Using the parsers:
 class Person extends Fluxo.ObjectStore {};
 
 Person.attributes = {
-  age: { parse: function (value) { return parseInt(value); } }
+  age: { parser: function (value) { return parseInt(value); } }
 };
 
 var jon = new Person();
@@ -215,7 +215,7 @@ class Post extends Fluxo.ObjectStore {};
 Post.attributes = {
   author: {
     defaultValue: {},
-    parse: function (value) {
+    parser: function (value) {
       return (value instanceof Author) ? value : new Author(value);
     }
   }
