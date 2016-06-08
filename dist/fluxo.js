@@ -569,6 +569,9 @@ exports["default"] = {
     return value;
   },
   dump: function dump(value) {
+    if (value === undefined) {
+      return;
+    }
     return JSON.parse(JSON.stringify(value));
   }
 };
