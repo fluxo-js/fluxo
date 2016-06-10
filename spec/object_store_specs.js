@@ -224,6 +224,18 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.data.type).to.be.eql("myStore");
   });
 
+  it("reset without attributes contract", function () {
+    class Store extends Fluxo.ObjectStore {}
+
+    let store = new Store({ fname: "John" });
+
+    expect(store.data).to.contain.all.keys("fname");
+
+    store.reset({ lname: "Smith" });
+
+    expect(store.data).to.contain.all.keys("lname");
+  });
+
   it("clear", function () {
     var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 

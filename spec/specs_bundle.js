@@ -827,6 +827,28 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.data.type).to.be.eql("myStore");
   });
 
+  it("reset without attributes contract", function () {
+    var Store = (function (_Fluxo$ObjectStore7) {
+      _inherits(Store, _Fluxo$ObjectStore7);
+
+      function Store() {
+        _classCallCheck(this, Store);
+
+        _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+      }
+
+      return Store;
+    })(Fluxo.ObjectStore);
+
+    var store = new Store({ fname: "John" });
+
+    expect(store.data).to.contain.all.keys("fname");
+
+    store.reset({ lname: "Smith" });
+
+    expect(store.data).to.contain.all.keys("lname");
+  });
+
   it("clear", function () {
     var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 
@@ -839,8 +861,8 @@ describe("Fluxo.ObjectStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var Store = (function (_Fluxo$ObjectStore7) {
-        _inherits(Store, _Fluxo$ObjectStore7);
+      var Store = (function (_Fluxo$ObjectStore8) {
+        _inherits(Store, _Fluxo$ObjectStore8);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -861,8 +883,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("allow to override the default values", function () {
-      var Store = (function (_Fluxo$ObjectStore8) {
-        _inherits(Store, _Fluxo$ObjectStore8);
+      var Store = (function (_Fluxo$ObjectStore9) {
+        _inherits(Store, _Fluxo$ObjectStore9);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -884,8 +906,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("custom dump generates the specified value", function () {
-    var Store = (function (_Fluxo$ObjectStore9) {
-      _inherits(Store, _Fluxo$ObjectStore9);
+    var Store = (function (_Fluxo$ObjectStore10) {
+      _inherits(Store, _Fluxo$ObjectStore10);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -961,8 +983,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("setup with different classes", function () {
-      var Post = (function (_Fluxo$ObjectStore10) {
-        _inherits(Post, _Fluxo$ObjectStore10);
+      var Post = (function (_Fluxo$ObjectStore11) {
+        _inherits(Post, _Fluxo$ObjectStore11);
 
         function Post() {
           _classCallCheck(this, Post);
@@ -973,8 +995,8 @@ describe("Fluxo.ObjectStore", function () {
         return Post;
       })(Fluxo.ObjectStore);
 
-      var Author = (function (_Fluxo$ObjectStore11) {
-        _inherits(Author, _Fluxo$ObjectStore11);
+      var Author = (function (_Fluxo$ObjectStore12) {
+        _inherits(Author, _Fluxo$ObjectStore12);
 
         function Author() {
           _classCallCheck(this, Author);

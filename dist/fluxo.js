@@ -704,7 +704,7 @@ var ObjectStore = (function () {
     key: "getDefaults",
     value: function getDefaults() {
       if (!this.constructor.attributes) {
-        return;
+        return {};
       }
 
       var defaults = {};

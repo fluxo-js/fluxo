@@ -69,7 +69,7 @@ class ObjectStore {
   }
 
   getDefaults () {
-    if (!this.constructor.attributes) { return; }
+    if (!this.constructor.attributes) { return {}; }
 
     var defaults = {};
 
