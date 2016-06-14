@@ -19,8 +19,6 @@ class ObjectStore {
 
     this.onChangeComputedProperties = [];
 
-    this.attributeParsers = (this.constructor.attributeParsers || {});
-
     this.signedEventsCancelers = [];
 
     this.events = {};
