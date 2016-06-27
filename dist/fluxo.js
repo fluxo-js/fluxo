@@ -55,17 +55,11 @@ var CollectionStore = (function (_ObjectStore) {
 
       this.storesOnChangeCancelers = {};
 
-      this.subsets = {};
-
-      this.subset = this.constructor.subset || {};
-
       this.childrenDelegate = this.constructor.childrenDelegate || [];
 
       _get(Object.getPrototypeOf(CollectionStore.prototype), "initialize", this).call(this, data);
 
       this.setStores(stores);
-
-      this.registerSubsets();
 
       this.createDelegateMethods();
 
@@ -74,62 +68,10 @@ var CollectionStore = (function (_ObjectStore) {
       });
     }
   }, {
-    key: "firstComputation",
-    value: function firstComputation() {
-      for (var subsetName in this.subset) {
-        this.updateSubset(subsetName);
-      }
-
-      _get(Object.getPrototypeOf(CollectionStore.prototype), "firstComputation", this).call(this);
-    }
-  }, {
-    key: "getSubset",
-    value: function getSubset(subsetName) {
-      if (!this[subsetName]) {
-        throw new Error("Subset compute function to \"" + subsetName + "\" subset is not defined.");
-      }
-
-      var result = this[subsetName].call(this);
-
-      if (!result || result.constructor !== Array) {
-        throw new Error("The subset \"" + subsetName + "\" computer function returned a value that isn't an array.");
-      }
-
-      return result;
-    }
-  }, {
-    key: "updateSubset",
-    value: function updateSubset(subsetName) {
-      if (!this.subsets[subsetName]) {
-        this.subsets[subsetName] = new CollectionStore();
-      }
-
-      this.subsets[subsetName].resetStores(this.getSubset(subsetName));
-
-      this.triggerEvent("change:" + subsetName);
-    }
-  }, {
-    key: "registerSubsets",
-    value: function registerSubsets() {
-      for (var subsetName in this.subset) {
-        var toComputeEvents = this.subset[subsetName];
-
-        if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
-          throw new Error("You can't register a SUBSET (" + this.constructor.name + "#" + subsetName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
-        }
-
-        this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
-      }
-    }
-  }, {
     key: "setAttribute",
     value: function setAttribute(attributeName) {
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
-      }
-
-      if (this.subset && this.subset[attributeName]) {
-        throw new Error("The attribute name \"" + attributeName + "\" is reserved to a subset.");
       }
 
       if (attributeName === "stores") {
@@ -485,17 +427,6 @@ var CollectionStore = (function (_ObjectStore) {
 
       return collectionData;
     }
-  }, {
-    key: "subsetsToJSON",
-    value: function subsetsToJSON() {
-      var subsetsData = {};
-
-      for (var subsetName in this.subsets) {
-        subsetsData[subsetName] = this.subsets[subsetName].toJSON().stores;
-      }
-
-      return subsetsData;
-    }
 
     /**
      * It returns a JSON with the store's attributes, the children stores data
@@ -515,7 +446,7 @@ var CollectionStore = (function (_ObjectStore) {
     key: "toJSON",
     value: function toJSON() {
       if (!this.lastGeneratedJSON) {
-        this.lastGeneratedJSON = _extends({}, this.attributesToJSON(), this.subsetsToJSON(), {
+        this.lastGeneratedJSON = _extends({}, this.attributesToJSON(), {
           stores: this.storesToJSON()
         });
       }
