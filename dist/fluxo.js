@@ -972,19 +972,41 @@ var ObjectStore = (function () {
       this.triggerEvent("change");
     }
   }, {
+    key: "watchChanges",
+    value: function watchChanges(block) {
+      var changed = false;
+
+      var canceler = this.on(["*"], function (eventName) {
+        if (eventName.indexOf("change:") !== 0) {
+          return;
+        }
+        changed = true;
+      });
+
+      block.call();
+
+      canceler.call();
+
+      return changed;
+    }
+  }, {
     key: "set",
     value: function set(data) {
+      var _this = this;
+
       var options = arguments.length <= 1 || arguments[1] === undefined ? { silentGlobalChange: false } : arguments[1];
 
       if (typeof data !== "object") {
         throw new Error("The \"data\" argument on store's \"set\" function must be an object.");
       }
 
-      for (var key in data) {
-        this.setAttribute(key, data[key], { silentGlobalChange: true });
-      }
+      var hasChanges = this.watchChanges(function () {
+        for (var key in data) {
+          _this.setAttribute(key, data[key], { silentGlobalChange: true });
+        }
+      });
 
-      if (!options.silentGlobalChange) {
+      if (!options.silentGlobalChange && hasChanges) {
         this.triggerEvent("change");
       }
     }
@@ -999,46 +1021,56 @@ var ObjectStore = (function () {
   }, {
     key: "reset",
     value: function reset() {
+      var _this2 = this;
+
       var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
       var attributes = _extends({}, this.data),
           defaults = this.getDefaults();
 
-      for (var attributeName in this.computed) {
-        delete attributes[attributeName];
-      }
+      var hasChanges = this.watchChanges(function () {
+        for (var attributeName in _this2.computed) {
+          delete attributes[attributeName];
+        }
 
-      for (var attributeName in data) {
-        this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
-        delete attributes[attributeName];
-        delete defaults[attributeName];
-      }
+        for (var attributeName in data) {
+          _this2.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
+          delete attributes[attributeName];
+          delete defaults[attributeName];
+        }
 
-      for (var attributeName in defaults) {
-        this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
-        delete attributes[attributeName];
-      }
+        for (var attributeName in defaults) {
+          _this2.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
+          delete attributes[attributeName];
+        }
 
-      for (var attributeName in attributes) {
-        this.unsetAttribute(attributeName, { silentGlobalChange: true });
-      }
+        for (var attributeName in attributes) {
+          _this2.unsetAttribute(attributeName, { silentGlobalChange: true });
+        }
+      });
 
-      this.triggerEvent("change");
+      if (hasChanges) {
+        this.triggerEvent("change");
+      }
     }
   }, {
     key: "clear",
     value: function clear() {
+      var _this3 = this;
+
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
       options = _extends({ silentGlobalChange: false }, options);
 
-      for (var key in this.data) {
-        if (!this.computed.hasOwnProperty(key)) {
-          this.unsetAttribute(key, { silentGlobalChange: true });
+      var hasChanges = this.watchChanges(function () {
+        for (var key in _this3.data) {
+          if (!_this3.computed.hasOwnProperty(key)) {
+            _this3.unsetAttribute(key, { silentGlobalChange: true });
+          }
         }
-      }
+      });
 
-      if (!options.silentGlobalChange) {
+      if (!options.silentGlobalChange && hasChanges) {
         this.triggerEvent("change");
       }
     }
