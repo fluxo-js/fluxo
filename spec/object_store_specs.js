@@ -28,22 +28,35 @@ describe("Fluxo.ObjectStore", function () {
     expect(onChangeNameCallback).to.have.been.called.with("Samuel");
   });
 
-  it("#set", function() {
-    var store = new Fluxo.ObjectStore({ name: "Samuel" }),
-        onChangeCallback = chai.spy(),
-        onChangeNameCallback = chai.spy();
+  describe("#set", function () {
+    it("define attributes", function() {
+      var store = new Fluxo.ObjectStore({ name: "Samuel" }),
+          onChangeCallback = chai.spy(),
+          onChangeNameCallback = chai.spy();
 
-    expect(store.data).to.be.eql({ name: "Samuel" });
+      expect(store.data).to.be.eql({ name: "Samuel" });
 
-    store.on(["change"], onChangeCallback);
-    store.on(["change:name"], onChangeNameCallback);
+      store.on(["change"], onChangeCallback);
+      store.on(["change:name"], onChangeNameCallback);
 
-    store.set({ name: "Other", email: "fluxo@flux.com" });
+      store.set({ name: "Other", email: "fluxo@flux.com" });
 
-    expect(store.data).to.be.eql({ name: "Other", email: "fluxo@flux.com" });
-    expect(onChangeCallback).to.have.been.called();
-    expect(onChangeNameCallback).to.have.been.called();
-  });
+      expect(store.data).to.be.eql({ name: "Other", email: "fluxo@flux.com" });
+      expect(onChangeCallback).to.have.been.called();
+      expect(onChangeNameCallback).to.have.been.called();
+    });
+
+    it("does not emit change if nothing change", function() {
+      var store = new Fluxo.ObjectStore({ name: "Samuel" }),
+          onChangeCallback = chai.spy();
+
+      store.on(["change"], onChangeCallback);
+
+      store.set({ name: "Samuel" });
+
+      expect(onChangeCallback).to.not.have.been.called();
+    });
+  })
 
   it("#toJSON", function() {
     var store = new Fluxo.ObjectStore({ name: "Samuel" });
@@ -204,46 +217,72 @@ describe("Fluxo.ObjectStore", function () {
     expect(store.data).to.not.contain.key("name");
   });
 
-  it("reset", function () {
-    class Store extends Fluxo.ObjectStore {}
+  describe("#reset", function () {
+    it("reset attributes", function () {
+      class Store extends Fluxo.ObjectStore {}
 
-    Store.attributes = {
-      type: { defaultValue: "myStore" }
-    };
+      Store.attributes = {
+        type: { defaultValue: "myStore" }
+      };
 
-    let store = new Store({ name: "Fluxo" });
+      let store = new Store({ name: "Fluxo" });
 
-    expect(store.data).to.contain.all.keys("type", "name");
+      expect(store.data).to.contain.all.keys("type", "name");
 
-    store.setAttribute("type", "newType");
+      store.setAttribute("type", "newType");
 
-    store.reset({ otherKey: "foo" });
+      store.reset({ otherKey: "foo" });
 
-    expect(store.data).to.contain.all.keys("type", "otherKey");
+      expect(store.data).to.contain.all.keys("type", "otherKey");
 
-    expect(store.data.type).to.be.eql("myStore");
+      expect(store.data.type).to.be.eql("myStore");
+    });
+
+    it("does not emit change if nothing change", function() {
+      var store = new Fluxo.ObjectStore({ name: "Samuel" }),
+          onChangeCallback = chai.spy();
+
+      store.on(["change"], onChangeCallback);
+
+      store.reset({ name: "Samuel" });
+
+      expect(onChangeCallback).to.not.have.been.called();
+    });
+
+    it("reset without attributes contract", function () {
+      class Store extends Fluxo.ObjectStore {}
+
+      let store = new Store({ fname: "John" });
+
+      expect(store.data).to.contain.all.keys("fname");
+
+      store.reset({ lname: "Smith" });
+
+      expect(store.data).to.contain.all.keys("lname");
+    });
   });
 
-  it("reset without attributes contract", function () {
-    class Store extends Fluxo.ObjectStore {}
+  describe("#clear", function () {
+    it("clear attributes", function () {
+      var store = new Fluxo.ObjectStore({ name: "Fluxo" });
 
-    let store = new Store({ fname: "John" });
+      expect(store.data).to.contain.all.keys("name");
 
-    expect(store.data).to.contain.all.keys("fname");
+      store.clear();
 
-    store.reset({ lname: "Smith" });
+      expect(store.data).to.not.contain.key("name");
+    });
 
-    expect(store.data).to.contain.all.keys("lname");
-  });
+    it("does not emit change if nothing change", function() {
+      var store = new Fluxo.ObjectStore(),
+          onChangeCallback = chai.spy();
 
-  it("clear", function () {
-    var store = new Fluxo.ObjectStore({ name: "Fluxo" });
+      store.on(["change"], onChangeCallback);
 
-    expect(store.data).to.contain.all.keys("name");
+      store.clear();
 
-    store.clear();
-
-    expect(store.data).to.not.contain.key("name");
+      expect(onChangeCallback).to.not.have.been.called();
+    });
   });
 
   describe("default values", function () {

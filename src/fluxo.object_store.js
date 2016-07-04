@@ -298,16 +298,33 @@ class ObjectStore {
     this.triggerEvent("change");
   }
 
+  watchChanges (block) {
+    let changed = false;
+
+    let canceler = this.on(["*"], eventName => {
+      if (eventName.indexOf("change:") !== 0) { return; }
+      changed = true;
+    });
+
+    block.call();
+
+    canceler.call();
+
+    return changed;
+  }
+
   set (data, options={ silentGlobalChange: false }) {
     if (typeof data !== "object") {
       throw new Error(`The "data" argument on store's "set" function must be an object.`);
     }
 
-    for (let key in data) {
-      this.setAttribute(key, data[key], { silentGlobalChange: true });
-    }
+    let hasChanges = this.watchChanges(() => {
+      for (let key in data) {
+        this.setAttribute(key, data[key], { silentGlobalChange: true });
+      }
+    });
 
-    if (!options.silentGlobalChange) {
+    if (!options.silentGlobalChange && hasChanges) {
       this.triggerEvent("change");
     }
   }
@@ -323,38 +340,44 @@ class ObjectStore {
     let attributes = { ...this.data },
         defaults = this.getDefaults();
 
-    for (let attributeName in this.computed) {
-      delete attributes[attributeName];
-    }
+    let hasChanges = this.watchChanges(() => {
+      for (let attributeName in this.computed) {
+        delete attributes[attributeName];
+      }
 
-    for (let attributeName in data) {
-      this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
-      delete attributes[attributeName];
-      delete defaults[attributeName];
-    }
+      for (let attributeName in data) {
+        this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
+        delete attributes[attributeName];
+        delete defaults[attributeName];
+      }
 
-    for (let attributeName in defaults) {
-      this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
-      delete attributes[attributeName];
-    }
+      for (let attributeName in defaults) {
+        this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
+        delete attributes[attributeName];
+      }
 
-    for (let attributeName in attributes) {
-      this.unsetAttribute(attributeName, { silentGlobalChange: true });
-    }
+      for (let attributeName in attributes) {
+        this.unsetAttribute(attributeName, { silentGlobalChange: true });
+      }
+    });
 
-    this.triggerEvent("change");
+    if (hasChanges) {
+      this.triggerEvent("change");
+    }
   }
 
   clear (options={}) {
     options = { silentGlobalChange: false, ...options };
 
-    for (let key in this.data) {
-      if (!this.computed.hasOwnProperty(key)) {
-        this.unsetAttribute(key, { silentGlobalChange: true });
+    let hasChanges = this.watchChanges(() => {
+      for (let key in this.data) {
+        if (!this.computed.hasOwnProperty(key)) {
+          this.unsetAttribute(key, { silentGlobalChange: true });
+        }
       }
-    }
+    });
 
-    if (!options.silentGlobalChange) {
+    if (!options.silentGlobalChange && hasChanges) {
       this.triggerEvent("change");
     }
   }
