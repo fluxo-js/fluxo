@@ -10,6 +10,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 describe("Fluxo.CollectionStore", function () {
+  it("allows quick dumb collections", function () {
+    var Store = (function (_Fluxo$ObjectStore) {
+      _inherits(Store, _Fluxo$ObjectStore);
+
+      function Store() {
+        _classCallCheck(this, Store);
+
+        _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+      }
+
+      return Store;
+    })(Fluxo.ObjectStore);
+
+    var collection = new Fluxo.CollectionStore([{ id: 1 }], {}, { store: Store });
+
+    expect(collection.stores[0]).to.be["instanceof"](Store);
+  });
+
   it("parsing store's data on collection's store object", function () {
     var Collection = (function (_Fluxo$CollectionStore) {
       _inherits(Collection, _Fluxo$CollectionStore);
@@ -23,8 +41,8 @@ describe("Fluxo.CollectionStore", function () {
       return Collection;
     })(Fluxo.CollectionStore);
 
-    var Store = (function (_Fluxo$ObjectStore) {
-      _inherits(Store, _Fluxo$ObjectStore);
+    var Store = (function (_Fluxo$ObjectStore2) {
+      _inherits(Store, _Fluxo$ObjectStore2);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -231,8 +249,8 @@ describe("Fluxo.CollectionStore", function () {
 
     Collection.childrenDelegate = ["customMethod"];
 
-    var Store = (function (_Fluxo$ObjectStore2) {
-      _inherits(Store, _Fluxo$ObjectStore2);
+    var Store = (function (_Fluxo$ObjectStore3) {
+      _inherits(Store, _Fluxo$ObjectStore3);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -274,8 +292,8 @@ describe("Fluxo.CollectionStore", function () {
 
     Collection.childrenDelegate = ["customMethod"];
 
-    var Store = (function (_Fluxo$ObjectStore3) {
-      _inherits(Store, _Fluxo$ObjectStore3);
+    var Store = (function (_Fluxo$ObjectStore4) {
+      _inherits(Store, _Fluxo$ObjectStore4);
 
       function Store() {
         _classCallCheck(this, Store);

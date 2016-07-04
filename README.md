@@ -70,6 +70,7 @@ dependency amount on your application. These entities objects we call **store**.
       * [find](#find)
       * [where](#where)
     * [Ordering](#ordering)
+    * [Quick Dumb Collections](#quick-dumb-collections)
     * [Collection children delegations](#collection-children-delegations)
     * [Collection Subsets](#collection-subsets)
 * [toJSON](#tojson)
@@ -404,6 +405,21 @@ class People extends Fluxo.CollectionStore {
     return a.data.at - b.data.at;
   }
 };
+```
+
+###Quick Dumb Collections
+
+You can create collections without create a new class just to specify an different store class.
+
+Just define the store key on the third argument of the `Fluxo.CollectionStore` constructor with the children store class.
+
+```js
+class Person extends Fluxo.ObjectStore {}
+
+var people =
+  new Fluxo.CollectionStore([{ name: "John" }], {}, { store: Person });
+
+people.stores[0] //=> instance of Person;
 ```
 
 ##Collection children delegations

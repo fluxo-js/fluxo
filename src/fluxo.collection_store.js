@@ -6,8 +6,10 @@ import ObjectStore from "./fluxo.object_store.js";
  */
 export default class CollectionStore extends ObjectStore {
 /** @lends Fluxo.CollectionStore */
-  initialize (stores=[], data={}) {
-    this.store = this.constructor.store || ObjectStore;
+  initialize (stores=[], data={}, options={}) {
+    this.options = options;
+
+    this.store = this.options.store || this.constructor.store || ObjectStore;
 
     this.stores = [];
 

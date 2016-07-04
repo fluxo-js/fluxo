@@ -1,4 +1,13 @@
 describe("Fluxo.CollectionStore", function () {
+  it("allows quick dumb collections", function () {
+    class Store extends Fluxo.ObjectStore {}
+
+    var collection =
+      new Fluxo.CollectionStore([{ id: 1 }], {}, { store: Store });
+
+    expect(collection.stores[0]).to.be.instanceof(Store);
+  });
+
   it("parsing store's data on collection's store object", function() {
     class Collection extends Fluxo.CollectionStore {}
 
