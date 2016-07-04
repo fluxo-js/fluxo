@@ -920,13 +920,13 @@ var ObjectStore = (function () {
 
       options = options || {};
 
+      value = this.parser(attribute).call(this, value);
+
       if (this.data[attribute] === value) {
         return;
       }
 
       delete this.lastGeneratedJSON;
-
-      value = this.parser(attribute).call(this, value);
 
       this.warnMissingAttribute(attribute, value);
 

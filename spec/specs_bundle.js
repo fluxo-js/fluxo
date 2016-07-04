@@ -745,32 +745,70 @@ describe("Fluxo.ObjectStore", function () {
     });
   });
 
-  it("attributes parser", function () {
-    var Store = (function (_Fluxo$ObjectStore5) {
-      _inherits(Store, _Fluxo$ObjectStore5);
+  describe("Attributes Parser", function () {
+    it("parse before set", function () {
+      var Store = (function (_Fluxo$ObjectStore5) {
+        _inherits(Store, _Fluxo$ObjectStore5);
 
-      function Store() {
-        _classCallCheck(this, Store);
+        function Store() {
+          _classCallCheck(this, Store);
 
-        _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
-      }
-
-      return Store;
-    })(Fluxo.ObjectStore);
-
-    ;
-
-    Store.attributes = {
-      count: {
-        parser: function parser(value) {
-          return parseInt(value, 10);
+          _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
         }
-      }
-    };
 
-    var store = new Store({ count: "1" });
+        return Store;
+      })(Fluxo.ObjectStore);
 
-    expect(store.data.count).to.be.eql(1);
+      ;
+
+      Store.attributes = {
+        count: {
+          parser: function parser(value) {
+            return parseInt(value, 10);
+          }
+        }
+      };
+
+      var store = new Store({ count: "1" });
+
+      expect(store.data.count).to.be.eql(1);
+    });
+
+    it("parse before check if it change", function () {
+      var onChangeCountCallback = chai.spy();
+
+      var Store = (function (_Fluxo$ObjectStore6) {
+        _inherits(Store, _Fluxo$ObjectStore6);
+
+        function Store() {
+          _classCallCheck(this, Store);
+
+          _get(Object.getPrototypeOf(Store.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        return Store;
+      })(Fluxo.ObjectStore);
+
+      ;
+
+      Store.attributes = {
+        count: {
+          parser: function parser(value) {
+            return parseInt(value, 10);
+          }
+        }
+      };
+
+      var store = new Store();
+
+      store.on(["change:count"], onChangeCountCallback);
+
+      store.setAttribute("count", "1");
+
+      store.setAttribute("count", "1");
+
+      expect(onChangeCountCallback).to.have.been.called.once();
+    });
   });
 
   it("#triggerEvent", function () {
@@ -798,8 +836,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("reset", function () {
-    var Store = (function (_Fluxo$ObjectStore6) {
-      _inherits(Store, _Fluxo$ObjectStore6);
+    var Store = (function (_Fluxo$ObjectStore7) {
+      _inherits(Store, _Fluxo$ObjectStore7);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -828,8 +866,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("reset without attributes contract", function () {
-    var Store = (function (_Fluxo$ObjectStore7) {
-      _inherits(Store, _Fluxo$ObjectStore7);
+    var Store = (function (_Fluxo$ObjectStore8) {
+      _inherits(Store, _Fluxo$ObjectStore8);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -861,8 +899,8 @@ describe("Fluxo.ObjectStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var Store = (function (_Fluxo$ObjectStore8) {
-        _inherits(Store, _Fluxo$ObjectStore8);
+      var Store = (function (_Fluxo$ObjectStore9) {
+        _inherits(Store, _Fluxo$ObjectStore9);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -883,8 +921,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("allow to override the default values", function () {
-      var Store = (function (_Fluxo$ObjectStore9) {
-        _inherits(Store, _Fluxo$ObjectStore9);
+      var Store = (function (_Fluxo$ObjectStore10) {
+        _inherits(Store, _Fluxo$ObjectStore10);
 
         function Store() {
           _classCallCheck(this, Store);
@@ -906,8 +944,8 @@ describe("Fluxo.ObjectStore", function () {
   });
 
   it("custom dump generates the specified value", function () {
-    var Store = (function (_Fluxo$ObjectStore10) {
-      _inherits(Store, _Fluxo$ObjectStore10);
+    var Store = (function (_Fluxo$ObjectStore11) {
+      _inherits(Store, _Fluxo$ObjectStore11);
 
       function Store() {
         _classCallCheck(this, Store);
@@ -983,8 +1021,8 @@ describe("Fluxo.ObjectStore", function () {
     });
 
     it("setup with different classes", function () {
-      var Post = (function (_Fluxo$ObjectStore11) {
-        _inherits(Post, _Fluxo$ObjectStore11);
+      var Post = (function (_Fluxo$ObjectStore12) {
+        _inherits(Post, _Fluxo$ObjectStore12);
 
         function Post() {
           _classCallCheck(this, Post);
@@ -995,8 +1033,8 @@ describe("Fluxo.ObjectStore", function () {
         return Post;
       })(Fluxo.ObjectStore);
 
-      var Author = (function (_Fluxo$ObjectStore12) {
-        _inherits(Author, _Fluxo$ObjectStore12);
+      var Author = (function (_Fluxo$ObjectStore13) {
+        _inherits(Author, _Fluxo$ObjectStore13);
 
         function Author() {
           _classCallCheck(this, Author);

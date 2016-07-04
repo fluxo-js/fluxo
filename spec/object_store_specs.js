@@ -166,18 +166,42 @@ describe("Fluxo.ObjectStore", function () {
     });
   });
 
-  it("attributes parser", function() {
-    class Store extends Fluxo.ObjectStore {};
+  describe("Attributes Parser", function () {
+    it("parse before set", function() {
+      class Store extends Fluxo.ObjectStore {};
 
-    Store.attributes ={
-      count: {
-        parser: function (value) { return parseInt(value, 10); }
-      }
-    };
+      Store.attributes = {
+        count: {
+          parser: function (value) { return parseInt(value, 10); }
+        }
+      };
 
-    var store = new Store({ count: "1" });
+      var store = new Store({ count: "1" });
 
-    expect(store.data.count).to.be.eql(1);
+      expect(store.data.count).to.be.eql(1);
+    });
+
+    it("parse before check if it change", function () {
+      let onChangeCountCallback = chai.spy();
+
+      class Store extends Fluxo.ObjectStore {};
+
+      Store.attributes = {
+        count: {
+          parser: function (value) { return parseInt(value, 10); }
+        }
+      };
+
+      var store = new Store();
+
+      store.on(["change:count"], onChangeCountCallback);
+
+      store.setAttribute("count", "1");
+
+      store.setAttribute("count", "1");
+
+      expect(onChangeCountCallback).to.have.been.called.once();
+    });
   });
 
   it("#triggerEvent", function() {
