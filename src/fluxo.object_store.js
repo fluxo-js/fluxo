@@ -17,8 +17,6 @@ class ObjectStore {
 
     this.computed = (this.constructor.computed || {});
 
-    this.onChangeComputedProperties = [];
-
     this.signedEventsCancelers = [];
 
     this.events = {};
@@ -154,21 +152,7 @@ class ObjectStore {
     }
   }
 
-  computeOnChangeComputedProperties () {
-    for (let i = 0, l = this.onChangeComputedProperties.length; i < l; i++) {
-      this.computeValue(this.onChangeComputedProperties[i]);
-    }
-  }
-
-  beforeTriggerEvent (eventName) {
-    if (eventName === "change") {
-      this.computeOnChangeComputedProperties();
-    }
-  }
-
   triggerEvent (eventName, ...args) {
-    this.beforeTriggerEvent(eventName);
-
     this.publish(eventName, this, ...args);
 
     this.publish("*", eventName, this, ...args);
@@ -198,11 +182,7 @@ class ObjectStore {
         throw new Error(`You can't register a COMPUTED PROPERTY (${this.constructor.name}#${attributeName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
       }
 
-      if (toComputeEvents.indexOf("change") === 1) {
-        this.onChangeComputedProperties.push(attributeName);
-      } else {
-        this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
-      }
+      this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
     }
   }
 

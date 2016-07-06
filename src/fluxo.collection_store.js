@@ -21,8 +21,6 @@ export default class CollectionStore extends ObjectStore {
 
     this.subset = (this.constructor.subset || {});
 
-    this.onChangeSubsets = [];
-
     this.childrenDelegate = (this.constructor.childrenDelegate || []);
 
     super.initialize(data);
@@ -78,11 +76,7 @@ export default class CollectionStore extends ObjectStore {
         throw new Error(`You can't register a SUBSET (${this.constructor.name}#${subsetName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
       }
 
-      if (toComputeEvents.indexOf("change") === 1) {
-        this.onChangeSubsets.push(subsetName);
-      } else {
-        this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
-      }
+      this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
     }
   }
 
@@ -379,20 +373,6 @@ export default class CollectionStore extends ObjectStore {
 
     if (!options.silentGlobalChange) {
       this.triggerEvent("change");
-    }
-  }
-
-  computeOnChangeSubsets () {
-    for (let i = 0, l = this.onChangeSubsets.length; i < l; i++) {
-      this.updateSubset(this.onChangeSubsets[i]);
-    }
-  }
-
-  beforeTriggerEvent (eventName) {
-    super.beforeTriggerEvent(eventName);
-
-    if (eventName === "change") {
-      this.computeOnChangeSubsets();
     }
   }
 

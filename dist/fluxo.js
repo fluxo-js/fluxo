@@ -59,8 +59,6 @@ var CollectionStore = (function (_ObjectStore) {
 
       this.subset = this.constructor.subset || {};
 
-      this.onChangeSubsets = [];
-
       this.childrenDelegate = this.constructor.childrenDelegate || [];
 
       _get(Object.getPrototypeOf(CollectionStore.prototype), "initialize", this).call(this, data);
@@ -120,11 +118,7 @@ var CollectionStore = (function (_ObjectStore) {
           throw new Error("You can't register a SUBSET (" + this.constructor.name + "#" + subsetName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
         }
 
-        if (toComputeEvents.indexOf("change") === 1) {
-          this.onChangeSubsets.push(subsetName);
-        } else {
-          this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
-        }
+        this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
       }
     }
   }, {
@@ -479,22 +473,6 @@ var CollectionStore = (function (_ObjectStore) {
         this.triggerEvent("change");
       }
     }
-  }, {
-    key: "computeOnChangeSubsets",
-    value: function computeOnChangeSubsets() {
-      for (var i = 0, l = this.onChangeSubsets.length; i < l; i++) {
-        this.updateSubset(this.onChangeSubsets[i]);
-      }
-    }
-  }, {
-    key: "beforeTriggerEvent",
-    value: function beforeTriggerEvent(eventName) {
-      _get(Object.getPrototypeOf(CollectionStore.prototype), "beforeTriggerEvent", this).call(this, eventName);
-
-      if (eventName === "change") {
-        this.computeOnChangeSubsets();
-      }
-    }
 
     /**
      * It returns an array with the result of toJSON method invoked
@@ -644,8 +622,6 @@ var ObjectStore = (function () {
       this.storeAttributesEventsCanceler = {};
 
       this.computed = this.constructor.computed || {};
-
-      this.onChangeComputedProperties = [];
 
       this.signedEventsCancelers = [];
 
@@ -812,24 +788,8 @@ var ObjectStore = (function () {
       }
     }
   }, {
-    key: "computeOnChangeComputedProperties",
-    value: function computeOnChangeComputedProperties() {
-      for (var i = 0, l = this.onChangeComputedProperties.length; i < l; i++) {
-        this.computeValue(this.onChangeComputedProperties[i]);
-      }
-    }
-  }, {
-    key: "beforeTriggerEvent",
-    value: function beforeTriggerEvent(eventName) {
-      if (eventName === "change") {
-        this.computeOnChangeComputedProperties();
-      }
-    }
-  }, {
     key: "triggerEvent",
     value: function triggerEvent(eventName) {
-      this.beforeTriggerEvent(eventName);
-
       for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
         args[_key3 - 1] = arguments[_key3];
       }
@@ -862,11 +822,7 @@ var ObjectStore = (function () {
           throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
         }
 
-        if (toComputeEvents.indexOf("change") === 1) {
-          this.onChangeComputedProperties.push(attributeName);
-        } else {
-          this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
-        }
+        this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
       }
     }
   }, {
