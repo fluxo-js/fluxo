@@ -34,19 +34,29 @@ describe("Fluxo.CollectionStore", function () {
     expect(collection1.cid).to.not.equal(collection2.cid);
   });
 
-  it("#addStore", function() {
-    var collection = new Fluxo.CollectionStore(),
-        onChangeCallback = chai.spy();
+  describe("#addStore", function () {
+    it("add a store", function() {
+      var collection = new Fluxo.CollectionStore(),
+          onChangeCallback = chai.spy();
 
-    collection.on(["change"], onChangeCallback);
+      collection.on(["change"], onChangeCallback);
 
-    var store = collection.addStore({ name: "Samuel" });
+      var store = collection.addStore({ name: "Samuel" });
 
-    expect(collection.toJSON()).to.be.eql({
-      cid: collection.cid,
-      stores: [{ cid: store.cid, name: "Samuel" }]
+      expect(collection.toJSON()).to.be.eql({
+        cid: collection.cid,
+        stores: [{ cid: store.cid, name: "Samuel" }]
+      });
+      expect(onChangeCallback).to.have.been.called.once();
     });
-    expect(onChangeCallback).to.have.been.called.once();
+
+    it("can add a store in a specific index", function () {
+      var collection = new Fluxo.CollectionStore([{id:3}, {id:1}]);
+
+      collection.addStore({id:2}, { atIndex: 1 });
+
+      expect(collection.stores.map(store => store.data.id)).to.be.eql([3,2,1]);
+    });
   });
 
   it("calls onChangeCallback when a child store changes", function() {

@@ -326,7 +326,11 @@ var CollectionStore = (function (_ObjectStore) {
         return alreadyAddedStore;
       }
 
-      this.stores.push(store);
+      if (typeof options.atIndex === "number") {
+        this.stores.splice(options.atIndex, 0, store);
+      } else {
+        this.stores.push(store);
+      }
 
       var onStoreEvent = function onStoreEvent(eventName) {
         for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {

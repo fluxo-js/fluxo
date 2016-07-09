@@ -277,10 +277,12 @@ You should avoid add or remove items on your `stores` property directly, instead
 should use the following methods:
 
 ####\#addStore
-`addStore(object|Fluxo.ObjectStore)`
+`addStore(object|Fluxo.ObjectStore, options)`
 
 Add a single store. If it isn't a Fluxo store it will be parsed. This emits `change`
 and `add` events.
+
+You can specify in what index you want your store with the option `atIndex` (zero based).
 
 ```js
 people.addStore({ name: "Neo" });

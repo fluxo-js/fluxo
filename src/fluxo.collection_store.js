@@ -245,7 +245,11 @@ export default class CollectionStore extends ObjectStore {
 
     if (alreadyAddedStore) { return alreadyAddedStore; }
 
-    this.stores.push(store);
+    if (typeof options.atIndex === "number") {
+      this.stores.splice(options.atIndex, 0, store);
+    } else {
+      this.stores.push(store);
+    }
 
     var onStoreEvent = function(eventName, ...args) {
       this.triggerEvent(`stores:${eventName}`, ...args);
