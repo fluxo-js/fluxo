@@ -585,7 +585,20 @@ post.data.author.setAttribute("name", "Ruth");
 
 The Fluxo collections propagates all the children store event's with the prefix
 `stores:`, so, if you trigger an event like "sayHello" on a store of a collection,
-your collection will trigger the `stores:sayHello` event.
+your collection will trigger the `stores:sayHello` event. Take a look on the example
+below:
+
+```js
+var john = new Fluxo.ObjectStore({ name: "John" });
+var people = new Fluxo.CollectionStore([john]);
+
+john.setAttribute("name", "John Doe");
+
+// Triggered Events on "people" store:
+// * stores:change:name
+// * stores:change
+// * change
+```
 
 ###Wildcard event
 
