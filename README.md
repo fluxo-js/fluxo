@@ -9,7 +9,7 @@ javascript app. It's inspired on [Backbone.js](http://backbonejs.org) models/col
 and other good ideas.
 
 :warning: **This project is under development and experimental phase and because
-of this many things may change.**
+of this, many things may change.**
 
 :ballot_box_with_check: Read the **[Getting started](https://github.com/samuelsimoes/fluxo/wiki/Getting-Started)**.
 
@@ -38,9 +38,9 @@ var jon = new Fluxo.ObjectStore({ name: "John Doe" });
 
 ## Giving super powers to your bare objects
 
-Javascript's literal objects most of time can be the best tool for your
+Javascript's literal objects most of the time can be the best tool for your
 app and you probably will hold the state of your app on one of then, but working
-with bare objects sometimes can generates some boilerplate. You may need compute
+with bare objects sometimes can generates some boilerplate. You may need to compute
 attributes, emit events, manipulate collections and so on. On apps that use
 some pattern like Facebook's Flux these kind of things is crucial.
 
@@ -85,7 +85,7 @@ dependency amount on your application. These entities objects we call **store**.
 
 ##Fluxo.ObjectStore
 
-For objects that represents a "single entity" you must instante the class `Fluxo.ObjectStore`
+For objects that represents a "single entity", you must instantiate the class `Fluxo.ObjectStore`
 passing on the first constructor argument the store's attributes, like this:
 
 ```js
@@ -94,8 +94,8 @@ var jon = new Fluxo.ObjectStore({ name: "John Doe" });
 
 ##Reading and Updating your store data
 
-To read your store's data you need access the `data` property. To update your
-data you should avoid change the `data` property directly because Fluxo will
+To read your store's data, you need access the `data` property. To update your
+data, you should avoid change the `data` property directly, because Fluxo will
 run some important tasks, like **[emits the change events](#events)** and **[parse values](#attributes-contracts)**.
 
 ####\#setAttribute
@@ -156,7 +156,7 @@ jon.data.age // => undefined
 
 ##Extending a Store
 
-You may want attach some custom behaviors to your stores, you can do this
+You may want to attach some custom behaviours to your stores, you can do this
 creating your own [ES6 class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) and extending `Fluxo.ObjectStore` or `Fluxo.CollectionStore`.
 
 ```js
@@ -168,7 +168,7 @@ class Person extends Fluxo.ObjectStore {
 ```
 
 ##Attributes Contracts
-Attributes contracts allow you to define default values and custom parsing/dumping logics to your store's attributes. To use them you need to specify the contracts on the class property `attributes` with the following properties:
+Attributes contracts allow you to define default values and custom parsing/dumping logics to your store's attributes. To use them, you need to specify the contracts on the class property `attributes` with the following properties:
 
 * `defaultValue`: the default value used on the store initialization and the [#reset method](#reset).
 * `parser`: the function that receives the value on the argument and returns the value parsed.
@@ -252,7 +252,7 @@ Before anything keep in mind that `Fluxo.CollectionStore` is a extension of
 to Fluxo collection stores.
 
 The usage is pretty like the object store usage, but on the first constructor's
-argument you should place an array with your children objects and on the second you
+argument, you should place an array with your children objects and on the second, you
 should place the collection store's data.
 
 ```js
@@ -292,7 +292,7 @@ people.stores[0].data.name //=> "Neo"
 ####\#addStores
 `addStores(array[object|Fluxo.ObjectStore])`
 
-Same that `addStore` but accepts an array with objects to add at the same time.
+Same that `addStore`, but accepts an array with objects to add at the same time.
 
 ```js
 people.addStores([{ name: "Neo" }, { name: "John" }]);
@@ -304,7 +304,7 @@ people.stores[1].data.name //=> "John"
 ####\#setStores
 `setStores(array[object|Fluxo.ObjectStore], options={ removeMissing: false })`
 
-Like `addStores` but **if a store on the parameter is already added it will be updated**.
+Like `addStores`, but **if a store on the parameter is already added it will be updated**.
 
 You can specify the option `removeMissing: true` to remove all stores that aren't specified on the payload.
 
@@ -411,7 +411,7 @@ class People extends Fluxo.CollectionStore {
 
 ###Quick Dumb Collections
 
-You can create collections without create a new class just to specify an different store class.
+You can create collections without create a new class just to specify a different store class.
 
 Just define the store key on the third argument of the `Fluxo.CollectionStore` constructor with the children store class.
 
@@ -425,13 +425,14 @@ people.stores[0] //=> instance of Person;
 ```
 
 ##Collection children delegations
-When you are manipulating collections you usually will manipulate the children
-stores, you can do this accessing the store directly on the `stores` property, but
+
+When you are manipulating collections, you usually will manipulate the children
+stores and you can do this accessing the store directly on the `stores` property, but
 it breaks the [law of demeter](https://en.wikipedia.org/wiki/Law_of_Demeter), so, to
 avoid this you can use the children delegations.
 
-Children delegations allows you to invoke methods on your children stores through the
-collection. To delegate you need declare on the `childrenDelegate` class property an
+Children delegations, allows you to invoke methods on your children stores through the
+collection. To delegate, you need to declare on the `childrenDelegate` class property an
 array with the name of methods that you want proxy, like this:
 
 ```js
@@ -454,14 +455,15 @@ todos.stores[0].data.done // true
 ```
 
 The first argument on the delegated method should be the ID of the child that you want
-invoke the method (you can use the [cid](#cid) too), the rest will be passed to
+to invoke the method (you can use the [cid](#cid) too), the rest will be passed to
 child's method.
 
 The last line of our example above will call `setAsDone` on the todo with id 2.
 
 ##Collection Subsets
-Sometimes you'll need compute filtered subsets of your collection. Imagine that you
-want show only the done todos on your interface, you can compute this filtered subset
+
+Sometimes you'll need to compute filtered subsets of your collection. Imagine that you
+want to show only the done todos on your interface, you can compute this filtered subset
 with the collection subsets.
 
 Collection subsets works pretty much like the **[computed properties](#computed-properties)**, you define what
@@ -469,7 +471,7 @@ are your subsets on the `subset` class property with subset name on the key and 
 the value the events that should trigger the computation of your subset. The subset value
 will be stored on the `subsets` collection store's property, **it's a basic Fluxo.CollectionStore**.
 
-Look the example below:
+Looks the example below:
 
 ```js
 class Todos extends Fluxo.CollectionStore {
@@ -492,8 +494,9 @@ todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
 ```
 
 ##toJSON
-Eventually you will pass the state that you are holding on your store to other
-parts to your app, like the view layer. You should avoid pass the `data` or `stores`
+
+Eventually, you will pass the state that you are holding on your store to other
+parts of your app, like the view layer. You should avoid pass the `data` or `stores`
 properties directly, the `toJSON` is the right tool for this job.
 
 On object stores the `toJSON` will include all the properties of your data and the `cid`,
@@ -529,7 +532,7 @@ stores (it will call `toJSON` on its children) and the **[subsets](#collection-s
 
 ##CID
 
-Every Fluxo store has an internal CID (client ID) that are used to many internal tasks
+Every Fluxo store has an internal CID (client ID) that are used to many internal tasks,
 but you can use to reference your object on your interface as well. The CID value
 is placed on the store's `cid` property.
 
@@ -545,7 +548,7 @@ methods.
 The `on` method accepts two arguments, the first is an array of events names
 and the second is the callback.
 
-To cancel the event subscription you can invoke the returned canceler on the
+To cancel the event subscription, you can invoke the returned canceler on the
 event subscription.
 
 ```js
@@ -559,14 +562,15 @@ eventCanceler.call();
 ```
 
 The first argument method of `triggerEvents` is an array with the events names that
-you want trigger, the other arguments are passed to the signed callbacks. If you
-want trigger only one event you can use the `triggerEvent`.
+you want to trigger, the other arguments are passed to the signed callbacks. If you
+want to trigger only one event you can use the `triggerEvent`.
 
 ```js
 myStore.triggerEvents(["myCustomEvent", "change"], "myCustomArgument");
 ```
 
 ###Nested Stores event bubbling
+
 Every nested Fluxo store bubbles its events to its parents, like the example below:
 
 ```js
@@ -607,7 +611,7 @@ Every triggered event emits a wildcard event.
 Example: if you trigger the event `sayHello` on your object, the event called `*`
 will be triggered, but the arguments to the callback for this event is diferrent
 of other events. The first argument will be the name of event that was triggered,
-the rest is the same of other events.
+the rest is the same of the other events.
 
 ```js
 jon.on(["sayHello"], function (store) {
@@ -625,15 +629,15 @@ jon.triggerEvent("sayHello");
 ##Computed properties
 
 Fluxo object store and collection stores can have computed properties like
-Ember.js computed properties, this feature allows you declare attributes that are
+Ember.js computed properties, this feature allows you to declare attributes that are
 computed on some **[events of your store](#events)**.
 
 Computed properties are very great to normalize the access of store's information
-(you don't want deal with `store.fullName()`, right?)
+(you don't want to deal with `store.fullName()`, right?)
 and "caching" the computed results helping to avoid possible not necessary expensive
 recomputations.
 
-Look the example below:
+Looks the example below:
 
 ```js
 class Person extends Fluxo.ObjectStore {
@@ -680,12 +684,12 @@ todos.data.doneCount; // => 2
 :warning: Computed properties **are computed on the store's creation**.
 
 :warning: Don't create computed properties that hold collection subsets, use the specific
-**[subset feature](#collection-subsets)** to this.
+**[subset feature](#collection-subsets)** to do this.
 
 ##Using with React.js
 
 Fluxo is view layer agnostic, you can use whatever you want, but we highly recommend
-the React.js. If you choose the React.js we already created a way to connect your
+the React.js. If you choose the React.js, we already created a way to connect your
 stores on your React.js components.
 
 **Read more: https://github.com/fluxo-js/fluxo-react-connect-stores**
