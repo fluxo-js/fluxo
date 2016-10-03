@@ -102,6 +102,16 @@ class ObjectStore {
     return this.removeSubscription.bind(this, eventName, callback);
   }
 
+  subscribeOnce (eventName, callback) {
+    const canceler = this.subscribe(eventName, (...args) => {
+      callback(...args);
+
+      canceler();
+    });
+
+    return canceler;
+  }
+
   removeSubscription (eventName, callback) {
     let index = this.events[eventName].indexOf(callback);
 
