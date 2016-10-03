@@ -68,6 +68,7 @@ dependency amount on your application. These entities objects we call **store**.
     * [Children stores extension](#children-stores-extension)
     * [Searching](#searching)
       * [find](#find)
+      * [findWhere](#findWhere)
       * [where](#where)
     * [Ordering](#ordering)
     * [Quick Dumb Collections](#quick-dumb-collections)
@@ -382,6 +383,11 @@ use the follow methods:
 `find(cid|id)`
 
 Returns the first store with the matching `id` attribute or matching `cid` ([what's cid?](#cid))
+
+####\#findWhere
+`findWhere(criteriaObject)`
+
+Returns the first matching store. See [#where](#where) for more about criteriaObject.
 
 ####\#where
 `where(criteriaObject)`
