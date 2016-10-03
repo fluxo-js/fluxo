@@ -728,6 +728,17 @@ var ObjectStore = (function () {
       return this.removeSubscription.bind(this, eventName, callback);
     }
   }, {
+    key: "subscribeOnce",
+    value: function subscribeOnce(eventName, callback) {
+      var canceler = this.subscribe(eventName, function () {
+        callback.apply(undefined, arguments);
+
+        canceler();
+      });
+
+      return canceler;
+    }
+  }, {
     key: "removeSubscription",
     value: function removeSubscription(eventName, callback) {
       var index = this.events[eventName].indexOf(callback);

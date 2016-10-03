@@ -552,6 +552,58 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 describe("Fluxo.ObjectStore", function () {
+  describe("#subscribe", function () {
+    it("subscribes the event", function () {
+      var store = new Fluxo.ObjectStore(),
+          callback = chai.spy();
+
+      store.subscribe("something", callback);
+
+      store.triggerEvent("something", "data");
+
+      expect(callback).to.have.been.called["with"]("data");
+    });
+
+    it("returns a function that cancels the subscription", function () {
+      var store = new Fluxo.ObjectStore(),
+          callback = chai.spy(),
+          canceler = store.subscribe("something", callback);
+
+      canceler();
+
+      store.triggerEvent("something");
+
+      expect(callback).to.not.have.been.called();
+    });
+  });
+
+  describe("#subscribeOnce", function () {
+    it("subscribes the event once and cancels the subscription", function () {
+      var store = new Fluxo.ObjectStore(),
+          callback = chai.spy();
+
+      store.subscribeOnce("something", callback);
+
+      store.triggerEvent("something", "data");
+      store.triggerEvent("something", "data");
+
+      expect(callback).to.have.been.called.exactly(1)["with"]("data");
+    });
+
+    it("returns a function that cancels the subscription", function () {
+      var store = new Fluxo.ObjectStore(),
+          callback = chai.spy(),
+          canceler = store.subscribeOnce("something", callback);
+
+      canceler();
+
+      store.triggerEvent("something");
+      store.triggerEvent("something");
+
+      expect(callback).to.not.have.been.called();
+    });
+  });
+
   it("#cid", function () {
     var store1 = new Fluxo.ObjectStore(),
         store2 = new Fluxo.ObjectStore();
