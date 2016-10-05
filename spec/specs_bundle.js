@@ -336,38 +336,9 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   describe("subset", function () {
-    it("warning about change with other dependent events", function () {
+    it("subset computing", function () {
       var Collection = (function (_Fluxo$CollectionStore6) {
         _inherits(Collection, _Fluxo$CollectionStore6);
-
-        function Collection() {
-          _classCallCheck(this, Collection);
-
-          _get(Object.getPrototypeOf(Collection.prototype), "constructor", this).apply(this, arguments);
-        }
-
-        _createClass(Collection, [{
-          key: "online",
-          value: function online() {
-            return [];
-          }
-        }]);
-
-        return Collection;
-      })(Fluxo.CollectionStore);
-
-      Collection.subset = {
-        online: ["add", "remove", "change"]
-      };
-
-      expect(function () {
-        new Collection();
-      }).to["throw"](Error, "You can't register a SUBSET (Collection#online) with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
-    });
-
-    it("subset computing", function () {
-      var Collection = (function (_Fluxo$CollectionStore7) {
-        _inherits(Collection, _Fluxo$CollectionStore7);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -385,8 +356,8 @@ describe("Fluxo.CollectionStore", function () {
         return Collection;
       })(Fluxo.CollectionStore);
 
-      Collection.subset = {
-        online: ["add", "remove", "stores:change:online"]
+      Collection.computed = {
+        online: ["change"]
       };
 
       var onChangeCallback = chai.spy();
@@ -412,40 +383,11 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(onChangeCallback).to.have.been.called.exactly(2);
     });
-
-    it("alert about computer function returning something different of an array", function () {
-      var Collection = (function (_Fluxo$CollectionStore8) {
-        _inherits(Collection, _Fluxo$CollectionStore8);
-
-        function Collection() {
-          _classCallCheck(this, Collection);
-
-          _get(Object.getPrototypeOf(Collection.prototype), "constructor", this).apply(this, arguments);
-        }
-
-        _createClass(Collection, [{
-          key: "online",
-          value: function online() {
-            return;
-          }
-        }]);
-
-        return Collection;
-      })(Fluxo.CollectionStore);
-
-      Collection.subset = {
-        online: ["stores:change:online"]
-      };
-
-      expect(function () {
-        new Collection();
-      }).to["throw"](Error, "The subset \"online\" computer function returned a value that isn't an array.");
-    });
   });
 
   it("#setAttribute", function () {
-    var Collection = (function (_Fluxo$CollectionStore9) {
-      _inherits(Collection, _Fluxo$CollectionStore9);
+    var Collection = (function (_Fluxo$CollectionStore7) {
+      _inherits(Collection, _Fluxo$CollectionStore7);
 
       function Collection() {
         _classCallCheck(this, Collection);
@@ -463,17 +405,11 @@ describe("Fluxo.CollectionStore", function () {
       return Collection;
     })(Fluxo.CollectionStore);
 
-    Collection.subset = { online: [] };
-
     var collection = new Collection();
 
     expect(function () {
       collection.setAttribute("stores", true);
     }).to["throw"](Error, "You can't set a attribute with \"stores\" name on a collection.");
-
-    expect(function () {
-      collection.setAttribute("online", true);
-    }).to["throw"](Error, "The attribute name \"online\" is reserved to a subset.");
 
     collection.setAttribute("name", "Fluxo");
 

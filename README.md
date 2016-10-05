@@ -73,7 +73,6 @@ dependency amount on your application. These entities objects we call **store**.
     * [Ordering](#ordering)
     * [Quick Dumb Collections](#quick-dumb-collections)
     * [Collection children delegations](#collection-children-delegations)
-    * [Collection Subsets](#collection-subsets)
 * [toJSON](#tojson)
 * [CID](#cid)
 * [Events](#events)
@@ -480,39 +479,6 @@ child's method.
 
 The last line of our example above will call `setAsDone` on the todo with id 2.
 
-##Collection Subsets
-
-Sometimes you'll need to compute filtered subsets of your collection. Imagine that you
-want to show only the done todos on your interface, you can compute this filtered subset
-with the collection subsets.
-
-Collection subsets works pretty much like the **[computed properties](#computed-properties)**, you define what
-are your subsets on the `subset` class property with subset name on the key and on
-the value the events that should trigger the computation of your subset. The subset value
-will be stored on the `subsets` collection store's property, **it's a basic Fluxo.CollectionStore**.
-
-Looks the example below:
-
-```js
-class Todos extends Fluxo.CollectionStore {
-  pending () {
-    return this.where({ done: false });
-  }
-}
-
-Todos.subset = { pending: ["add", "remove", "stores:change:done"] };
-
-var todo1 = new Fluxo.ObjectStore({ done: true }),
-    todo2 = new Fluxo.ObjectStore({ done: true }),
-    todos = new Todos([todo1, todo2]);
-
-todos.subsets.pending; // [] (Empty Fluxo.CollectionStore)
-
-todo1.setAttribute("done", false);
-
-todos.subsets.pending; // [todo1] (it's a Fluxo.CollectionStore)
-```
-
 ##toJSON
 
 Eventually, you will pass the state that you are holding on your store to other
@@ -531,7 +497,7 @@ like this:
 
 On collection stores the `toJSON` will include the same things of object store
 toJSON, but it'll also include the `stores` property with all data of your children
-stores (it will call `toJSON` on its children) and the **[subsets](#collection-subsets)** on the same way, like this:
+stores (it will call `toJSON` on its children), like this:
 
 ```js
 {
@@ -702,9 +668,6 @@ todos.data.doneCount; // => 2
 ```
 
 :warning: Computed properties **are computed on the store's creation**.
-
-:warning: Don't create computed properties that hold collection subsets, use the specific
-**[subset feature](#collection-subsets)** to do this.
 
 ##Using with React.js
 

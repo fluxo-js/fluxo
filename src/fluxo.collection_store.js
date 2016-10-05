@@ -17,17 +17,11 @@ export default class CollectionStore extends ObjectStore {
 
     this.storesOnChangeCancelers = {};
 
-    this.subsets = {};
-
-    this.subset = (this.constructor.subset || {});
-
     this.childrenDelegate = (this.constructor.childrenDelegate || []);
 
     super.initialize(data);
 
     this.setStores(stores);
-
-    this.registerSubsets();
 
     this.createDelegateMethods();
 
@@ -36,55 +30,7 @@ export default class CollectionStore extends ObjectStore {
     });
   }
 
-  firstComputation () {
-    for (let subsetName in this.subset) {
-      this.updateSubset(subsetName);
-    }
-
-    super.firstComputation();
-  }
-
-  getSubset (subsetName) {
-    if (!this[subsetName]) {
-      throw new Error(`Subset compute function to "${subsetName}" subset is not defined.`);
-    }
-
-    let result = this[subsetName].call(this);
-
-    if (!result || result.constructor !== Array) {
-      throw new Error(`The subset "${subsetName}" computer function returned a value that isn't an array.`);
-    }
-
-    return result;
-  }
-
-  updateSubset (subsetName) {
-    if (!this.subsets[subsetName]) {
-      this.subsets[subsetName] = new CollectionStore();
-    }
-
-    this.subsets[subsetName].resetStores(this.getSubset(subsetName));
-
-    this.triggerEvent(`change:${subsetName}`);
-  }
-
-  registerSubsets () {
-    for (let subsetName in this.subset) {
-      let toComputeEvents = this.subset[subsetName];
-
-      if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
-        throw new Error(`You can't register a SUBSET (${this.constructor.name}#${subsetName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
-      }
-
-      this.on(toComputeEvents, this.updateSubset.bind(this, subsetName));
-    }
-  }
-
   setAttribute (attributeName, ...args) {
-    if (this.subset && this.subset[attributeName]) {
-      throw new Error(`The attribute name "${attributeName}" is reserved to a subset.`);
-    }
-
     if (attributeName === "stores") {
       throw new Error(`You can't set a attribute with "stores" name on a collection.`);
     }
@@ -389,16 +335,6 @@ export default class CollectionStore extends ObjectStore {
     return collectionData;
   }
 
-  subsetsToJSON () {
-    var subsetsData = {};
-
-    for (let subsetName in this.subsets) {
-      subsetsData[subsetName] = this.subsets[subsetName].toJSON().stores;
-    }
-
-    return subsetsData;
-  }
-
   /**
    * It returns a JSON with the store's attributes, the children stores data
    * on "stores" key and the subsets store's data.
@@ -417,7 +353,6 @@ export default class CollectionStore extends ObjectStore {
     if (!this.lastGeneratedJSON) {
       this.lastGeneratedJSON = {
         ...this.attributesToJSON(),
-        ...this.subsetsToJSON(),
         stores: this.storesToJSON()
       };
     }

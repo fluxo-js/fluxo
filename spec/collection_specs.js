@@ -225,20 +225,6 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   describe("subset", function () {
-    it("warning about change with other dependent events", function () {
-      class Collection extends Fluxo.CollectionStore {
-        online () { return []; }
-      }
-
-      Collection.subset = {
-        online: ["add", "remove", "change"]
-      };
-
-      expect(function () {
-        new Collection();
-      }).to.throw(Error, `You can't register a SUBSET (Collection#online) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
-    });
-
     it("subset computing", function () {
       class Collection extends Fluxo.CollectionStore {
         online () {
@@ -246,8 +232,8 @@ describe("Fluxo.CollectionStore", function () {
         }
       }
 
-      Collection.subset = {
-        online: ["add", "remove", "stores:change:online"]
+      Collection.computed = {
+        online: ["change"]
       }
 
       var onChangeCallback = chai.spy()
@@ -276,22 +262,6 @@ describe("Fluxo.CollectionStore", function () {
 
       expect(onChangeCallback).to.have.been.called.exactly(2);
     });
-
-    it("alert about computer function returning something different of an array", function () {
-      class Collection extends Fluxo.CollectionStore {
-        online () {
-          return;
-        }
-      }
-
-      Collection.subset = {
-        online: ["stores:change:online"]
-      }
-
-      expect(function () {
-        new Collection();
-      }).to.throw(Error, "The subset \"online\" computer function returned a value that isn't an array.");
-    });
   });
 
   it("#setAttribute", function () {
@@ -299,17 +269,11 @@ describe("Fluxo.CollectionStore", function () {
       online () { return []; }
     }
 
-    Collection.subset = { online: [] };
-
     var collection = new Collection();
 
     expect(function () {
       collection.setAttribute("stores", true);
     }).to.throw(Error, `You can't set a attribute with "stores" name on a collection.`);
-
-    expect(function () {
-      collection.setAttribute("online", true);
-    }).to.throw(Error, `The attribute name "online" is reserved to a subset.`);
 
     collection.setAttribute("name", "Fluxo");
 
