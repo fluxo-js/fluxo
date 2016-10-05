@@ -405,15 +405,29 @@ people.where({ age: 30 }); //=> [jon];
 
 ###Ordering
 
-If you want to keep the stores always sorted, you may define a sort method:
+If you want the stores sorted, you must use a computed property that sorts them, i.e.:
 
 ```js
 class People extends Fluxo.CollectionStore {
-  sort (a, b) {
-    return a.data.at - b.data.at;
+  static computed = {
+    sorted: ["add", "remove", "stores:change:name"]
+  };
+
+  sorted () {
+    return [...this.stores].sort((a, b) => a.data.name.localeCompare(b.data.name));
   }
 };
+
+people = new People;
+people.addStore({name: 'zach'});
+people.addStore({name: 'abraham'});
+
+console.log(people.data.sorted.map(person => person.name));
+//=> ['abraham', 'zach']
 ```
+
+*Note:* You must use spread operator to copy the array because Array.prototype.sort
+mutates the caller and we don't want to mutate this.stores.
 
 ###Quick Dumb Collections
 
