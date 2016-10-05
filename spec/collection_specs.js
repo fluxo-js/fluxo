@@ -125,30 +125,6 @@ describe("Fluxo.CollectionStore", function () {
     expect(collection.findWhere({ name: "samuel" })).to.be.eql(store1);
   });
 
-  it("#sort", function() {
-    class Collection extends Fluxo.CollectionStore {
-      sort (a, b) {
-        return a.data.price - b.data.price;
-      }
-    }
-
-    var store1 = new Fluxo.ObjectStore({ price: 100 }),
-        store2 = new Fluxo.ObjectStore({ price: 10 }),
-        store3 = new Fluxo.ObjectStore({ price: 1 });
-
-    var collection = new Collection([store1, store2, store3]);
-
-    expect(collection.stores).to.be.eql([store3, store2, store1]);
-
-    store3.setAttribute("price", 200);
-
-    expect(collection.stores).to.be.eql([store2, store1, store3]);
-
-    collection.remove(store1);
-
-    expect(collection.stores).to.be.eql([store2, store3]);
-  });
-
   describe("#setStores", function () {
     it("update and add new stores", function() {
       var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel", gender: "m" });

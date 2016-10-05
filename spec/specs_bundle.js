@@ -170,43 +170,6 @@ describe("Fluxo.CollectionStore", function () {
     expect(collection.findWhere({ name: "samuel" })).to.be.eql(store1);
   });
 
-  it("#sort", function () {
-    var Collection = (function (_Fluxo$CollectionStore2) {
-      _inherits(Collection, _Fluxo$CollectionStore2);
-
-      function Collection() {
-        _classCallCheck(this, Collection);
-
-        _get(Object.getPrototypeOf(Collection.prototype), "constructor", this).apply(this, arguments);
-      }
-
-      _createClass(Collection, [{
-        key: "sort",
-        value: function sort(a, b) {
-          return a.data.price - b.data.price;
-        }
-      }]);
-
-      return Collection;
-    })(Fluxo.CollectionStore);
-
-    var store1 = new Fluxo.ObjectStore({ price: 100 }),
-        store2 = new Fluxo.ObjectStore({ price: 10 }),
-        store3 = new Fluxo.ObjectStore({ price: 1 });
-
-    var collection = new Collection([store1, store2, store3]);
-
-    expect(collection.stores).to.be.eql([store3, store2, store1]);
-
-    store3.setAttribute("price", 200);
-
-    expect(collection.stores).to.be.eql([store2, store1, store3]);
-
-    collection.remove(store1);
-
-    expect(collection.stores).to.be.eql([store2, store3]);
-  });
-
   describe("#setStores", function () {
     it("update and add new stores", function () {
       var store1 = new Fluxo.ObjectStore({ id: 1, name: "Samuel", gender: "m" });
@@ -247,8 +210,8 @@ describe("Fluxo.CollectionStore", function () {
   it("children's methods delegation", function () {
     var _customMethod = chai.spy();
 
-    var Collection = (function (_Fluxo$CollectionStore3) {
-      _inherits(Collection, _Fluxo$CollectionStore3);
+    var Collection = (function (_Fluxo$CollectionStore2) {
+      _inherits(Collection, _Fluxo$CollectionStore2);
 
       function Collection() {
         _classCallCheck(this, Collection);
@@ -290,8 +253,8 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("warns about calling delegated method on missing child store", function () {
-    var Collection = (function (_Fluxo$CollectionStore4) {
-      _inherits(Collection, _Fluxo$CollectionStore4);
+    var Collection = (function (_Fluxo$CollectionStore3) {
+      _inherits(Collection, _Fluxo$CollectionStore3);
 
       function Collection() {
         _classCallCheck(this, Collection);
@@ -328,8 +291,8 @@ describe("Fluxo.CollectionStore", function () {
 
   describe("default values", function () {
     it("initialise with default values", function () {
-      var Collection = (function (_Fluxo$CollectionStore5) {
-        _inherits(Collection, _Fluxo$CollectionStore5);
+      var Collection = (function (_Fluxo$CollectionStore4) {
+        _inherits(Collection, _Fluxo$CollectionStore4);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -350,8 +313,8 @@ describe("Fluxo.CollectionStore", function () {
     });
 
     it("allow to override the default values", function () {
-      var Collection = (function (_Fluxo$CollectionStore6) {
-        _inherits(Collection, _Fluxo$CollectionStore6);
+      var Collection = (function (_Fluxo$CollectionStore5) {
+        _inherits(Collection, _Fluxo$CollectionStore5);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -374,8 +337,8 @@ describe("Fluxo.CollectionStore", function () {
 
   describe("subset", function () {
     it("warning about change with other dependent events", function () {
-      var Collection = (function (_Fluxo$CollectionStore7) {
-        _inherits(Collection, _Fluxo$CollectionStore7);
+      var Collection = (function (_Fluxo$CollectionStore6) {
+        _inherits(Collection, _Fluxo$CollectionStore6);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -403,8 +366,8 @@ describe("Fluxo.CollectionStore", function () {
     });
 
     it("subset computing", function () {
-      var Collection = (function (_Fluxo$CollectionStore8) {
-        _inherits(Collection, _Fluxo$CollectionStore8);
+      var Collection = (function (_Fluxo$CollectionStore7) {
+        _inherits(Collection, _Fluxo$CollectionStore7);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -451,8 +414,8 @@ describe("Fluxo.CollectionStore", function () {
     });
 
     it("alert about computer function returning something different of an array", function () {
-      var Collection = (function (_Fluxo$CollectionStore9) {
-        _inherits(Collection, _Fluxo$CollectionStore9);
+      var Collection = (function (_Fluxo$CollectionStore8) {
+        _inherits(Collection, _Fluxo$CollectionStore8);
 
         function Collection() {
           _classCallCheck(this, Collection);
@@ -481,8 +444,8 @@ describe("Fluxo.CollectionStore", function () {
   });
 
   it("#setAttribute", function () {
-    var Collection = (function (_Fluxo$CollectionStore10) {
-      _inherits(Collection, _Fluxo$CollectionStore10);
+    var Collection = (function (_Fluxo$CollectionStore9) {
+      _inherits(Collection, _Fluxo$CollectionStore9);
 
       function Collection() {
         _classCallCheck(this, Collection);
