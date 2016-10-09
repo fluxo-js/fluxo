@@ -39,7 +39,7 @@ describe("Fluxo.CollectionStore", function () {
       var collection = new Fluxo.CollectionStore(),
           onChangeCallback = chai.spy();
 
-      collection.on(["change"], onChangeCallback);
+      collection.radio.on(["change"], onChangeCallback);
 
       var store = collection.addStore({ name: "Samuel" });
 
@@ -64,8 +64,8 @@ describe("Fluxo.CollectionStore", function () {
         onChangeCallback = chai.spy(),
         onStoreNameChangeCallback = chai.spy();
 
-    collection.on(["change", "stores:change"], onChangeCallback);
-    collection.on(["stores:change:name"], onStoreNameChangeCallback);
+    collection.radio.on(["change", "stores:change"], onChangeCallback);
+    collection.radio.on(["stores:change:name"], onStoreNameChangeCallback);
 
     collection.stores[0].setAttribute("name", "Samuel S");
     expect(onChangeCallback).to.have.been.called().exactly(2);
@@ -81,7 +81,7 @@ describe("Fluxo.CollectionStore", function () {
 
     collection.remove(store);
 
-    collection.on(["change"], onChangeCallback);
+    collection.radio.on(["change"], onChangeCallback);
 
     store.setAttribute("name", "a diferent name");
 
@@ -93,7 +93,7 @@ describe("Fluxo.CollectionStore", function () {
     var collection = new Fluxo.CollectionStore({ name: "Samuel" }, { name: "Fluxo" }),
         onChangeCallback = chai.spy();
 
-    collection.on(["change"], onChangeCallback);
+    collection.radio.on(["change"], onChangeCallback);
 
     collection.removeAll();
 
@@ -106,7 +106,7 @@ describe("Fluxo.CollectionStore", function () {
         store = new Fluxo.ObjectStore(),
         onChangeCallback = chai.spy();
 
-    collection.on(["change", "add"], onChangeCallback);
+    collection.radio.on(["change", "add"], onChangeCallback);
 
     collection.addStores([store]);
 
@@ -158,7 +158,7 @@ describe("Fluxo.CollectionStore", function () {
           collection = new Fluxo.CollectionStore,
           globalChangeCallback = chai.spy();
 
-      collection.on(["change"], globalChangeCallback);
+      collection.radio.on(["change"], globalChangeCallback);
       collection.setStores([store]);
 
       expect(globalChangeCallback).to.have.been.called();
@@ -169,7 +169,7 @@ describe("Fluxo.CollectionStore", function () {
           collection = new Fluxo.CollectionStore,
           globalChangeCallback = chai.spy();
 
-      collection.on(["change"], globalChangeCallback);
+      collection.radio.on(["change"], globalChangeCallback);
       collection.setStores([store], { silentGlobalChange: true });
 
       expect(globalChangeCallback).to.not.have.been.called();
@@ -265,7 +265,7 @@ describe("Fluxo.CollectionStore", function () {
 
       var collection = new Collection([store1, store2]);
 
-      collection.on(["change:online"], onChangeCallback);
+      collection.radio.on(["change:online"], onChangeCallback);
 
       expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }]);
 

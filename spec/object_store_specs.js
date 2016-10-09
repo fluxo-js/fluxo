@@ -14,8 +14,8 @@ describe("Fluxo.ObjectStore", function () {
         onChangeCallback = chai.spy(),
         onChangeNameCallback = chai.spy();
 
-    store.on(["change"], onChangeCallback);
-    store.on(["change:name"], onChangeNameCallback);
+    store.radio.on(["change"], onChangeCallback);
+    store.radio.on(["change:name"], onChangeNameCallback);
 
     store.setAttribute("name", "Samuel");
 
@@ -35,8 +35,8 @@ describe("Fluxo.ObjectStore", function () {
 
     expect(store.data).to.be.eql({ name: "Samuel" });
 
-    store.on(["change"], onChangeCallback);
-    store.on(["change:name"], onChangeNameCallback);
+    store.radio.on(["change"], onChangeCallback);
+    store.radio.on(["change:name"], onChangeNameCallback);
 
     store.set({ name: "Other", email: "fluxo@flux.com" });
 
@@ -194,7 +194,7 @@ describe("Fluxo.ObjectStore", function () {
 
       var store = new Store();
 
-      store.on(["change:count"], onChangeCountCallback);
+      store.radio.on(["change:count"], onChangeCountCallback);
 
       store.setAttribute("count", "1");
 
@@ -202,20 +202,6 @@ describe("Fluxo.ObjectStore", function () {
 
       expect(onChangeCountCallback).to.have.been.called.once();
     });
-  });
-
-  it("#triggerEvent", function() {
-    var store = new Fluxo.ObjectStore(),
-        callback = chai.spy(),
-        wildcardCallback = chai.spy();
-
-    store.on(["myEvent"], callback);
-    store.on(["*"], wildcardCallback);
-
-    store.triggerEvent("myEvent", "myArg");
-
-    expect(callback).to.have.been.called.with(store, "myArg");
-    expect(wildcardCallback).to.have.been.called.with("myEvent", store, "myArg");
   });
 
   it("unset", function () {
@@ -315,13 +301,13 @@ describe("Fluxo.ObjectStore", function () {
       let setStoreCallback = chai.spy();
       let setStoreAttributeCallback = chai.spy();
 
-      parentStore.on(["change:child", "change"], setStoreCallback);
+      parentStore.radio.on(["change:child", "change"], setStoreCallback);
 
       parentStore.setAttribute("child", childStore);
 
       expect(setStoreCallback).to.have.been.called.twice();
 
-      parentStore.on(["change:child:name", "change:child", "change"], setStoreAttributeCallback);
+      parentStore.radio.on(["change:child:name", "change:child", "change"], setStoreAttributeCallback);
 
       childStore.setAttribute("name", "Fluxo");
 
@@ -338,7 +324,7 @@ describe("Fluxo.ObjectStore", function () {
 
       parentStore.setAttribute("child", otherChildStore);
 
-      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+      parentStore.radio.on(["change:child:name"], setStoreAttributeCallback);
 
       firstChildStore.setAttribute("name", "Fluxo");
 
@@ -352,7 +338,7 @@ describe("Fluxo.ObjectStore", function () {
 
       parentStore.setAttribute("child", childStore);
 
-      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+      parentStore.radio.on(["change:child:name"], setStoreAttributeCallback);
 
       parentStore.unsetAttribute("child");
 
@@ -370,7 +356,7 @@ describe("Fluxo.ObjectStore", function () {
       let author = new Author();
       let setStoreAttributeCallback = chai.spy();
 
-      post.on(["change:author:name"], setStoreAttributeCallback);
+      post.radio.on(["change:author:name"], setStoreAttributeCallback);
 
       post.setAttribute("author", author);
 

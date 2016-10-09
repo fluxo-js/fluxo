@@ -82,7 +82,7 @@ describe("Fluxo.CollectionStore", function () {
       var collection = new Fluxo.CollectionStore(),
           onChangeCallback = chai.spy();
 
-      collection.on(["change"], onChangeCallback);
+      collection.radio.on(["change"], onChangeCallback);
 
       var store = collection.addStore({ name: "Samuel" });
 
@@ -109,8 +109,8 @@ describe("Fluxo.CollectionStore", function () {
         onChangeCallback = chai.spy(),
         onStoreNameChangeCallback = chai.spy();
 
-    collection.on(["change", "stores:change"], onChangeCallback);
-    collection.on(["stores:change:name"], onStoreNameChangeCallback);
+    collection.radio.on(["change", "stores:change"], onChangeCallback);
+    collection.radio.on(["stores:change:name"], onStoreNameChangeCallback);
 
     collection.stores[0].setAttribute("name", "Samuel S");
     expect(onChangeCallback).to.have.been.called().exactly(2);
@@ -126,7 +126,7 @@ describe("Fluxo.CollectionStore", function () {
 
     collection.remove(store);
 
-    collection.on(["change"], onChangeCallback);
+    collection.radio.on(["change"], onChangeCallback);
 
     store.setAttribute("name", "a diferent name");
 
@@ -138,7 +138,7 @@ describe("Fluxo.CollectionStore", function () {
     var collection = new Fluxo.CollectionStore({ name: "Samuel" }, { name: "Fluxo" }),
         onChangeCallback = chai.spy();
 
-    collection.on(["change"], onChangeCallback);
+    collection.radio.on(["change"], onChangeCallback);
 
     collection.removeAll();
 
@@ -151,7 +151,7 @@ describe("Fluxo.CollectionStore", function () {
         store = new Fluxo.ObjectStore(),
         onChangeCallback = chai.spy();
 
-    collection.on(["change", "add"], onChangeCallback);
+    collection.radio.on(["change", "add"], onChangeCallback);
 
     collection.addStores([store]);
 
@@ -203,7 +203,7 @@ describe("Fluxo.CollectionStore", function () {
           collection = new Fluxo.CollectionStore(),
           globalChangeCallback = chai.spy();
 
-      collection.on(["change"], globalChangeCallback);
+      collection.radio.on(["change"], globalChangeCallback);
       collection.setStores([store]);
 
       expect(globalChangeCallback).to.have.been.called();
@@ -214,7 +214,7 @@ describe("Fluxo.CollectionStore", function () {
           collection = new Fluxo.CollectionStore(),
           globalChangeCallback = chai.spy();
 
-      collection.on(["change"], globalChangeCallback);
+      collection.radio.on(["change"], globalChangeCallback);
       collection.setStores([store], { silentGlobalChange: true });
 
       expect(globalChangeCallback).to.not.have.been.called();
@@ -389,7 +389,7 @@ describe("Fluxo.CollectionStore", function () {
 
       var collection = new Collection([store1, store2]);
 
-      collection.on(["change:online"], onChangeCallback);
+      collection.radio.on(["change:online"], onChangeCallback);
 
       expect(collection.toJSON().online).to.be.eql([{ cid: store1.cid, online: true }]);
 
@@ -488,8 +488,8 @@ describe("Fluxo.ObjectStore", function () {
         onChangeCallback = chai.spy(),
         onChangeNameCallback = chai.spy();
 
-    store.on(["change"], onChangeCallback);
-    store.on(["change:name"], onChangeNameCallback);
+    store.radio.on(["change"], onChangeCallback);
+    store.radio.on(["change:name"], onChangeNameCallback);
 
     store.setAttribute("name", "Samuel");
 
@@ -509,8 +509,8 @@ describe("Fluxo.ObjectStore", function () {
 
     expect(store.data).to.be.eql({ name: "Samuel" });
 
-    store.on(["change"], onChangeCallback);
-    store.on(["change:name"], onChangeNameCallback);
+    store.radio.on(["change"], onChangeCallback);
+    store.radio.on(["change:name"], onChangeNameCallback);
 
     store.set({ name: "Other", email: "fluxo@flux.com" });
 
@@ -752,7 +752,7 @@ describe("Fluxo.ObjectStore", function () {
 
       var store = new Store();
 
-      store.on(["change:count"], onChangeCountCallback);
+      store.radio.on(["change:count"], onChangeCountCallback);
 
       store.setAttribute("count", "1");
 
@@ -760,20 +760,6 @@ describe("Fluxo.ObjectStore", function () {
 
       expect(onChangeCountCallback).to.have.been.called.once();
     });
-  });
-
-  it("#triggerEvent", function () {
-    var store = new Fluxo.ObjectStore(),
-        callback = chai.spy(),
-        wildcardCallback = chai.spy();
-
-    store.on(["myEvent"], callback);
-    store.on(["*"], wildcardCallback);
-
-    store.triggerEvent("myEvent", "myArg");
-
-    expect(callback).to.have.been.called["with"](store, "myArg");
-    expect(wildcardCallback).to.have.been.called["with"]("myEvent", store, "myArg");
   });
 
   it("unset", function () {
@@ -925,13 +911,13 @@ describe("Fluxo.ObjectStore", function () {
       var setStoreCallback = chai.spy();
       var setStoreAttributeCallback = chai.spy();
 
-      parentStore.on(["change:child", "change"], setStoreCallback);
+      parentStore.radio.on(["change:child", "change"], setStoreCallback);
 
       parentStore.setAttribute("child", childStore);
 
       expect(setStoreCallback).to.have.been.called.twice();
 
-      parentStore.on(["change:child:name", "change:child", "change"], setStoreAttributeCallback);
+      parentStore.radio.on(["change:child:name", "change:child", "change"], setStoreAttributeCallback);
 
       childStore.setAttribute("name", "Fluxo");
 
@@ -948,7 +934,7 @@ describe("Fluxo.ObjectStore", function () {
 
       parentStore.setAttribute("child", otherChildStore);
 
-      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+      parentStore.radio.on(["change:child:name"], setStoreAttributeCallback);
 
       firstChildStore.setAttribute("name", "Fluxo");
 
@@ -962,7 +948,7 @@ describe("Fluxo.ObjectStore", function () {
 
       parentStore.setAttribute("child", childStore);
 
-      parentStore.on(["change:child:name"], setStoreAttributeCallback);
+      parentStore.radio.on(["change:child:name"], setStoreAttributeCallback);
 
       parentStore.unsetAttribute("child");
 
@@ -1000,7 +986,7 @@ describe("Fluxo.ObjectStore", function () {
       var author = new Author();
       var setStoreAttributeCallback = chai.spy();
 
-      post.on(["change:author:name"], setStoreAttributeCallback);
+      post.radio.on(["change:author:name"], setStoreAttributeCallback);
 
       post.setAttribute("author", author);
 
@@ -1014,7 +1000,118 @@ describe("Fluxo.ObjectStore", function () {
 },{}],3:[function(require,module,exports){
 "use strict";
 
+describe("Fluxo.Radio", function () {
+  describe("#subscribe", function () {
+    it("subscribes to an event", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.subscribe("event", callback);
+      radio.publish("event");
+
+      expect(callback).to.have.been.called();
+    });
+
+    it("returns a function that removes the subscription", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy(),
+          canceler = radio.subscribe("event", callback);
+
+      canceler();
+      radio.publish("event");
+
+      expect(callback).to.not.have.been.called();
+    });
+  });
+
+  describe("#removeSubscription", function () {
+    it("unsubscribes an event", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.subscribe("event", callback);
+      radio.removeSubscription("event", callback);
+      radio.publish("event");
+
+      expect(callback).to.not.have.been.called();
+    });
+  });
+
+  describe("#on", function () {
+    it("subscribes to an array of events", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.on(["eventOne", "eventTwo"], callback);
+      radio.publish("eventOne");
+      radio.publish("eventTwo");
+
+      expect(callback).to.have.been.called.twice();
+    });
+
+    it("returns a function that removes all subscriptions", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy(),
+          canceler = radio.on(["eventOne", "eventTwo"], callback);
+
+      canceler();
+      radio.publish("eventOne");
+      radio.publish("eventTwo");
+
+      expect(callback).to.not.have.been.called();
+    });
+  });
+
+  describe("#triggerEvents", function () {
+    it("triggers an array of events", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.on(["eventOne", "eventTwo"], callback);
+      radio.triggerEvents(["eventOne", "eventTwo"]);
+
+      expect(callback).to.have.been.called.twice();
+    });
+
+    it("triggers the wildcard event", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.subscribe("*", callback);
+      radio.triggerEvents(["event"]);
+
+      expect(callback).to.have.been.called();
+    });
+  });
+
+  describe("#triggerEvent", function () {
+    it("triggers an event", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.subscribe("event", callback);
+      radio.triggerEvent("event");
+
+      expect(callback).to.have.been.called();
+    });
+
+    it("triggers the wildcard event", function () {
+      var radio = new Fluxo.Radio(),
+          callback = chai.spy();
+
+      radio.subscribe("*", callback);
+      radio.triggerEvent("event");
+
+      expect(callback).to.have.been.called();
+    });
+  });
+});
+
+},{}],4:[function(require,module,exports){
+"use strict";
+
 require("./object_store_specs.js");
 require("./collection_specs.js");
+require("./radio_specs.js");
 
-},{"./collection_specs.js":1,"./object_store_specs.js":2}]},{},[3]);
+},{"./collection_specs.js":1,"./object_store_specs.js":2,"./radio_specs.js":3}]},{},[4]);

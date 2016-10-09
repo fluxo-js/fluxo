@@ -1,4 +1,5 @@
 import defaultAttributeContract from "./fluxo.default_attribute_contract.js";
+import Radio from "./fluxo.radio.js";
 
 var storesUUID = 1;
 
@@ -13,13 +14,11 @@ class ObjectStore {
 
     this.data = {};
 
-    this.storeAttributesEventsCanceler = {};
+    this.radio = new Radio;
 
     this.computed = (this.constructor.computed || {});
 
-    this.signedEventsCancelers = [];
-
-    this.events = {};
+    this.storeAttributesEventsCanceler = {};
 
     this.setDefaults();
 
@@ -27,9 +26,7 @@ class ObjectStore {
 
     this.registerComputed();
 
-    this.on(["change"], function () {
-      delete this.lastGeneratedJSON;
-    });
+    this.radio.on(["change"], () => delete this.lastGeneratedJSON);
 
     this.warnMissingAttributes();
   }
@@ -90,74 +87,6 @@ class ObjectStore {
     }
   }
 
-  subscribe (eventName, callback) {
-    if (typeof callback !== "function") {
-      throw new Error("Callback must be a function");
-    }
-
-    this.events[eventName] = (this.events[eventName] || []);
-
-    this.events[eventName].push(callback);
-
-    return this.removeSubscription.bind(this, eventName, callback);
-  }
-
-  removeSubscription (eventName, callback) {
-    let index = this.events[eventName].indexOf(callback);
-
-    this.events[eventName].splice(index, 1);
-
-    if (!this.events[eventName]) {
-      delete this.events[eventName];
-    }
-  }
-
-  publish (eventName, ...args) {
-    var callbacks = this.events[eventName];
-
-    if (!callbacks) { return; }
-
-    for (let i = 0; i < callbacks.length; i++) {
-      callbacks[i].apply(null, args);
-    }
-  }
-
-  on (events, callback) {
-    var cancelers = [];
-
-    for (let i = 0, l = events.length; i < l; i++) {
-      let eventName = events[i],
-          changeEventToken = eventName,
-          canceler = this.subscribe(changeEventToken, callback.bind(this));
-
-      cancelers.push(canceler);
-    }
-
-    var aggregatedCanceler = function() {
-      for (let i = 0, l = cancelers.length; i < l; i++) {
-        let canceler = cancelers[i];
-        canceler.call();
-      }
-    };
-
-    this.signedEventsCancelers.push(aggregatedCanceler);
-
-    return aggregatedCanceler;
-  }
-
-  triggerEvents (eventsNames, ...args) {
-    for (let i = 0, l = eventsNames.length; i < l; i++) {
-      let eventName = eventsNames[i];
-      this.triggerEvent(eventName, ...args);
-    }
-  }
-
-  triggerEvent (eventName, ...args) {
-    this.publish(eventName, this, ...args);
-
-    this.publish("*", eventName, this, ...args);
-  }
-
   getComputed (attributeName) {
     if (!this[attributeName]) {
       throw new Error(`Compute function to "${attributeName}" value is not defined.`);
@@ -182,7 +111,7 @@ class ObjectStore {
         throw new Error(`You can't register a COMPUTED PROPERTY (${this.constructor.name}#${attributeName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
       }
 
-      this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
+      this.radio.on(toComputeEvents, this.computeValue.bind(this, attributeName));
     }
   }
 
@@ -194,20 +123,21 @@ class ObjectStore {
   listenStoreAttribute (attribute, store) {
     let onStoreEvent = function(attributeName, eventName, ...args) {
       if (eventName !== "change") {
-        this.triggerEvent(
+        this.radio.triggerEvent(
           `change:${attributeName}:${eventName.replace(/^change:/, '')}`,
+          this,
           ...args
         );
       }
 
       if (eventName === "change" || eventName === "stores:change") {
-        this.triggerEvent(`change:${attributeName}`);
-        this.triggerEvent(`change`);
+        this.radio.triggerEvent(`change:${attributeName}`, this);
+        this.radio.triggerEvent(`change`, this);
       }
     };
 
     this.storeAttributesEventsCanceler[attribute] =
-      store.on(["*"], onStoreEvent.bind(this, attribute));
+      store.radio.on(["*"], onStoreEvent.bind(this, attribute));
   }
 
   contract (attributeName) {
@@ -253,11 +183,11 @@ class ObjectStore {
 
     this.data[attribute] = value;
 
-    this.triggerEvent(`change:${attribute}`, previousValue);
+    this.radio.triggerEvent(`change:${attribute}`, this, previousValue);
 
     if (options.silentGlobalChange) { return; }
 
-    this.triggerEvent("change");
+    this.radio.triggerEvent("change", this);
   }
 
   unsetAttribute  (attribute, options) {
@@ -271,11 +201,11 @@ class ObjectStore {
 
     delete this.data[attribute];
 
-    this.triggerEvent(`change:${attribute}`);
+    this.radio.triggerEvent(`change:${attribute}`, this);
 
     if (options.silentGlobalChange) { return; }
 
-    this.triggerEvent("change");
+    this.radio.triggerEvent("change", this);
   }
 
   set (data, options={ silentGlobalChange: false }) {
@@ -288,7 +218,7 @@ class ObjectStore {
     }
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change", this);
     }
   }
 
@@ -322,7 +252,7 @@ class ObjectStore {
       this.unsetAttribute(attributeName, { silentGlobalChange: true });
     }
 
-    this.triggerEvent("change");
+    this.radio.triggerEvent("change", this);
   }
 
   clear (options={}) {
@@ -335,7 +265,7 @@ class ObjectStore {
     }
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change", this);
     }
   }
 
