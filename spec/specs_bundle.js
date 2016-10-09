@@ -197,6 +197,28 @@ describe("Fluxo.CollectionStore", function () {
       expect(store1.data.gender).to.be.eql("m");
       expect(collection.stores).to.be.eql([store1, store2]);
     });
+
+    it("triggers a change event", function () {
+      var store = new Fluxo.ObjectStore(),
+          collection = new Fluxo.CollectionStore(),
+          globalChangeCallback = chai.spy();
+
+      collection.on(["change"], globalChangeCallback);
+      collection.setStores([store]);
+
+      expect(globalChangeCallback).to.have.been.called();
+    });
+
+    it("do not triggers a change event when silentGlobalChange is specified", function () {
+      var store = new Fluxo.ObjectStore(),
+          collection = new Fluxo.CollectionStore(),
+          globalChangeCallback = chai.spy();
+
+      collection.on(["change"], globalChangeCallback);
+      collection.setStores([store], { silentGlobalChange: true });
+
+      expect(globalChangeCallback).to.not.have.been.called();
+    });
   });
 
   it("#find", function () {
