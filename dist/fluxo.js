@@ -222,7 +222,9 @@ var CollectionStore = (function (_ObjectStore) {
         }
       }
 
-      this.triggerEvent("change");
+      if (!options.silentGlobalChange) {
+        this.triggerEvent("change");
+      }
     }
   }, {
     key: "setStore",

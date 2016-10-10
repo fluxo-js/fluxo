@@ -155,7 +155,9 @@ export default class CollectionStore extends ObjectStore {
       }
     }
 
-    this.triggerEvent("change");
+    if (!options.silentGlobalChange) {
+      this.triggerEvent("change");
+    }
   }
 
   setStore (data) {
