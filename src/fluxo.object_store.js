@@ -165,8 +165,6 @@ class ObjectStore {
 
     if (this.data[attribute] === value) { return; }
 
-    delete this.lastGeneratedJSON;
-
     this.warnMissingAttribute(attribute, value);
 
     if (this.data[attribute] instanceof ObjectStore) {

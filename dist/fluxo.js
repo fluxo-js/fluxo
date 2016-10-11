@@ -732,8 +732,6 @@ var ObjectStore = (function () {
         return;
       }
 
-      delete this.lastGeneratedJSON;
-
       this.warnMissingAttribute(attribute, value);
 
       if (this.data[attribute] instanceof ObjectStore) {
