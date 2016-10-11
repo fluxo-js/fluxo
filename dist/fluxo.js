@@ -949,7 +949,7 @@ var Radio = (function () {
       for (var i = 0, l = events.length; i < l; i++) {
         var eventName = events[i],
             changeEventToken = eventName,
-            canceler = this.subscribe(changeEventToken, callback.bind(this));
+            canceler = this.subscribe(changeEventToken, callback);
 
         cancelers.push(canceler);
       }
