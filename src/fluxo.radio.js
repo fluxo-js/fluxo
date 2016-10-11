@@ -43,7 +43,7 @@ class Radio {
     for (let i = 0, l = events.length; i < l; i++) {
       let eventName = events[i],
           changeEventToken = eventName,
-          canceler = this.subscribe(changeEventToken, callback.bind(this));
+          canceler = this.subscribe(changeEventToken, callback);
 
       cancelers.push(canceler);
     }
