@@ -25,7 +25,7 @@ export default class CollectionStore extends ObjectStore {
 
     this.createDelegateMethods();
 
-    this.on(["change:stores"], function () {
+    this.radio.on(["change:stores"], function () {
       delete this.lastGeneratedJSON;
     });
   }
@@ -79,7 +79,7 @@ export default class CollectionStore extends ObjectStore {
     }
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change");
     }
   }
 
@@ -90,7 +90,7 @@ export default class CollectionStore extends ObjectStore {
   resetStores (stores=[]) {
     this.removeAll({ silentGlobalChange: true });
     this.addStores(stores, { silentGlobalChange: true });
-    this.triggerEvent("change");
+    this.radio.triggerEvent("change");
   }
 
   /**
@@ -106,7 +106,7 @@ export default class CollectionStore extends ObjectStore {
     this.stores = [];
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change");
     }
   }
 
@@ -156,7 +156,7 @@ export default class CollectionStore extends ObjectStore {
     }
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change");
     }
   }
 
@@ -195,10 +195,10 @@ export default class CollectionStore extends ObjectStore {
     }
 
     var onStoreEvent = function(eventName, ...args) {
-      this.triggerEvent(`stores:${eventName}`, ...args);
+      this.radio.triggerEvent(`stores:${eventName}`, ...args);
 
       if (eventName === "change") {
-        this.triggerEvent("change");
+        this.radio.triggerEvent("change");
       }
 
       if (eventName === "change:id") {
@@ -216,7 +216,7 @@ export default class CollectionStore extends ObjectStore {
     };
 
     this.storesOnChangeCancelers[store.cid] =
-      store.on(["*"], onStoreEvent.bind(this));
+      store.radio.on(["*"], onStoreEvent.bind(this));
 
     this.index[store.cid] = store;
 
@@ -224,10 +224,10 @@ export default class CollectionStore extends ObjectStore {
       this.index[store.data.id] = store;
     }
 
-    this.triggerEvent("add");
+    this.radio.triggerEvent("add");
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change");
     }
 
     return store;
@@ -311,10 +311,10 @@ export default class CollectionStore extends ObjectStore {
       delete this.index[store.data.id];
     }
 
-    this.triggerEvent("remove");
+    this.radio.triggerEvent("remove");
 
     if (!options.silentGlobalChange) {
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change");
     }
   }
 

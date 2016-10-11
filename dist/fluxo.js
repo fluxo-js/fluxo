@@ -63,7 +63,7 @@ var CollectionStore = (function (_ObjectStore) {
 
       this.createDelegateMethods();
 
-      this.on(["change:stores"], function () {
+      this.radio.on(["change:stores"], function () {
         delete this.lastGeneratedJSON;
       });
     }
@@ -134,7 +134,7 @@ var CollectionStore = (function (_ObjectStore) {
       }
 
       if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
+        this.radio.triggerEvent("change");
       }
     }
 
@@ -149,7 +149,7 @@ var CollectionStore = (function (_ObjectStore) {
 
       this.removeAll({ silentGlobalChange: true });
       this.addStores(stores, { silentGlobalChange: true });
-      this.triggerEvent("change");
+      this.radio.triggerEvent("change");
     }
 
     /**
@@ -169,7 +169,7 @@ var CollectionStore = (function (_ObjectStore) {
       this.stores = [];
 
       if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
+        this.radio.triggerEvent("change");
       }
     }
 
@@ -223,7 +223,7 @@ var CollectionStore = (function (_ObjectStore) {
       }
 
       if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
+        this.radio.triggerEvent("change");
       }
     }
   }, {
@@ -269,14 +269,16 @@ var CollectionStore = (function (_ObjectStore) {
       }
 
       var onStoreEvent = function onStoreEvent(eventName) {
+        var _radio;
+
         for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
           args[_key3 - 1] = arguments[_key3];
         }
 
-        this.triggerEvent.apply(this, ["stores:" + eventName].concat(args));
+        (_radio = this.radio).triggerEvent.apply(_radio, ["stores:" + eventName].concat(args));
 
         if (eventName === "change") {
-          this.triggerEvent("change");
+          this.radio.triggerEvent("change");
         }
 
         if (eventName === "change:id") {
@@ -293,7 +295,7 @@ var CollectionStore = (function (_ObjectStore) {
         }
       };
 
-      this.storesOnChangeCancelers[store.cid] = store.on(["*"], onStoreEvent.bind(this));
+      this.storesOnChangeCancelers[store.cid] = store.radio.on(["*"], onStoreEvent.bind(this));
 
       this.index[store.cid] = store;
 
@@ -301,10 +303,10 @@ var CollectionStore = (function (_ObjectStore) {
         this.index[store.data.id] = store;
       }
 
-      this.triggerEvent("add");
+      this.radio.triggerEvent("add");
 
       if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
+        this.radio.triggerEvent("change");
       }
 
       return store;
@@ -402,10 +404,10 @@ var CollectionStore = (function (_ObjectStore) {
         delete this.index[store.data.id];
       }
 
-      this.triggerEvent("remove");
+      this.radio.triggerEvent("remove");
 
       if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
+        this.radio.triggerEvent("change");
       }
     }
 
@@ -491,6 +493,10 @@ Object.defineProperty(exports, "__esModule", {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
+
+var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
+
 var _fluxoObject_storeJs = _dereq_("./fluxo.object_store.js");
 
 var _fluxoObject_storeJs2 = _interopRequireDefault(_fluxoObject_storeJs);
@@ -500,12 +506,13 @@ var _fluxoCollection_storeJs = _dereq_("./fluxo.collection_store.js");
 var _fluxoCollection_storeJs2 = _interopRequireDefault(_fluxoCollection_storeJs);
 
 exports["default"] = {
+  Radio: _fluxoRadioJs2["default"],
   ObjectStore: _fluxoObject_storeJs2["default"],
   CollectionStore: _fluxoCollection_storeJs2["default"]
 };
 module.exports = exports["default"];
 
-},{"./fluxo.collection_store.js":1,"./fluxo.object_store.js":4}],4:[function(_dereq_,module,exports){
+},{"./fluxo.collection_store.js":1,"./fluxo.object_store.js":4,"./fluxo.radio.js":5}],4:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -524,6 +531,10 @@ var _fluxoDefault_attribute_contractJs = _dereq_("./fluxo.default_attribute_cont
 
 var _fluxoDefault_attribute_contractJs2 = _interopRequireDefault(_fluxoDefault_attribute_contractJs);
 
+var _fluxoRadioJs = _dereq_("./fluxo.radio.js");
+
+var _fluxoRadioJs2 = _interopRequireDefault(_fluxoRadioJs);
+
 var storesUUID = 1;
 
 var ObjectStore = (function () {
@@ -537,19 +548,19 @@ var ObjectStore = (function () {
   _createClass(ObjectStore, [{
     key: "initialize",
     value: function initialize() {
+      var _this = this;
+
       var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
       this.cid = "FS:" + storesUUID++;
 
       this.data = {};
 
-      this.storeAttributesEventsCanceler = {};
+      this.radio = new _fluxoRadioJs2["default"]();
 
       this.computed = this.constructor.computed || {};
 
-      this.signedEventsCancelers = [];
-
-      this.events = {};
+      this.storeAttributesEventsCanceler = {};
 
       this.setDefaults();
 
@@ -557,8 +568,8 @@ var ObjectStore = (function () {
 
       this.registerComputed();
 
-      this.on(["change"], function () {
-        delete this.lastGeneratedJSON;
+      this.radio.on(["change"], function () {
+        return delete _this.lastGeneratedJSON;
       });
 
       this.warnMissingAttributes();
@@ -635,6 +646,261 @@ var ObjectStore = (function () {
       }
     }
   }, {
+    key: "getComputed",
+    value: function getComputed(attributeName) {
+      if (!this[attributeName]) {
+        throw new Error("Compute function to \"" + attributeName + "\" value is not defined.");
+      }
+
+      return this[attributeName].call(this);
+    }
+  }, {
+    key: "computeValue",
+    value: function computeValue(attributeName) {
+      this.setAttribute(attributeName, this.getComputed(attributeName), { silentGlobalChange: true });
+    }
+  }, {
+    key: "registerComputed",
+    value: function registerComputed() {
+      for (var attributeName in this.computed) {
+        var toComputeEvents = this.computed[attributeName];
+
+        if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
+          throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
+        }
+
+        this.radio.on(toComputeEvents, this.computeValue.bind(this, attributeName));
+      }
+    }
+  }, {
+    key: "stopListenStoreAttribute",
+    value: function stopListenStoreAttribute(attributeName) {
+      this.storeAttributesEventsCanceler[attributeName].call();
+      delete this.storeAttributesEventsCanceler[attributeName];
+    }
+  }, {
+    key: "listenStoreAttribute",
+    value: function listenStoreAttribute(attribute, store) {
+      var onStoreEvent = function onStoreEvent(attributeName, eventName) {
+        if (eventName !== "change") {
+          var _radio;
+
+          for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+            args[_key - 2] = arguments[_key];
+          }
+
+          (_radio = this.radio).triggerEvent.apply(_radio, ["change:" + attributeName + ":" + eventName.replace(/^change:/, ''), this].concat(args));
+        }
+
+        if (eventName === "change" || eventName === "stores:change") {
+          this.radio.triggerEvent("change:" + attributeName, this);
+          this.radio.triggerEvent("change", this);
+        }
+      };
+
+      this.storeAttributesEventsCanceler[attribute] = store.radio.on(["*"], onStoreEvent.bind(this, attribute));
+    }
+  }, {
+    key: "contract",
+    value: function contract(attributeName) {
+      if (this.constructor.attributes && this.constructor.attributes[attributeName]) {
+        return this.constructor.attributes[attributeName];
+      } else {
+        return {};
+      }
+    }
+  }, {
+    key: "parser",
+    value: function parser(attributeName) {
+      return this.contract(attributeName).parser || _fluxoDefault_attribute_contractJs2["default"].parser;
+    }
+  }, {
+    key: "dump",
+    value: function dump(attributeName) {
+      return this.contract(attributeName).dump || _fluxoDefault_attribute_contractJs2["default"].dump;
+    }
+  }, {
+    key: "setAttribute",
+    value: function setAttribute(attribute, value, options) {
+      if (typeof attribute !== "string") {
+        throw new Error("The \"attribute\" argument on store's \"setAttribute\" function must be a string.");
+      }
+
+      options = options || {};
+
+      value = this.parser(attribute).call(this, value);
+
+      if (this.data[attribute] === value) {
+        return;
+      }
+
+      delete this.lastGeneratedJSON;
+
+      this.warnMissingAttribute(attribute, value);
+
+      if (this.data[attribute] instanceof ObjectStore) {
+        this.stopListenStoreAttribute(attribute);
+      }
+
+      if (value instanceof ObjectStore) {
+        this.listenStoreAttribute(attribute, value);
+      }
+
+      var previousValue = this.data[attribute];
+
+      this.data[attribute] = value;
+
+      this.radio.triggerEvent("change:" + attribute, this, previousValue);
+
+      if (options.silentGlobalChange) {
+        return;
+      }
+
+      this.radio.triggerEvent("change", this);
+    }
+  }, {
+    key: "unsetAttribute",
+    value: function unsetAttribute(attribute, options) {
+      options = options || {};
+
+      this.warnMissingAttribute(attribute);
+
+      if (this.data[attribute] instanceof ObjectStore) {
+        this.stopListenStoreAttribute(attribute);
+      }
+
+      delete this.data[attribute];
+
+      this.radio.triggerEvent("change:" + attribute, this);
+
+      if (options.silentGlobalChange) {
+        return;
+      }
+
+      this.radio.triggerEvent("change", this);
+    }
+  }, {
+    key: "set",
+    value: function set(data) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? { silentGlobalChange: false } : arguments[1];
+
+      if (typeof data !== "object") {
+        throw new Error("The \"data\" argument on store's \"set\" function must be an object.");
+      }
+
+      for (var key in data) {
+        this.setAttribute(key, data[key], { silentGlobalChange: true });
+      }
+
+      if (!options.silentGlobalChange) {
+        this.radio.triggerEvent("change", this);
+      }
+    }
+  }, {
+    key: "cancelSignedEvents",
+    value: function cancelSignedEvents() {
+      for (var i = 0, l = this.signedEventsCancelers.length; i < l; i++) {
+        var canceler = this.signedEventsCancelers[i];
+        canceler.call();
+      }
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+      var attributes = _extends({}, this.data),
+          defaults = this.getDefaults();
+
+      for (var attributeName in this.computed) {
+        delete attributes[attributeName];
+      }
+
+      for (var attributeName in data) {
+        this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
+        delete attributes[attributeName];
+        delete defaults[attributeName];
+      }
+
+      for (var attributeName in defaults) {
+        this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
+        delete attributes[attributeName];
+      }
+
+      for (var attributeName in attributes) {
+        this.unsetAttribute(attributeName, { silentGlobalChange: true });
+      }
+
+      this.radio.triggerEvent("change", this);
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+      options = _extends({ silentGlobalChange: false }, options);
+
+      for (var key in this.data) {
+        if (!this.computed.hasOwnProperty(key)) {
+          this.unsetAttribute(key, { silentGlobalChange: true });
+        }
+      }
+
+      if (!options.silentGlobalChange) {
+        this.radio.triggerEvent("change", this);
+      }
+    }
+  }, {
+    key: "attributesToJSON",
+    value: function attributesToJSON() {
+      var data = {};
+
+      for (var attributeName in this.data) {
+        data[attributeName] = this.dump(attributeName).call(this, this.data[attributeName]);
+      }
+
+      return _extends({}, data, { cid: this.cid });
+    }
+  }, {
+    key: "toJSON",
+    value: function toJSON() {
+      if (!this.lastGeneratedJSON) {
+        this.lastGeneratedJSON = this.attributesToJSON();
+      }
+
+      return this.lastGeneratedJSON;
+    }
+  }]);
+
+  return ObjectStore;
+})();
+
+;
+
+exports["default"] = ObjectStore;
+module.exports = exports["default"];
+
+},{"./fluxo.default_attribute_contract.js":2,"./fluxo.radio.js":5}],5:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Radio = (function () {
+  function Radio() {
+    _classCallCheck(this, Radio);
+
+    this.signedEventsCancelers = [];
+
+    this.events = {};
+  }
+
+  _createClass(Radio, [{
     key: "subscribe",
     value: function subscribe(eventName, callback) {
       if (typeof callback !== "function") {
@@ -718,242 +984,17 @@ var ObjectStore = (function () {
         args[_key3 - 1] = arguments[_key3];
       }
 
-      this.publish.apply(this, [eventName, this].concat(args));
+      this.publish.apply(this, [eventName].concat(args));
 
-      this.publish.apply(this, ["*", eventName, this].concat(args));
-    }
-  }, {
-    key: "getComputed",
-    value: function getComputed(attributeName) {
-      if (!this[attributeName]) {
-        throw new Error("Compute function to \"" + attributeName + "\" value is not defined.");
-      }
-
-      return this[attributeName].call(this);
-    }
-  }, {
-    key: "computeValue",
-    value: function computeValue(attributeName) {
-      this.setAttribute(attributeName, this.getComputed(attributeName), { silentGlobalChange: true });
-    }
-  }, {
-    key: "registerComputed",
-    value: function registerComputed() {
-      for (var attributeName in this.computed) {
-        var toComputeEvents = this.computed[attributeName];
-
-        if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
-          throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
-        }
-
-        this.on(toComputeEvents, this.computeValue.bind(this, attributeName));
-      }
-    }
-  }, {
-    key: "stopListenStoreAttribute",
-    value: function stopListenStoreAttribute(attributeName) {
-      this.storeAttributesEventsCanceler[attributeName].call();
-      delete this.storeAttributesEventsCanceler[attributeName];
-    }
-  }, {
-    key: "listenStoreAttribute",
-    value: function listenStoreAttribute(attribute, store) {
-      var onStoreEvent = function onStoreEvent(attributeName, eventName) {
-        if (eventName !== "change") {
-          for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-            args[_key4 - 2] = arguments[_key4];
-          }
-
-          this.triggerEvent.apply(this, ["change:" + attributeName + ":" + eventName.replace(/^change:/, '')].concat(args));
-        }
-
-        if (eventName === "change" || eventName === "stores:change") {
-          this.triggerEvent("change:" + attributeName);
-          this.triggerEvent("change");
-        }
-      };
-
-      this.storeAttributesEventsCanceler[attribute] = store.on(["*"], onStoreEvent.bind(this, attribute));
-    }
-  }, {
-    key: "contract",
-    value: function contract(attributeName) {
-      if (this.constructor.attributes && this.constructor.attributes[attributeName]) {
-        return this.constructor.attributes[attributeName];
-      } else {
-        return {};
-      }
-    }
-  }, {
-    key: "parser",
-    value: function parser(attributeName) {
-      return this.contract(attributeName).parser || _fluxoDefault_attribute_contractJs2["default"].parser;
-    }
-  }, {
-    key: "dump",
-    value: function dump(attributeName) {
-      return this.contract(attributeName).dump || _fluxoDefault_attribute_contractJs2["default"].dump;
-    }
-  }, {
-    key: "setAttribute",
-    value: function setAttribute(attribute, value, options) {
-      if (typeof attribute !== "string") {
-        throw new Error("The \"attribute\" argument on store's \"setAttribute\" function must be a string.");
-      }
-
-      options = options || {};
-
-      value = this.parser(attribute).call(this, value);
-
-      if (this.data[attribute] === value) {
-        return;
-      }
-
-      delete this.lastGeneratedJSON;
-
-      this.warnMissingAttribute(attribute, value);
-
-      if (this.data[attribute] instanceof ObjectStore) {
-        this.stopListenStoreAttribute(attribute);
-      }
-
-      if (value instanceof ObjectStore) {
-        this.listenStoreAttribute(attribute, value);
-      }
-
-      var previousValue = this.data[attribute];
-
-      this.data[attribute] = value;
-
-      this.triggerEvent("change:" + attribute, previousValue);
-
-      if (options.silentGlobalChange) {
-        return;
-      }
-
-      this.triggerEvent("change");
-    }
-  }, {
-    key: "unsetAttribute",
-    value: function unsetAttribute(attribute, options) {
-      options = options || {};
-
-      this.warnMissingAttribute(attribute);
-
-      if (this.data[attribute] instanceof ObjectStore) {
-        this.stopListenStoreAttribute(attribute);
-      }
-
-      delete this.data[attribute];
-
-      this.triggerEvent("change:" + attribute);
-
-      if (options.silentGlobalChange) {
-        return;
-      }
-
-      this.triggerEvent("change");
-    }
-  }, {
-    key: "set",
-    value: function set(data) {
-      var options = arguments.length <= 1 || arguments[1] === undefined ? { silentGlobalChange: false } : arguments[1];
-
-      if (typeof data !== "object") {
-        throw new Error("The \"data\" argument on store's \"set\" function must be an object.");
-      }
-
-      for (var key in data) {
-        this.setAttribute(key, data[key], { silentGlobalChange: true });
-      }
-
-      if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
-      }
-    }
-  }, {
-    key: "cancelSignedEvents",
-    value: function cancelSignedEvents() {
-      for (var i = 0, l = this.signedEventsCancelers.length; i < l; i++) {
-        var canceler = this.signedEventsCancelers[i];
-        canceler.call();
-      }
-    }
-  }, {
-    key: "reset",
-    value: function reset() {
-      var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-      var attributes = _extends({}, this.data),
-          defaults = this.getDefaults();
-
-      for (var attributeName in this.computed) {
-        delete attributes[attributeName];
-      }
-
-      for (var attributeName in data) {
-        this.setAttribute(attributeName, data[attributeName], { silentGlobalChange: true });
-        delete attributes[attributeName];
-        delete defaults[attributeName];
-      }
-
-      for (var attributeName in defaults) {
-        this.setAttribute(attributeName, defaults[attributeName], { silentGlobalChange: true });
-        delete attributes[attributeName];
-      }
-
-      for (var attributeName in attributes) {
-        this.unsetAttribute(attributeName, { silentGlobalChange: true });
-      }
-
-      this.triggerEvent("change");
-    }
-  }, {
-    key: "clear",
-    value: function clear() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-      options = _extends({ silentGlobalChange: false }, options);
-
-      for (var key in this.data) {
-        if (!this.computed.hasOwnProperty(key)) {
-          this.unsetAttribute(key, { silentGlobalChange: true });
-        }
-      }
-
-      if (!options.silentGlobalChange) {
-        this.triggerEvent("change");
-      }
-    }
-  }, {
-    key: "attributesToJSON",
-    value: function attributesToJSON() {
-      var data = {};
-
-      for (var attributeName in this.data) {
-        data[attributeName] = this.dump(attributeName).call(this, this.data[attributeName]);
-      }
-
-      return _extends({}, data, { cid: this.cid });
-    }
-  }, {
-    key: "toJSON",
-    value: function toJSON() {
-      if (!this.lastGeneratedJSON) {
-        this.lastGeneratedJSON = this.attributesToJSON();
-      }
-
-      return this.lastGeneratedJSON;
+      this.publish.apply(this, ["*", eventName].concat(args));
     }
   }]);
 
-  return ObjectStore;
+  return Radio;
 })();
 
-;
-
-exports["default"] = ObjectStore;
+exports["default"] = Radio;
 module.exports = exports["default"];
 
-},{"./fluxo.default_attribute_contract.js":2}]},{},[3])(3)
+},{}]},{},[3])(3)
 });
