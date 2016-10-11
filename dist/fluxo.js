@@ -558,8 +558,6 @@ var ObjectStore = (function () {
 
       this.radio = new _fluxoRadioJs2["default"]();
 
-      this.computed = this.constructor.computed || {};
-
       this.storeAttributesEventsCanceler = {};
 
       this.setDefaults();
@@ -641,7 +639,7 @@ var ObjectStore = (function () {
   }, {
     key: "firstComputation",
     value: function firstComputation() {
-      for (var attributeName in this.computed) {
+      for (var attributeName in this.constructor.computed) {
         this.computeValue(attributeName);
       }
     }
@@ -662,8 +660,8 @@ var ObjectStore = (function () {
   }, {
     key: "registerComputed",
     value: function registerComputed() {
-      for (var attributeName in this.computed) {
-        var toComputeEvents = this.computed[attributeName];
+      for (var attributeName in this.constructor.computed) {
+        var toComputeEvents = this.constructor.computed[attributeName];
 
         if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
           throw new Error("You can't register a COMPUTED PROPERTY (" + this.constructor.name + "#" + attributeName + ") with the \"change\" event and other events. The \"change\" event will be called on every change so you don't need complement with other events.");
@@ -812,7 +810,7 @@ var ObjectStore = (function () {
       var attributes = _extends({}, this.data),
           defaults = this.getDefaults();
 
-      for (var attributeName in this.computed) {
+      for (var attributeName in this.constructor.computed) {
         delete attributes[attributeName];
       }
 
@@ -841,7 +839,7 @@ var ObjectStore = (function () {
       options = _extends({ silentGlobalChange: false }, options);
 
       for (var key in this.data) {
-        if (!this.computed.hasOwnProperty(key)) {
+        if (!this.constructor.computed.hasOwnProperty(key)) {
           this.unsetAttribute(key, { silentGlobalChange: true });
         }
       }
@@ -876,6 +874,8 @@ var ObjectStore = (function () {
 })();
 
 ;
+
+ObjectStore.computed = {};
 
 exports["default"] = ObjectStore;
 module.exports = exports["default"];

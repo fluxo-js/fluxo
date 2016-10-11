@@ -16,8 +16,6 @@ class ObjectStore {
 
     this.radio = new Radio;
 
-    this.computed = (this.constructor.computed || {});
-
     this.storeAttributesEventsCanceler = {};
 
     this.setDefaults();
@@ -82,7 +80,7 @@ class ObjectStore {
   }
 
   firstComputation () {
-    for (let attributeName in this.computed) {
+    for (let attributeName in this.constructor.computed) {
       this.computeValue(attributeName);
     }
   }
@@ -104,8 +102,8 @@ class ObjectStore {
   }
 
   registerComputed () {
-    for (let attributeName in this.computed) {
-      let toComputeEvents = this.computed[attributeName];
+    for (let attributeName in this.constructor.computed) {
+      let toComputeEvents = this.constructor.computed[attributeName];
 
       if (toComputeEvents.indexOf("change") !== -1 && toComputeEvents.length > 1) {
         throw new Error(`You can't register a COMPUTED PROPERTY (${this.constructor.name}#${attributeName}) with the "change" event and other events. The "change" event will be called on every change so you don't need complement with other events.`);
@@ -233,7 +231,7 @@ class ObjectStore {
     let attributes = { ...this.data },
         defaults = this.getDefaults();
 
-    for (let attributeName in this.computed) {
+    for (let attributeName in this.constructor.computed) {
       delete attributes[attributeName];
     }
 
@@ -259,7 +257,7 @@ class ObjectStore {
     options = { silentGlobalChange: false, ...options };
 
     for (let key in this.data) {
-      if (!this.computed.hasOwnProperty(key)) {
+      if (!this.constructor.computed.hasOwnProperty(key)) {
         this.unsetAttribute(key, { silentGlobalChange: true });
       }
     }
@@ -288,5 +286,7 @@ class ObjectStore {
     return this.lastGeneratedJSON;
   }
 };
+
+ObjectStore.computed = {};
 
 export default ObjectStore;
